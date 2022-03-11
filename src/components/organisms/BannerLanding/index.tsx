@@ -1,10 +1,14 @@
-import Button from '@/components/atoms/Button';
+import Button from '@/components/atoms/Button'
 
-import Image from 'next/image';
+import Image from 'next/image'
 
-import { Banner } from './styles';
+import { Banner } from './styles'
 
 const BannerLanding = () => {
+  const goToPlans = () => {
+    window.location.hash = '#planos'
+  }
+
   return (
     <Banner>
       <Image
@@ -24,12 +28,10 @@ const BannerLanding = () => {
           entregas.
         </p>
 
-        <Button onClick={() => (window.location.hash = '#planos')}>
-          Ver planos
-        </Button>
+        <Button onClick={goToPlans}>Ver planos</Button>
       </div>
     </Banner>
-  );
-};
+  )
+}
 
-export default BannerLanding;
+export default BannerLanding

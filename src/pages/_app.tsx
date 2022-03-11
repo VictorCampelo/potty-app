@@ -1,6 +1,6 @@
-import Head from 'next/head';
+import Head from 'next/head'
 
-import GlobalStyle from '@/styles/GlobalStyle';
+import GlobalStyle from '@/styles/GlobalStyle'
 
 function MyApp({ Component, pageProps }: any) {
   return (
@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: any) {
       <GlobalStyle />
       <Component {...pageProps} />
     </>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

@@ -1,9 +1,10 @@
-import styled from 'styled-components';
-import sizes from '@/utils/sizes';
+import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 export const Container = styled.header`
   height: 96px;
   width: 100%;
+  max-width: 1440px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -106,4 +107,4 @@ export const Container = styled.header`
   ${[sizes.down('sm')]} {
     display: none;
   }
-`;
+`

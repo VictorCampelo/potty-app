@@ -1,14 +1,14 @@
-import { Container } from './styles';
+import { Container } from './styles'
 
-import Link from 'next/link';
-import Image from 'next/image';
-import Logo from '@images/logo.svg';
-import { BiUserCircle, BiHome } from 'react-icons/bi';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import Link from 'next/link'
+import Image from 'next/image'
+import Logo from '@images/logo.svg'
+import { BiUserCircle, BiHome } from 'react-icons/bi'
+import { MdKeyboardArrowDown } from 'react-icons/md'
 
 const Header = () => {
-  const user: any = null;
-  const firstName = user?.firstName?.split(' ')[0];
+  const user: any = null
+  const firstName = user?.firstName?.split(' ')[0]
 
   return (
     <Container>
@@ -61,7 +61,7 @@ const Header = () => {
         )}
       </nav>
     </Container>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

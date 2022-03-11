@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import sizes from '@/utils/sizes';
+import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 export const Banner = styled.div`
   width: 100%;
@@ -9,9 +9,9 @@ export const Banner = styled.div`
   background-color: white;
 
   img {
-    max-width: 546px;
-    filter: drop-shadow(0px 0px 20px rgba(54, 63, 78, 0.2));
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     border-radius: 0px 0px 57px 0px;
+    background-color: white;
   }
 
   ${[sizes.down('md')]} {
@@ -36,4 +36,4 @@ export const Banner = styled.div`
       font-size: var(--font-size-xs);
     }
   }
-`;
+`
