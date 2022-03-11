@@ -14,18 +14,14 @@ export const Container = styled.header`
   z-index: 5;
 
   .logo {
-    display: flex;
-    align-content: center;
     margin-right: 400px;
-    img {
-      max-width: 100%;
-    }
   }
 
   nav {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
+    margin-left: auto;
 
     display: flex;
     align-items: center;
@@ -87,19 +83,22 @@ export const Container = styled.header`
       }
     }
 
-    a {
-      text-decoration: none;
-      cursor: pointer;
-      padding: var(--spacing-nano);
-      margin: var(--spacing-nano);
-      font-size: var(--font-size-xxs);
-      transition: 0.2s background;
-      padding: var(--spacing-xxxs);
-      border-radius: var(--border-radius-lg);
-      border: none;
+    .links {
+      margin-left: auto;
+      a {
+        text-decoration: none;
+        cursor: pointer;
+        padding: var(--spacing-nano);
+        margin: var(--spacing-nano);
+        font-size: var(--font-size-xxs);
+        transition: 0.2s background;
+        padding: var(--spacing-xxxs);
+        border-radius: var(--border-radius-lg);
+        border: none;
 
-      :hover {
-        background: var(--gray-200);
+        :hover {
+          background: var(--gray-200);
+        }
       }
     }
   }
