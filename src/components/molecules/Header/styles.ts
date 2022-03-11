@@ -1,20 +1,14 @@
 import styled from 'styled-components';
 import sizes from '@/utils/sizes';
 
-interface ContainerProps {
-  isMain: boolean;
-}
-
-export const Container = styled.header<ContainerProps>`
+export const Container = styled.header`
   height: 96px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
   padding: var(--spacing-nano) var(--spacing-xxxs);
-
-  ${(props) => props.isMain === false && 'background: rgba(0,0,0,0.4);'}
-  ${(props) => props.isMain === false && 'color: var(--white);'}
 
   z-index: 5;
 
@@ -22,7 +16,6 @@ export const Container = styled.header<ContainerProps>`
     display: flex;
     align-content: center;
     margin-right: 400px;
-    ${(props) => props.isMain === false && 'display: none;'}
     img {
       max-width: 100%;
     }
@@ -30,12 +23,13 @@ export const Container = styled.header<ContainerProps>`
 
   nav {
     width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 
     display: flex;
     align-items: center;
     justify-content: flex-end;
 
-    ${(props) => props.isMain === false && 'width: 100%;'}
     list-style-type: none;
 
     .userContainer {

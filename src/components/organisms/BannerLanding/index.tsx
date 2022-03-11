@@ -8,7 +8,7 @@ const BannerLanding = () => {
   return (
     <Banner>
       <Image
-        src='images/landing_girl.jpg'
+        src='/images/landing_girl.jpg'
         alt='Foto de garota'
         width={546}
         height={500}

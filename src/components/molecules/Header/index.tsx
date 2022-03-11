@@ -2,22 +2,19 @@ import { Container } from './styles';
 
 import Link from 'next/link';
 import Image from 'next/image';
+import Logo from '@images/logo.svg';
 import { BiUserCircle, BiHome } from 'react-icons/bi';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
-interface HeaderProps {
-  isMain?: boolean;
-}
-
-const Header = ({ isMain = false }: HeaderProps) => {
+const Header = () => {
   const user: any = null;
   const firstName = user?.firstName?.split(' ')[0];
 
   return (
-    <Container isMain={isMain}>
+    <Container>
       <div className='logo'>
         <Link passHref href='/'>
-          <Image src='/images/logo.svg' alt='logo' />
+          <Image src={Logo} alt='logo' width={156} height={156} />
         </Link>
       </div>
       <nav>
