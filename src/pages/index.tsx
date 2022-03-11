@@ -7,7 +7,7 @@ import Head from 'next/head'
 import Header from '@/components/molecules/Header'
 import BannerLanding from '@/components/organisms/BannerLanding'
 import BenefitsLanding from '@/components/organisms/BenefitsLanding'
-// import PlansLanding from '@/components/organisms/PlansLanding';
+import PlansLanding from '@/components/organisms/PlansLanding'
 // import FooterLanding from '@/components/organisms/FooterLanding';
 
 const Landing: NextPage = () => {
@@ -24,9 +24,9 @@ const Landing: NextPage = () => {
 
         <BenefitsLanding />
 
-        {/* <PlansLanding />
+        <PlansLanding />
 
-        <FooterLanding /> */}
+        {/* <FooterLanding /> */}
       </Container>
     </Wrapper>
   )

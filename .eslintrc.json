@@ -18,6 +18,7 @@
   },
   "plugins": ["prettier", "react", "@typescript-eslint"],
   "rules": {
-    "multiline-ternary": "off"
+    "multiline-ternary": "off",
+    "space-before-function-paren": ["off"]
   }
 }
