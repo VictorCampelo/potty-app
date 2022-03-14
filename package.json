@@ -9,19 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.8.8",
+    "@types/react-toastify": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "axios": "^0.26.1",
     "axios-cache-adapter": "^2.7.3",
     "eslint-config-airbnb": "^19.0.4",
     "leaflet": "^1.7.1",
+    "moment": "^2.29.1",
     "next": "12.1.0",
     "nookies": "^2.5.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-hook-form": "^7.28.0",
     "react-icons": "^4.3.1",
     "react-leaflet": "^3.2.5",
     "react-spinners": "^0.11.0",
-    "styled-components": "^5.3.3"
+    "react-toastify": "^8.2.0",
+    "styled-components": "^5.3.3",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@commitlint/cli": "9.1.1",
@@ -30,6 +36,7 @@
     "@types/node": "17.0.21",
     "@types/react": "17.0.40",
     "@types/styled-components": "^5.1.24",
+    "@types/yup": "^0.29.13",
     "@typescript-eslint/parser": "^5.14.0",
     "autoprefixer": "^10.4.2",
     "babel-plugin-styled-components": "^2.0.6",

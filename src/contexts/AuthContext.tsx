@@ -8,7 +8,7 @@ import type { SignInDTO } from '@/@types/requests'
 import type { User } from '@/@types/entities'
 
 interface AuthContextData {
-  signIn: (dto: SignInDTO) => Promise<void>
+  signIn: (dto: SignInDTO) => Promise<User | null>
   signOut: () => Promise<void>
   isAuthenticated: boolean
   user: User | null
@@ -23,7 +23,7 @@ const authRepository = new AuthRepository()
 const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
-  signIn: async () => {},
+  signIn: async () => null,
   signOut: async () => {},
   isAuthenticated: false,
   user: null,
@@ -54,8 +54,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(null)
 
       await authRepository.singOut()
-    } catch {
+    } catch (error) {
       setUser(null)
+      throw error
     } finally {
       setIsLoading(false)
     }
@@ -65,11 +66,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setIsLoading(true)
 
-      await authRepository.singIn(dto)
+      const user = await authRepository.singIn(dto)
 
-      await fetchUser()
-    } catch {
-      signOut()
+      setUser(user)
+
+      return user
     } finally {
       setIsLoading(false)
     }

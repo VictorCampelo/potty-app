@@ -5,7 +5,7 @@ export interface SignInDTO {
   password: string
 }
 
-export interface SingInResponse {
+export interface SingInResponse extends User {
   jwtToken: string
 }
 
