@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import L from 'leaflet'
 import * as ReactLeaflet from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -9,17 +9,23 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 
 const { MapContainer, MapConsumer } = ReactLeaflet
 
-const Map = ({ children, ...rest }) => {
-  useEffect(() => {
-    ;(async function init() {
-      delete (L.Icon.Default.prototype as any)._getIconUrl
+interface Props extends ReactLeaflet.MapContainerProps {
+  children: any
+}
 
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: iconRetinaUrl.src,
-        iconUrl: iconUrl.src,
-        shadowUrl: shadowUrl.src
-      })
-    })()
+const Map = ({ children, ...rest }: Props) => {
+  const init = async () => {
+    delete (L.Icon.Default.prototype as any)._getIconUrl
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: iconRetinaUrl.src,
+      iconUrl: iconUrl.src,
+      shadowUrl: shadowUrl.src
+    })
+  }
+
+  useEffect(() => {
+    init()
   }, [])
 
   return (

@@ -19,6 +19,7 @@
   "plugins": ["prettier", "react", "@typescript-eslint"],
   "rules": {
     "multiline-ternary": "off",
-    "space-before-function-paren": ["off"]
+    "space-before-function-paren": "off",
+    "react-hooks/exhaustive-deps": "off"
   }
 }

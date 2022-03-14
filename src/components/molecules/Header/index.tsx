@@ -1,14 +1,16 @@
-import { Container } from './styles'
-
 import Link from 'next/link'
 import Image from 'next/image'
+
+import { useAuth } from '@/contexts/AuthContext'
+
 import Logo from '@images/logo.svg'
 import { BiUserCircle, BiHome } from 'react-icons/bi'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
+import { Container } from './styles'
+
 const Header = () => {
-  const user: any = null
-  const firstName = user?.firstName?.split(' ')[0]
+  const { user } = useAuth()
 
   return (
     <Container>
@@ -22,7 +24,7 @@ const Header = () => {
             <div>
               <BiUserCircle size={40} color='var(--color-secondary-darker)' />
               <span>
-                {firstName} {user?.lastName}
+                {user.firstName} {user?.lastName}
               </span>
               <MdKeyboardArrowDown
                 size={30}

@@ -6,29 +6,35 @@ interface Props {
   color?: string
 }
 
-const BenefitsLanding = ({ color }: Props) => {
+const BenefitsLanding = ({ color = '' }: Props) => {
+  const benefits = [
+    {
+      title: 'Controle suas vendas',
+      description: 'Tenha uma melhor gestão e controle da suas vendas.'
+    },
+    {
+      title: 'Maior visibilidade',
+      description: 'Tenha uma melhor gestão e controle da suas vendas.'
+    },
+    {
+      title: 'Otimize seus custos',
+      description: 'Reduza seus custos com atendimento, vendas e marketing'
+    }
+  ]
+
   return (
     <Container color={color}>
       <h1>Principais vantagens de vender na Boa de Venda</h1>
 
       <div className='cards'>
-        <CardCheck
-          color={color}
-          title='Controle suas vendas'
-          description='Tenha uma melhor gestão e controle da suas vendas.'
-        />
-
-        <CardCheck
-          color={color}
-          title='Maior visibilidade'
-          description='Exiba sua loja e produtos para mais consumidores.'
-        />
-
-        <CardCheck
-          color={color}
-          title='Otimize seus custos'
-          description='Reduza seus custos com atendimento, vendas e marketing'
-        />
+        {benefits.map((benefit, index) => (
+          <CardCheck
+            key={index}
+            iconColor={color}
+            title={benefit.title}
+            description={benefit.description}
+          />
+        ))}
       </div>
     </Container>
   )

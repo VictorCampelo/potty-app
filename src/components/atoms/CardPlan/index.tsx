@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import Http from '@/services/Http'
+import PlanRepository from '@/repositories/PlanRepository'
 
 import Button from '@/components/atoms/Button'
 
@@ -23,6 +23,8 @@ interface Props {
   quota: number
 }
 
+const planRepository = new PlanRepository()
+
 const CardPlan = ({
   crown,
   colors,
@@ -32,10 +34,13 @@ const CardPlan = ({
   quota
 }: Props) => {
   const selectPlan = async () => {
-    const { url } = await Http.get<{ url: string }>(
-      `/plans/find/${title.toLowerCase()}`
-    )
-    window.open(url, '_blank')
+    try {
+      const { url } = await planRepository.findPlan(title)
+
+      window.open(url, '_blank')
+    } catch {
+      alert('Algo deu errado!')
+    }
   }
 
   return (

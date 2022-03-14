@@ -1,7 +1,11 @@
 import Map from '@/components/atoms/Map'
 
+import * as ReactLeaflet from 'react-leaflet'
+
 const MapBdv = () => {
-  const DEFAULT_CENTER = [-23.565985644182255, -46.65077920923577]
+  const DEFAULT_CENTER: [number, number] = [
+    -23.565985644182255, -46.65077920923577
+  ]
 
   return (
     <Map
@@ -12,7 +16,7 @@ const MapBdv = () => {
       zoomControl={false}
       attributionControl={false}
     >
-      {({ TileLayer, Marker }) => (
+      {({ TileLayer, Marker }: typeof ReactLeaflet) => (
         <>
           <TileLayer
             id='mapbox/streets-v11'

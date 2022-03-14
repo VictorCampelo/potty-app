@@ -3,15 +3,15 @@ import { Container } from './styles'
 import { AiFillCheckCircle } from 'react-icons/ai'
 
 interface Props {
-  color: string
+  iconColor: string
   title: string
   description: string
 }
 
-const CardCheck = ({ color, title, description }: Props) => {
+const CardCheck = ({ iconColor, title, description }: Props) => {
   return (
     <Container>
-      <AiFillCheckCircle size={96} color={color} />
+      <AiFillCheckCircle size={96} color={iconColor} />
       <p>{title}</p>
       <span>{description}</span>
     </Container>
