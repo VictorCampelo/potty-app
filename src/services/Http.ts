@@ -33,7 +33,10 @@ class Http {
         return response
       },
       async (error) => {
-        if (error.response?.status === 401) {
+        if (
+          error.response?.status === 401 &&
+          !error.request.responseURL.includes('signin')
+        ) {
           destroyCookie(null, 'ultimo.auth.token')
           destroyCookie(null, 'ultimo.auth.refreshToken')
           await Router.push('/')
