@@ -1,6 +1,6 @@
 import { Container } from './styles'
 
-import CardPlan from '@/components/atoms/CardPlan'
+import CardPlan from '@/components/molecules/CardPlan'
 
 interface Props {
   colors?: {

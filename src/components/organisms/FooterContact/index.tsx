@@ -1,4 +1,4 @@
-import MapBdv from '@/components/molecules/MapBdv'
+import MapBdv from '@/components/organisms/MapBdv'
 
 import { AiFillPhone, AiOutlineWhatsApp } from 'react-icons/ai'
 

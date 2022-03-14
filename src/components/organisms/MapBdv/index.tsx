@@ -1,4 +1,4 @@
-import Map from '@/components/atoms/Map'
+import Map from '@/components/molecules/Map'
 
 import * as ReactLeaflet from 'react-leaflet'
 

@@ -1,4 +1,4 @@
-import FooterContact from '@/components/molecules/FooterContact'
+import FooterContact from '@/components/organisms/FooterContact'
 
 import { Register } from './styles'
 

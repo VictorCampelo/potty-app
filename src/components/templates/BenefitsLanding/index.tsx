@@ -1,6 +1,6 @@
 import { Container } from './styles'
 
-import CardCheck from '@/components/atoms/CardCheck'
+import CardCheck from '@/components/molecules/CardCheck'
 
 interface Props {
   color?: string
