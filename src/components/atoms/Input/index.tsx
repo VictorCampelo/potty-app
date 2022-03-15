@@ -71,12 +71,14 @@ const Input = ({
             <AiOutlineEye
               onClick={() => setIsInputVisible(false)}
               size={24}
+              style={{ marginRight: '10px' }}
               color='var(--black-800)'
             />
           ) : (
             <AiOutlineEyeInvisible
               onClick={() => setIsInputVisible(true)}
               size={24}
+              style={{ marginRight: '10px' }}
               color='var(--black-800)'
             />
           ))}

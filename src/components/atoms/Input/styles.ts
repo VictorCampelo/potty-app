@@ -63,7 +63,7 @@ export const Container = styled.div<ContainerProps>`
       border-radius: 11px;
       font-size: 0.875rem;
       background: inherit;
-      padding-left: 5px;
+      padding-right: 10px;
       ${(props) => props.error && 'color: var(--red);'}
       cursor: text;
     }
