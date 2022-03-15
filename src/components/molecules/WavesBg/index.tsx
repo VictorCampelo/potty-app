@@ -1,38 +1,25 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react'
-
-import Image from 'next/image'
 
 import { Container } from './styles'
 
 const Waves = () => {
   return (
     <Container>
-      <Image
-        className='first'
-        src='/images/wave1.svg'
-        alt='wave 1'
-        layout='fill'
-      />
+      <img className='first' src='/images/wave1.svg' alt='wave 1' />
 
-      <Image
-        className='second'
-        src='/images/wave2.svg'
-        alt='wave 2'
-        layout='fill'
-      />
+      <img className='second' src='/images/wave2.svg' alt='wave 2' />
 
-      <Image
+      <img
         className='third'
         src='/images/illustration1.svg'
         alt='illustration 1'
-        layout='fill'
       />
 
-      <Image
+      <img
         className='fourth'
         src='/images/illustration2.svg'
         alt='illustration 2'
-        layout='fill'
       />
     </Container>
   )

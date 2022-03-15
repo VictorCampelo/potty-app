@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export interface ContainerProps {
-  skin?: 'primary' | 'secondary';
+  skin?: 'primary' | 'secondary'
 }
 
 export const Container = styled.button<ContainerProps>`
@@ -15,7 +15,10 @@ export const Container = styled.button<ContainerProps>`
   font-weight: 700;
   font-size: 1.125rem;
   background-color: var(--color-primary);
-  transition: 0.2s background;
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 
   display: flex;
   align-items: center;
@@ -37,4 +40,4 @@ export const Container = styled.button<ContainerProps>`
     background-color: var(--gray-300);
     cursor: not-allowed;
   }
-`;
+`

@@ -1,39 +1,40 @@
 import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 export const Container = styled.div`
+  ${[sizes.down('lg')]} {
+    display: none;
+  }
+
   .first {
-    position: 'absolute';
+    position: absolute;
     bottom: 0;
-    height: '85%';
+    height: 85%;
     left: 0;
     right: 0;
-    z-index: -1;
-    width: '100%';
+    width: 100%;
   }
 
   .second {
-    position: 'absolute';
+    position: absolute;
     bottom: 0;
-    height: '65%';
+    height: 65%;
     left: 0;
     right: 0;
-    z-index: -1;
-    width: '100%';
+    width: 100%;
   }
 
   .third {
-    position: 'absolute';
+    position: absolute;
     bottom: 0;
     right: 0;
-    height: '55%';
-    z-index: -1;
+    height: 55%;
   }
 
   .fourth {
-    position: 'absolute';
+    position: absolute;
     bottom: 0;
     left: 0;
-    height: '50%';
-    z-index: -1;
+    height: 50%;
   }
 `

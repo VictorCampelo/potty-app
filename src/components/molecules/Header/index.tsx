@@ -52,10 +52,10 @@ const Header = () => {
               </Link>
             </div>
             <div className='authContainer'>
-              <Link passHref href='/cadastro/lojista'>
+              <Link passHref href='/cadastro'>
                 <a className='register'>Criar conta</a>
               </Link>
-              <Link passHref href='/login'>
+              <Link passHref href='/entrar'>
                 <button>Entrar</button>
               </Link>
             </div>

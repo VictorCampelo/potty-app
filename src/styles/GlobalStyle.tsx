@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components'
 
 export default createGlobalStyle`
   * {
@@ -172,7 +172,7 @@ export default createGlobalStyle`
       cursor: pointer;
     }
   }
-`;
+`
 
 export const Wrapper = styled.div`
   width: 100vw;
@@ -180,7 +180,7 @@ export const Wrapper = styled.div`
   overflow-x: hidden;
   background: var(--gray-100);
   margin: 0 auto;
-`;
+`
 
 export const Container = styled.main`
   width: 100%;
@@ -189,4 +189,4 @@ export const Container = styled.main`
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-`;
+`

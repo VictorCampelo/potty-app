@@ -3,12 +3,12 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import AuthRepository from '@/repositories/AuthRepository'
 import UserRepository from '@/repositories/UserRepository'
 
+import { parseCookies } from 'nookies'
+
 import type { ReactNode } from 'react'
-import type { SignInDTO } from '@/@types/requests'
 import type { User } from '@/@types/entities'
 
 interface AuthContextData {
-  signIn: (dto: SignInDTO) => Promise<User | null>
   signOut: () => Promise<void>
   isAuthenticated: boolean
   user: User | null
@@ -23,7 +23,6 @@ const authRepository = new AuthRepository()
 const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
-  signIn: async () => null,
   signOut: async () => {},
   isAuthenticated: false,
   user: null,
@@ -62,30 +61,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const signIn = async (dto: SignInDTO) => {
-    try {
-      setIsLoading(true)
-
-      const user = await authRepository.singIn(dto)
-
-      setUser(user)
-
-      return user
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   useEffect(() => {
-    if (!user) {
+    const { 'ultimo.auth.token': token } = parseCookies()
+    if (!user && token) {
       fetchUser()
     }
   }, [])
 
   return (
-    <AuthContext.Provider
-      value={{ signIn, signOut, isAuthenticated, user, isLoading }}
-    >
+    <AuthContext.Provider value={{ signOut, isAuthenticated, user, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

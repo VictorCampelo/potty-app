@@ -8,9 +8,9 @@ import Router from 'next/router'
 import Input from '@/components/atoms/Input'
 import Button from '@/components/atoms/Button'
 import Checkbox from '@/components/atoms/Checkbox'
-// import WavesBg from '@/components/atoms/WavesBg'
+import WavesBg from '@/components/molecules/WavesBg'
 
-import { useAuth } from '@/contexts/AuthContext'
+import AuthRepository from '@/repositories/AuthRepository'
 
 import toast from '@/utils/toast'
 
@@ -27,11 +27,9 @@ import { Container } from './styles'
 
 import type { SignInDTO } from '@/@types/requests'
 
-// TODOS: fix page styles
+const authRepository = new AuthRepository()
 
 const Login = () => {
-  const { signIn } = useAuth()
-
   const signInFormSchema = yup.object().shape({
     email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
     password: yup
@@ -52,7 +50,7 @@ const Login = () => {
 
   const handleSignIn = async (dto: any) => {
     try {
-      const user = await signIn(dto as SignInDTO)
+      const user = await authRepository.singIn(dto as SignInDTO)
 
       if (user?.role === 'USER') {
         await Router.push('/')
@@ -80,14 +78,25 @@ const Login = () => {
   return (
     <Wrapper>
       <Head>
-        <title>Login</title>
+        <title>Entrar</title>
       </Head>
 
       <Container>
+        <div className='logo'>
+          <Image src='/images/logo.svg' alt='logo' width={156} height={96} />
+        </div>
+
         <form onSubmit={handleSubmit(handleSignIn)}>
           <div className='title'>
             <h1>Login</h1>
-            <Image src='/images/logo.svg' alt='logo' width={150} height={80} />
+            <div className='logo'>
+              <Image
+                src='/images/logo.svg'
+                alt='logo'
+                width={150}
+                height={80}
+              />
+            </div>
           </div>
 
           <div className='inputContainerLogin'>
@@ -109,16 +118,14 @@ const Login = () => {
               register={register}
               errors={errors}
             />
-          </div>
 
-          <Checkbox
-            label='Lembrar usuário'
-            confirm={rememberUser}
-            toggleConfirm={() => setRememberUser(!rememberUser)}
-            recovery
-          />
+            <Checkbox
+              label='Lembrar usuário'
+              confirm={rememberUser}
+              toggleConfirm={() => setRememberUser(!rememberUser)}
+              recovery
+            />
 
-          <div className='buttonContainer'>
             <Button isLoading={isSubmitting} type='submit'>
               Entrar
             </Button>
@@ -131,17 +138,17 @@ const Login = () => {
           </div>
 
           <div className='social'>
-            <AiFillGoogleCircle size={50} color='var(--gray-700)' />
-            <FaFacebook size={50} color='var(--gray-700)' />
+            <AiFillGoogleCircle size={56} color='var(--gray-700)' />
+            <FaFacebook size={51} color='var(--gray-700)' />
           </div>
 
           <div className='register'>
-            Não possui conta? <Link href='register'>Cadastre-se!</Link>
+            Não possui conta? <Link href='/cadastro'>Cadastre-se!</Link>
           </div>
         </form>
       </Container>
 
-      {/* <WavesBg /> */}
+      <WavesBg />
     </Wrapper>
   )
 }
