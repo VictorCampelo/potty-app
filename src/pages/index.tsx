@@ -5,10 +5,10 @@ import { Wrapper, Container } from '@/styles/GlobalStyle'
 import Head from 'next/head'
 
 import Header from '@/components/molecules/Header'
-import BannerLanding from '@/components/templates/BannerLanding'
-import BenefitsLanding from '@/components/templates/BenefitsLanding'
-import PlansLanding from '@/components/templates/PlansLanding'
-import FooterLanding from '@/components/templates/FooterLanding'
+import BannerLanding from '@/components/organisms/BannerLanding'
+import BenefitsLanding from '@/components/organisms/BenefitsLanding'
+import PlansLanding from '@/components/organisms/PlansLanding'
+import FooterLanding from '@/components/organisms/FooterLanding'
 
 const Landing: NextPage = () => {
   return (
