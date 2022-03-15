@@ -33,7 +33,9 @@ class Http {
         return response
       },
       async (error) => {
-        if (error.response?.status === 401) {
+        const { 'ultimo.auth.token': token } = parseCookies()
+
+        if (error.response?.status === 401 && token) {
           destroyCookie(null, 'ultimo.auth.token')
           destroyCookie(null, 'ultimo.auth.refreshToken')
           await Router.push('/')

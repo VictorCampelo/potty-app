@@ -1,7 +1,5 @@
 import Button from '@/components/atoms/Button'
 
-import Image from 'next/image'
-
 import { Banner } from './styles'
 
 const BannerLanding = () => {
@@ -11,7 +9,7 @@ const BannerLanding = () => {
 
   return (
     <Banner>
-      <Image
+      <img
         src='/images/landing_girl.jpg'
         alt='Foto de garota'
         width={546}

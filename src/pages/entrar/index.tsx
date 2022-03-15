@@ -26,6 +26,7 @@ import { Wrapper } from '@/styles/GlobalStyle'
 import { Container } from './styles'
 
 import type { SignInDTO } from '@/@types/requests'
+import IconButton from '@/components/atoms/IconButton'
 
 const authRepository = new AuthRepository()
 
@@ -50,7 +51,7 @@ const Login = () => {
 
   const handleSignIn = async (dto: any) => {
     try {
-      const user = await authRepository.singIn(dto as SignInDTO)
+      const { user } = await authRepository.singIn(dto as SignInDTO)
 
       if (user?.role === 'USER') {
         await Router.push('/')
@@ -138,8 +139,12 @@ const Login = () => {
           </div>
 
           <div className='social'>
-            <AiFillGoogleCircle size={56} color='var(--gray-700)' />
-            <FaFacebook size={51} color='var(--gray-700)' />
+            <IconButton>
+              <AiFillGoogleCircle size={56} color='var(--gray-700)' />
+            </IconButton>
+            <IconButton>
+              <FaFacebook size={51} color='var(--gray-700)' />
+            </IconButton>
           </div>
 
           <div className='register'>

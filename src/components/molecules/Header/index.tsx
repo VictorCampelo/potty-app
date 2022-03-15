@@ -3,14 +3,15 @@ import Image from 'next/image'
 
 import { useAuth } from '@/contexts/AuthContext'
 
+import IconButton from '@/components/atoms/IconButton'
+
 import Logo from '@images/logo.svg'
-import { BiUserCircle, BiHome } from 'react-icons/bi'
-import { MdKeyboardArrowDown } from 'react-icons/md'
+import { BiUserCircle, BiHome, BiLogOut } from 'react-icons/bi'
 
 import { Container } from './styles'
 
 const Header = () => {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   return (
     <Container>
@@ -20,17 +21,20 @@ const Header = () => {
       <nav>
         {user ? (
           <div className='userContainer'>
-            <BiHome size={40} color='var(--color-primary)' />
+            <IconButton>
+              <BiHome size={32} color='var(--color-primary)' />
+            </IconButton>
+
             <div>
-              <BiUserCircle size={40} color='var(--color-secondary-darker)' />
+              <BiUserCircle size={36} color='var(--color-secondary-darker)' />
               <span>
                 {user.firstName} {user?.lastName}
               </span>
-              <MdKeyboardArrowDown
-                size={30}
-                color='var(--color-secondary-darker)'
-              />
             </div>
+
+            <IconButton onClick={signOut}>
+              <BiLogOut size={28} color='var(--color-primary)' />
+            </IconButton>
           </div>
         ) : (
           <>

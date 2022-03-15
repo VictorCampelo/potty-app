@@ -2,12 +2,12 @@ import styled from 'styled-components'
 
 export interface ContainerProps {
   skin?: 'primary' | 'secondary'
+  fullWidth?: boolean
 }
 
 export const Container = styled.button<ContainerProps>`
   height: 3.375rem;
-  width: 100%;
-  min-width: max-content;
+  ${(props) => (props.fullWidth ? 'width: 100%;' : 'width: max-content;')}
   border: none;
   border-radius: 30px;
   padding: 1rem 2rem;

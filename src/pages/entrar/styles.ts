@@ -70,18 +70,6 @@ export const Container = styled.main`
       justify-content: space-between;
       align-items: center;
       margin-top: var(--spacing-nano);
-
-      svg {
-        transition-property: opacity;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 150ms;
-        cursor: pointer;
-        filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.25));
-
-        &:hover {
-          opacity: 0.5;
-        }
-      }
     }
 
     .register {
