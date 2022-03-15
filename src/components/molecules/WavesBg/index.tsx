@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Container } from './styles'
 
-const Waves = () => {
+const WavesBg = () => {
   return (
     <Container>
       <img className='first' src='/images/wave1.svg' alt='wave 1' />
@@ -24,4 +24,4 @@ const Waves = () => {
   )
 }
 
-export default Waves
+export default WavesBg

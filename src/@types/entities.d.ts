@@ -4,3 +4,8 @@ export interface User {
   lastName?: string
   role: 'USER' | 'OWNER'
 }
+
+export interface UserSignUpMeta {
+  email: string
+  password: string
+}

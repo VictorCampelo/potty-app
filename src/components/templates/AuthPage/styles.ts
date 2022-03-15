@@ -8,7 +8,7 @@ export const Container = styled.main`
   align-items: flex-start;
   padding: 0 var(--spacing-md);
 
-  form {
+  .card {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -42,14 +42,7 @@ export const Container = styled.main`
       }
     }
 
-    .inputContainerLogin {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-xxxs);
-    }
-
-    .divisorContainer {
+    .container-divisor {
       display: flex;
       width: 100%;
       align-items: center;
@@ -72,7 +65,7 @@ export const Container = styled.main`
       margin-top: var(--spacing-nano);
     }
 
-    .register {
+    .footer {
       font-size: var(--font-size-xxs);
       margin-top: var(--spacing-xxs);
 
@@ -92,7 +85,7 @@ export const Container = styled.main`
       display: none !important;
     }
 
-    form {
+    .card {
       box-shadow: none;
       border-radius: 0;
       margin: 0;

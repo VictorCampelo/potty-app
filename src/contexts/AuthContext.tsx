@@ -6,12 +6,14 @@ import UserRepository from '@/repositories/UserRepository'
 import { parseCookies } from 'nookies'
 
 import type { ReactNode } from 'react'
-import type { User } from '@/@types/entities'
+import type { User, UserSignUpMeta } from '@/@types/entities'
 
 interface AuthContextData {
   signOut: () => Promise<void>
   isAuthenticated: boolean
   user: User | null
+  signUpMeta: UserSignUpMeta | null
+  setSignUpMeta: (meta: UserSignUpMeta) => void
   isLoading: boolean
 }
 
@@ -26,11 +28,14 @@ export const AuthContext = createContext<AuthContextData>({
   signOut: async () => {},
   isAuthenticated: false,
   user: null,
+  signUpMeta: null,
+  setSignUpMeta: () => {},
   isLoading: false
 })
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
+  const [signUpMeta, setSignUpMeta] = useState<UserSignUpMeta | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const isAuthenticated = false
 
@@ -69,7 +74,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ signOut, isAuthenticated, user, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        signUpMeta,
+        setSignUpMeta,
+        signOut,
+        isAuthenticated,
+        user,
+        isLoading
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

@@ -5,7 +5,17 @@ export interface SignInDTO {
   password: string
 }
 
-export interface SingInResponse {
+export interface SignInResponse {
+  jwtToken: string
+  user: User
+}
+
+export interface SignUpDTO {
+  email: string
+  password: string
+}
+
+export interface SignUpResponse {
   jwtToken: string
   user: User
 }
