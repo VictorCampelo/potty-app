@@ -12,7 +12,18 @@ export interface SignInResponse {
 
 export interface SignUpDTO {
   email: string
+  firstName: string
+  lastName: string
   password: string
+  passwordConfirmation: string
+  city: string
+  uf: string
+  street: string
+  logradouro: string
+  adressNumber: number
+  neighborhood: string
+  zipcode: string
+  complement: string
 }
 
 export interface SignUpResponse {

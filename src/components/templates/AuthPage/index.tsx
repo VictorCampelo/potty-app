@@ -14,19 +14,27 @@ import { Container } from './styles'
 import IconButton from '@/components/atoms/IconButton'
 
 interface Props {
+  size?: 'md' | 'lg'
   title: string
+  socialAuth?: boolean
   children: React.ReactNode
   footer: React.ReactNode
 }
 
-const AuthPage = ({ title, children, footer }: Props) => {
+const AuthPage = ({
+  size = 'md',
+  title,
+  socialAuth,
+  children,
+  footer
+}: Props) => {
   return (
     <Wrapper>
       <Head>
         <title>{title}</title>
       </Head>
 
-      <Container>
+      <Container size={size}>
         <div className='logo'>
           <Image src='/images/logo.svg' alt='logo' width={156} height={96} />
         </div>
@@ -46,20 +54,24 @@ const AuthPage = ({ title, children, footer }: Props) => {
 
           {children}
 
-          <div className='container-divisor'>
-            <div className='divisor' />
-            ou
-            <div className='divisor' />
-          </div>
+          {socialAuth && (
+            <>
+              <div className='container-divisor'>
+                <div className='divisor' />
+                ou
+                <div className='divisor' />
+              </div>
 
-          <div className='social'>
-            <IconButton>
-              <AiFillGoogleCircle size={56} color='var(--gray-700)' />
-            </IconButton>
-            <IconButton>
-              <FaFacebook size={51} color='var(--gray-700)' />
-            </IconButton>
-          </div>
+              <div className='social'>
+                <IconButton>
+                  <AiFillGoogleCircle size={56} color='var(--gray-700)' />
+                </IconButton>
+                <IconButton>
+                  <FaFacebook size={51} color='var(--gray-700)' />
+                </IconButton>
+              </div>
+            </>
+          )}
 
           <div className='footer'>{footer}</div>
         </div>

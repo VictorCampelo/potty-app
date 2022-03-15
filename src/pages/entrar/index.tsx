@@ -7,6 +7,7 @@ const Login = () => {
   return (
     <AuthPage
       title='Entrar'
+      socialAuth={true}
       footer={
         <>
           Não possui conta? <Link href='/cadastro'>Cadastre-se!</Link>

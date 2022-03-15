@@ -14,6 +14,7 @@ interface AuthContextData {
   user: User | null
   signUpMeta: UserSignUpMeta | null
   setSignUpMeta: (meta: UserSignUpMeta) => void
+  clearSignUpMeta: () => void
   isLoading: boolean
 }
 
@@ -30,6 +31,7 @@ export const AuthContext = createContext<AuthContextData>({
   user: null,
   signUpMeta: null,
   setSignUpMeta: () => {},
+  clearSignUpMeta: () => {},
   isLoading: false
 })
 
@@ -66,10 +68,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
+  const clearSignUpMeta = () => {
+    sessionStorage.removeItem('bdv.auth.register.meta')
+    setSignUpMeta(null)
+  }
+
   useEffect(() => {
-    const { 'ultimo.auth.token': token } = parseCookies()
+    if (signUpMeta) {
+      sessionStorage.setItem(
+        'bdv.auth.register.meta',
+        JSON.stringify(signUpMeta)
+      )
+    } else {
+      sessionStorage.removeItem('bdv.auth.register.meta')
+    }
+  }, [signUpMeta])
+
+  useEffect(() => {
+    const { 'bdv.auth.token': token } = parseCookies()
+    const sessionSingUpMeta = sessionStorage.getItem('bdv.auth.register.meta')
+
     if (!user && token) {
       fetchUser()
+    }
+
+    if (sessionSingUpMeta) {
+      sessionStorage.setItem(
+        'bdv.auth.register.meta',
+        JSON.stringify(sessionSingUpMeta)
+      )
+      setSignUpMeta(JSON.parse(sessionSingUpMeta))
     }
   }, [])
 
@@ -78,6 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         signUpMeta,
         setSignUpMeta,
+        clearSignUpMeta,
         signOut,
         isAuthenticated,
         user,

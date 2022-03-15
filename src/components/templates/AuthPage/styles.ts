@@ -1,7 +1,11 @@
 import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
-export const Container = styled.main`
+interface ContainerProps {
+  size?: 'md' | 'lg'
+}
+
+export const Container = styled.main<ContainerProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -12,7 +16,9 @@ export const Container = styled.main`
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 530px;
+    ${(props) => props.size === 'md' && 'max-width: 512px;'}
+    ${(props) => props.size === 'lg' && 'max-width: 1024px;'}
+
     padding: var(--spacing-xxxs) var(--spacing-md) var(--spacing-xs)
       var(--spacing-md);
     align-items: center;

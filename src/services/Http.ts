@@ -18,7 +18,7 @@ class Http {
 
     this.http.interceptors.request.use(
       (config: any) => {
-        const { 'ultimo.auth.token': token } = parseCookies()
+        const { 'bdv.auth.token': token } = parseCookies()
 
         config.headers.common.Authorization = `Bearer ${token}`
         return config
@@ -33,11 +33,11 @@ class Http {
         return response
       },
       async (error) => {
-        const { 'ultimo.auth.token': token } = parseCookies()
+        const { 'bdv.auth.token': token } = parseCookies()
 
         if (error.response?.status === 401 && token) {
-          destroyCookie(null, 'ultimo.auth.token')
-          destroyCookie(null, 'ultimo.auth.refreshToken')
+          destroyCookie(null, 'bdv.auth.token')
+          destroyCookie(null, 'bdv.auth.refreshToken')
           await Router.push('/')
         }
         return Promise.reject(error)

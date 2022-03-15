@@ -1,25 +1,27 @@
 import Http from '@/services/Http'
 import Router from 'next/router'
 
-import { setCookie, destroyCookie } from 'nookies'
+import { destroyCookie } from 'nookies'
 
-import type { SignInDTO, SignInResponse } from '@/@types/requests'
+import type {
+  SignInDTO,
+  SignInResponse,
+  SignUpDTO,
+  SignUpResponse
+} from '@/@types/requests'
 
 export default class AuthRepository extends Http {
-  async singIn(dto: SignInDTO) {
-    const data = await this.post<SignInDTO, SignInResponse>('/auth/signin', dto)
+  singIn(dto: SignInDTO) {
+    return this.post<SignInDTO, SignInResponse>('/auth/signin', dto)
+  }
 
-    setCookie(null, 'ultimo.auth.token', data.jwtToken, {
-      maxAge: 60 * 60 * 24 * 30, // 1 month
-      path: '/'
-    })
-
-    return data
+  singUp(dto: SignUpDTO) {
+    return this.post<SignUpDTO, SignUpResponse>('/auth/signup', dto)
   }
 
   async singOut() {
-    destroyCookie(null, 'ultimo.auth.token')
-    destroyCookie(null, 'ultimo.auth.refreshToken')
+    destroyCookie(null, 'bdv.auth.token')
+    destroyCookie(null, 'bdv.auth.refreshToken')
 
     await Router.push('/')
   }

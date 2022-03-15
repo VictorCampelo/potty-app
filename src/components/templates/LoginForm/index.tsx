@@ -8,6 +8,8 @@ import Checkbox from '@/components/atoms/Checkbox'
 
 import AuthRepository from '@/repositories/AuthRepository'
 
+import { setCookie } from 'nookies'
+
 import toast from '@/utils/toast'
 
 import { useForm } from 'react-hook-form'
@@ -16,8 +18,9 @@ import * as yup from 'yup'
 
 import { FiLock } from 'react-icons/fi'
 
-import type { SignInDTO } from '@/@types/requests'
 import { Container } from './styles'
+
+import type { SignInDTO } from '@/@types/requests'
 
 const authRepository = new AuthRepository()
 
@@ -42,7 +45,12 @@ const LoginForm = () => {
 
   const handleSignIn = async (dto: any) => {
     try {
-      const { user } = await authRepository.singIn(dto as SignInDTO)
+      const { user, jwtToken } = await authRepository.singIn(dto as SignInDTO)
+
+      setCookie(null, 'bdv.auth.token', jwtToken, {
+        maxAge: 60 * 60 * 24 * 30, // 1 month
+        path: '/'
+      })
 
       if (user?.role === 'USER') {
         await Router.push('/')

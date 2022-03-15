@@ -1,22 +1,22 @@
 import Link from 'next/link'
 
 import AuthPage from '@/components/templates/AuthPage'
-import RegisterForm from '@/components/templates/RegisterForm'
+import RegisterContinueForm from '@/components/templates/RegisterContinueForm'
 
-const Register = () => {
+const RegisterContinue = () => {
   return (
     <AuthPage
-      title='Cadastro'
-      socialAuth={true}
+      size='lg'
+      title='Continuar Cadastro'
       footer={
         <>
           Já possui conta? <Link href='/entrar'>Entre agora!</Link>
         </>
       }
     >
-      <RegisterForm />
+      <RegisterContinueForm />
     </AuthPage>
   )
 }
 
-export default Register
+export default RegisterContinue
