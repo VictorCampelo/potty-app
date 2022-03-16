@@ -7,6 +7,7 @@ import Button from '@/components/atoms/Button'
 import Checkbox from '@/components/atoms/Checkbox'
 
 import toast from '@/utils/toast'
+import findCep from 'cep-promise'
 
 import AuthRepository from '@/repositories/AuthRepository'
 
@@ -32,7 +33,7 @@ const RegisterForm = () => {
   const signUpFormSchema = yup.object().shape({
     firstName: yup.string().required('Nome é obrigatório'),
     lastName: yup.string().required('Sobrenome é obrigatório'),
-    uf: yup.string().required('Estado é obrigatório'),
+    state: yup.string().required('Estado é obrigatório'),
     city: yup.string().required('Cidade obrigatória'),
     street: yup.string().required('Logradouro é obrigatório'),
     adressNumber: yup.string().required('Número é obrigatório'),
@@ -47,6 +48,7 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting }
   } = useForm({
     resolver: yupResolver(signUpFormSchema)
@@ -62,7 +64,7 @@ const RegisterForm = () => {
         firstName: dto.firstName,
         lastName: dto.lastName,
         city: dto.city,
-        uf: dto.uf,
+        state: dto.state,
         street: dto.street,
         adressNumber: Number(dto.adressNumber),
         neighborhood: dto.neighborhood,
@@ -84,6 +86,19 @@ const RegisterForm = () => {
         type: 'error'
       })
     }
+  }
+
+  const autoCompleteWithCep = async (cep: string) => {
+    try {
+      if (cep.length < 9) return
+      const { city, neighborhood, state, street } = await findCep(
+        cep.replace(/\D/g, '')
+      )
+      setValue('city', city)
+      setValue('neighborhood', neighborhood)
+      setValue('state', state)
+      setValue('street', street)
+    } catch {}
   }
 
   useEffect(() => {
@@ -119,6 +134,7 @@ const RegisterForm = () => {
               mask='cep'
               placeholder='00000-000'
               icon={<BiMapAlt size={20} color='var(--black-800)' />}
+              onChange={(e) => autoCompleteWithCep(e.target.value)}
               register={register}
               errors={errors}
             />
@@ -138,7 +154,7 @@ const RegisterForm = () => {
           <div className='row'>
             <Input
               label='Estado'
-              name='uf'
+              name='state'
               placeholder='Estado'
               icon={
                 <HiOutlineLocationMarker size={20} color='var(--black-800)' />
@@ -206,7 +222,6 @@ const RegisterForm = () => {
         <div className='row buttonsContainer'>
           <Button
             skin='secondary'
-            isLoading={isSubmitting}
             type='button'
             onClick={() => Router.push('/cadastro')}
           >

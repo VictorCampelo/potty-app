@@ -14,6 +14,7 @@
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "axios": "^0.26.1",
     "axios-cache-adapter": "^2.7.3",
+    "cep-promise": "^4.1.2",
     "eslint-config-airbnb": "^19.0.4",
     "leaflet": "^1.7.1",
     "moment": "^2.29.1",
