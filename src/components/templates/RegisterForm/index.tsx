@@ -44,7 +44,7 @@ const RegisterForm = () => {
     try {
       setSignUpMeta(dto)
 
-      await Router.push('/cadastro/continue')
+      await Router.push('/cadastro/continuar')
     } catch {
       toast({
         message: 'Algo deu errado!',

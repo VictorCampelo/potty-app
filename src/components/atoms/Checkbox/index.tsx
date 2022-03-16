@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { FaCheck } from 'react-icons/fa'
 
 import { Container } from './styles'
@@ -10,6 +12,7 @@ interface Props {
   recovery?: boolean
   size?: 'small' | 'medium'
   disabled?: boolean
+  children: React.ReactNode
 }
 
 const Checkbox = ({
@@ -17,7 +20,8 @@ const Checkbox = ({
   toggleConfirm,
   label,
   size = 'medium',
-  disabled
+  disabled,
+  children
 }: Props) => {
   const id = label
 
@@ -34,6 +38,7 @@ const Checkbox = ({
           {confirm && <FaCheck color='var(--gray-800)' />}
         </button>
         {label && <label htmlFor={id}>{label}</label>}
+        {children}
       </div>
     </Container>
   )

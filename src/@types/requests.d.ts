@@ -19,7 +19,6 @@ export interface SignUpDTO {
   city: string
   uf: string
   street: string
-  logradouro: string
   adressNumber: number
   neighborhood: string
   zipcode: string

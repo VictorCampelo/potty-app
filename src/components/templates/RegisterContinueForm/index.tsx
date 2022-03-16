@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Router from 'next/router'
 
@@ -17,6 +17,7 @@ import { Container } from './styles'
 import { useAuth } from '@/contexts/AuthContext'
 
 import type { SignUpDTO } from '@/@types/requests'
+import Checkbox from '@/components/atoms/Checkbox'
 
 const authRepository = new AuthRepository()
 
@@ -26,11 +27,11 @@ const RegisterForm = () => {
   const signUpFormSchema = yup.object().shape({
     firstName: yup.string().required('Nome é obrigatório'),
     lastName: yup.string().required('Sobrenome é obrigatório'),
-    clientState: yup.string().required('Estado é obrigatório'),
-    clientCity: yup.string().required('Cidade obrigatória'),
-    publicPlace: yup.string().required('Logradouro é obrigatório'),
-    number: yup.string().required('Numero é obrigatório'),
-    district: yup.string().required('Bairro é obrigatório'),
+    uf: yup.string().required('Estado é obrigatório'),
+    city: yup.string().required('Cidade obrigatória'),
+    street: yup.string().required('Logradouro é obrigatório'),
+    adressNumber: yup.string().required('Numero é obrigatório'),
+    neighborhood: yup.string().required('Bairro é obrigatório'),
     cep: yup
       .string()
       .required('CEP é obrigatório')
@@ -46,6 +47,8 @@ const RegisterForm = () => {
     resolver: yupResolver(signUpFormSchema)
   })
 
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false)
+
   const handleSignUp = async (dto: any) => {
     try {
       if (!signUpMeta) return await Router.push('/cadastro')
@@ -53,12 +56,11 @@ const RegisterForm = () => {
       const data: SignUpDTO = {
         firstName: dto.firstName,
         lastName: dto.lastName,
-        city: dto.clientCity,
-        uf: dto.clientState,
-        street: dto.publicPlace,
-        logradouro: dto.publicPlace,
-        adressNumber: Number(dto.number),
-        neighborhood: dto.district,
+        city: dto.city,
+        uf: dto.uf,
+        street: dto.street,
+        adressNumber: Number(dto.adressNumber),
+        neighborhood: dto.neighborhood,
         zipcode: dto.cep,
         complement: dto.complement,
         email: signUpMeta?.email,
@@ -89,28 +91,111 @@ const RegisterForm = () => {
 
   return (
     <Container onSubmit={handleSubmit(handleSignUp)}>
-      <Input
-        label='Nome'
-        name='firstName'
-        placeholder='Seu nome'
-        register={register}
-        errors={errors}
-      />
+      <div>
+        <Input
+          label='Nome'
+          name='firstName'
+          placeholder='Seu nome'
+          register={register}
+          errors={errors}
+        />
 
-      <Input
-        label='Sobrenome'
-        name='lastName'
-        placeholder='Seu sobrenome'
-        register={register}
-        errors={errors}
-      />
+        <Input
+          label='Sobrenome'
+          name='lastName'
+          placeholder='Seu sobrenome'
+          register={register}
+          errors={errors}
+        />
+
+        <div>
+          <Input
+            label='CEP'
+            name='cep'
+            placeholder='0000-000'
+            register={register}
+            errors={errors}
+          />
+
+          <Input
+            label='Bairro'
+            name='neighborhood'
+            placeholder='Bairro'
+            register={register}
+            errors={errors}
+          />
+        </div>
+      </div>
 
       <div>
-        <Button skin='secondary' isLoading={isSubmitting} type='submit'>
+        <div>
+          <Input
+            label='Estado'
+            name='uf'
+            placeholder='Estado'
+            register={register}
+            errors={errors}
+          />
+
+          <Input
+            label='Cidade'
+            name='city'
+            placeholder='Cidade'
+            register={register}
+            errors={errors}
+          />
+        </div>
+
+        <div>
+          <Input
+            label='Logradouro'
+            name='street'
+            placeholder='Logradouro'
+            register={register}
+            errors={errors}
+          />
+
+          <Input
+            label='Número'
+            type='number'
+            name='adressNumber'
+            placeholder='Logradouro'
+            register={register}
+            errors={errors}
+          />
+        </div>
+
+        <Input
+          label='Complemento'
+          name='complement'
+          placeholder='Complemento'
+          register={register}
+          errors={errors}
+        />
+      </div>
+
+      <Checkbox
+        confirm={acceptPrivacy}
+        toggleConfirm={() => setAcceptPrivacy(!acceptPrivacy)}
+      >
+        Li e concordo com os termos de uso e política de privacidade
+      </Checkbox>
+
+      <div>
+        <Button
+          skin='secondary'
+          isLoading={isSubmitting}
+          type='button'
+          onClick={() => Router.push('/cadastro')}
+        >
           Voltar
         </Button>
 
-        <Button isLoading={isSubmitting} type='submit'>
+        <Button
+          disabled={!acceptPrivacy}
+          isLoading={isSubmitting}
+          type='submit'
+        >
           Finalizar
         </Button>
       </div>
