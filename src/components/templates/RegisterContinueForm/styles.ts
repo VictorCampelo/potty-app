@@ -32,6 +32,12 @@ export const Wrapper = styled.form`
     gap: var(--spacing-xxxs);
   }
 
+  .row-flex {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-xxxs);
+  }
+
   .buttonsContainer {
     width: max-content;
     margin: 0 auto;

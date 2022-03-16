@@ -35,7 +35,7 @@ const RegisterForm = () => {
     uf: yup.string().required('Estado é obrigatório'),
     city: yup.string().required('Cidade obrigatória'),
     street: yup.string().required('Logradouro é obrigatório'),
-    adressNumber: yup.string().required('Numero é obrigatório'),
+    adressNumber: yup.string().required('Número é obrigatório'),
     neighborhood: yup.string().required('Bairro é obrigatório'),
     cep: yup
       .string()
@@ -159,8 +159,9 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div className='row'>
+          <div className='row-flex'>
             <Input
+              fullWidth={true}
               label='Logradouro'
               name='street'
               placeholder='Logradouro'
@@ -169,16 +170,18 @@ const RegisterForm = () => {
               errors={errors}
             />
 
-            <Input
-              label='Número'
-              type='number'
-              name='adressNumber'
-              mask='number'
-              placeholder='Número'
-              icon={<BiBuildings size={20} color='var(--black-800)' />}
-              register={register}
-              errors={errors}
-            />
+            <div style={{ maxWidth: '130px' }}>
+              <Input
+                label='Número'
+                type='number'
+                name='adressNumber'
+                mask='number'
+                placeholder='Número'
+                icon={<BiBuildings size={20} color='var(--black-800)' />}
+                register={register}
+                errors={errors}
+              />
+            </div>
           </div>
 
           <Input
