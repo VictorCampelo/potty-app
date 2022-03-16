@@ -64,7 +64,7 @@ const RegisterForm = () => {
         firstName: dto.firstName,
         lastName: dto.lastName,
         city: dto.city,
-        state: dto.state,
+        uf: dto.state,
         street: dto.street,
         adressNumber: Number(dto.adressNumber),
         neighborhood: dto.neighborhood,
