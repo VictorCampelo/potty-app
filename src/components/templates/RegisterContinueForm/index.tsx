@@ -4,6 +4,7 @@ import Router from 'next/router'
 
 import Input from '@/components/atoms/Input'
 import Button from '@/components/atoms/Button'
+import Checkbox from '@/components/atoms/Checkbox'
 
 import toast from '@/utils/toast'
 
@@ -13,11 +14,15 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
-import { Container } from './styles'
+import { Wrapper } from './styles'
 import { useAuth } from '@/contexts/AuthContext'
 
+import { FiUser } from 'react-icons/fi'
+import { HiOutlineLocationMarker } from 'react-icons/hi'
+import { FaHome } from 'react-icons/fa'
+import { BiBuildings, BiMapAlt } from 'react-icons/bi'
+
 import type { SignUpDTO } from '@/@types/requests'
-import Checkbox from '@/components/atoms/Checkbox'
 
 const authRepository = new AuthRepository()
 
@@ -85,42 +90,102 @@ const RegisterForm = () => {
     if (!signUpMeta) Router.push('/cadastro')
   }, [])
 
-  // TODO: add missing inputs
-  // TODO: inputs and buttons positions
-  // TODO: test
-
   return (
-    <Container onSubmit={handleSubmit(handleSignUp)}>
-      <div>
-        <Input
-          label='Nome'
-          name='firstName'
-          placeholder='Seu nome'
-          register={register}
-          errors={errors}
-        />
-
-        <Input
-          label='Sobrenome'
-          name='lastName'
-          placeholder='Seu sobrenome'
-          register={register}
-          errors={errors}
-        />
-
-        <div>
+    <Wrapper onSubmit={handleSubmit(handleSignUp)}>
+      <div className='container'>
+        <div className='column'>
           <Input
-            label='CEP'
-            name='cep'
-            placeholder='0000-000'
+            label='Nome'
+            name='firstName'
+            placeholder='Seu nome'
+            icon={<FiUser size={20} color='var(--black-800)' />}
             register={register}
             errors={errors}
           />
 
           <Input
-            label='Bairro'
-            name='neighborhood'
-            placeholder='Bairro'
+            label='Sobrenome'
+            name='lastName'
+            placeholder='Seu sobrenome'
+            icon={<FiUser size={20} color='var(--black-800)' />}
+            register={register}
+            errors={errors}
+          />
+
+          <div className='row'>
+            <Input
+              label='CEP'
+              name='cep'
+              mask='cep'
+              placeholder='00000-000'
+              icon={<BiMapAlt size={20} color='var(--black-800)' />}
+              register={register}
+              errors={errors}
+            />
+
+            <Input
+              label='Bairro'
+              name='neighborhood'
+              placeholder='Bairro'
+              icon={<BiMapAlt size={20} color='var(--black-800)' />}
+              register={register}
+              errors={errors}
+            />
+          </div>
+        </div>
+
+        <div className='column'>
+          <div className='row'>
+            <Input
+              label='Estado'
+              name='uf'
+              placeholder='Estado'
+              icon={
+                <HiOutlineLocationMarker size={20} color='var(--black-800)' />
+              }
+              register={register}
+              errors={errors}
+            />
+
+            <Input
+              label='Cidade'
+              name='city'
+              placeholder='Cidade'
+              icon={
+                <HiOutlineLocationMarker size={20} color='var(--black-800)' />
+              }
+              register={register}
+              errors={errors}
+            />
+          </div>
+
+          <div className='row'>
+            <Input
+              label='Logradouro'
+              name='street'
+              placeholder='Logradouro'
+              icon={<FaHome size={20} color='var(--black-800)' />}
+              register={register}
+              errors={errors}
+            />
+
+            <Input
+              label='Número'
+              type='number'
+              name='adressNumber'
+              mask='number'
+              placeholder='Número'
+              icon={<BiBuildings size={20} color='var(--black-800)' />}
+              register={register}
+              errors={errors}
+            />
+          </div>
+
+          <Input
+            label='Complemento'
+            name='complement'
+            placeholder='Complemento'
+            icon={<BiBuildings size={20} color='var(--black-800)' />}
             register={register}
             errors={errors}
           />
@@ -128,78 +193,33 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <div>
-          <Input
-            label='Estado'
-            name='uf'
-            placeholder='Estado'
-            register={register}
-            errors={errors}
-          />
-
-          <Input
-            label='Cidade'
-            name='city'
-            placeholder='Cidade'
-            register={register}
-            errors={errors}
-          />
-        </div>
-
-        <div>
-          <Input
-            label='Logradouro'
-            name='street'
-            placeholder='Logradouro'
-            register={register}
-            errors={errors}
-          />
-
-          <Input
-            label='Número'
-            type='number'
-            name='adressNumber'
-            placeholder='Logradouro'
-            register={register}
-            errors={errors}
-          />
-        </div>
-
-        <Input
-          label='Complemento'
-          name='complement'
-          placeholder='Complemento'
-          register={register}
-          errors={errors}
-        />
-      </div>
-
-      <Checkbox
-        confirm={acceptPrivacy}
-        toggleConfirm={() => setAcceptPrivacy(!acceptPrivacy)}
-      >
-        Li e concordo com os termos de uso e política de privacidade
-      </Checkbox>
-
-      <div>
-        <Button
-          skin='secondary'
-          isLoading={isSubmitting}
-          type='button'
-          onClick={() => Router.push('/cadastro')}
+        <Checkbox
+          confirm={acceptPrivacy}
+          toggleConfirm={() => setAcceptPrivacy(!acceptPrivacy)}
         >
-          Voltar
-        </Button>
+          Li e concordo com os termos de uso e política de privacidade
+        </Checkbox>
 
-        <Button
-          disabled={!acceptPrivacy}
-          isLoading={isSubmitting}
-          type='submit'
-        >
-          Finalizar
-        </Button>
+        <div className='row buttonsContainer'>
+          <Button
+            skin='secondary'
+            isLoading={isSubmitting}
+            type='button'
+            onClick={() => Router.push('/cadastro')}
+          >
+            Voltar
+          </Button>
+
+          <Button
+            disabled={!acceptPrivacy}
+            isLoading={isSubmitting}
+            type='submit'
+          >
+            Finalizar
+          </Button>
+        </div>
       </div>
-    </Container>
+    </Wrapper>
   )
 }
 

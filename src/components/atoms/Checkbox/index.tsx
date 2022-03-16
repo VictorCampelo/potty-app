@@ -38,7 +38,7 @@ const Checkbox = ({
           {confirm && <FaCheck color='var(--gray-800)' />}
         </button>
         {label && <label htmlFor={id}>{label}</label>}
-        {children}
+        <span>{children}</span>
       </div>
     </Container>
   )

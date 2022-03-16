@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 
 interface ContainerProps {
+  fullWidth?: boolean
   error?: boolean
   disabled?: boolean
 }
 
 export const Container = styled.div<ContainerProps>`
-  width: auto;
-  max-width: 500px;
+  ${(props) => (props.fullWidth ? 'width: 100%;' : 'width: auto;')}
   display: flex;
   flex-direction: column;
 

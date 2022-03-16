@@ -82,10 +82,11 @@ export const Container = styled.main<ContainerProps>`
   }
 
   ${[sizes.down('md')]} {
-    height: 100vh;
-    padding-top: 0;
+    min-height: 100vh;
     justify-content: start;
     background: var(--white);
+    padding: 0 var(--spacing-md);
+    padding-bottom: var(--spacing-xs);
 
     .logo {
       display: none !important;
@@ -96,6 +97,7 @@ export const Container = styled.main<ContainerProps>`
       border-radius: 0;
       margin: 0;
       padding: 0;
+      max-width: none;
 
       .title {
         margin-bottom: var(--spacing-xs);

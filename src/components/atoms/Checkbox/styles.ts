@@ -6,8 +6,8 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  display: flex;
   width: 100%;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 1rem 0;
@@ -20,8 +20,8 @@ export const Container = styled.div<ContainerProps>`
   }
 
   .btn {
-    ${(props) => props.size === 'small' && 'width: 16px;height: 16px;'}
-    ${(props) => props.size === 'medium' && 'width: 20px;height: 20px;'}
+    ${(props) => props.size === 'small' && 'min-width: 16px;min-height: 16px;'}
+    ${(props) => props.size === 'medium' && 'min-width: 20px;min-height: 20px;'}
 
     display: flex;
     justify-content: center;

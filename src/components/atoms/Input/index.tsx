@@ -8,6 +8,7 @@ import type { UseFormRegisterReturn, FieldErrors } from 'react-hook-form'
 import type { MasksTypes } from '@/utils/masks'
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+  fullWidth?: boolean
   register?: (name: string) => UseFormRegisterReturn
   errors?: FieldErrors
   label?: string
@@ -18,6 +19,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = ({
+  fullWidth,
   register,
   errors,
   name,
@@ -47,7 +49,7 @@ const Input = ({
   const registerProps = register && name ? register(name) : null
 
   return (
-    <Container error={!!errorMessage} disabled={disabled}>
+    <Container fullWidth={fullWidth} error={!!errorMessage} disabled={disabled}>
       {label && (
         <section className='labelContent'>
           <label>{label}</label>
