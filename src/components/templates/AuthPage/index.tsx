@@ -14,7 +14,7 @@ import { Container } from './styles'
 import IconButton from '@/components/atoms/IconButton'
 
 interface Props {
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
   title: string
   socialAuth?: boolean
   children: React.ReactNode

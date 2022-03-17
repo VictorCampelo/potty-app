@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
 interface ContainerProps {
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
 }
 
 export const Container = styled.main<ContainerProps>`
@@ -17,7 +17,8 @@ export const Container = styled.main<ContainerProps>`
     flex-direction: column;
     width: 100%;
     ${(props) => props.size === 'md' && 'max-width: 512px;'}
-    ${(props) => props.size === 'lg' && 'max-width: 1024px;'}
+    ${(props) => props.size === 'lg' && 'max-width: 640px;'}
+    ${(props) => props.size === 'xl' && 'max-width: 1024px;'}
 
     padding: var(--spacing-xxxs) var(--spacing-md) var(--spacing-xs)
       var(--spacing-md);
@@ -74,6 +75,7 @@ export const Container = styled.main<ContainerProps>`
     .footer {
       font-size: var(--font-size-xxs);
       margin-top: var(--spacing-xxs);
+      text-align: center;
 
       a {
         font-weight: 600;

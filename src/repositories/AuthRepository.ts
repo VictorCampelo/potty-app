@@ -25,4 +25,8 @@ export default class AuthRepository extends Http {
 
     await Router.push('/')
   }
+
+  verifyAccount(token: string) {
+    return this.patch(`/auth/token?tokenDigits=${token}`, {})
+  }
 }

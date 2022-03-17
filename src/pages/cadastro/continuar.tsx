@@ -6,7 +6,7 @@ import RegisterContinueForm from '@/components/templates/RegisterContinueForm'
 const RegisterContinue = () => {
   return (
     <AuthPage
-      size='lg'
+      size='xl'
       title='Continuar Cadastro'
       footer={
         <>
