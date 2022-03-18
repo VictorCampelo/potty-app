@@ -72,7 +72,10 @@ const FooterContact = ({
 
         <ContainerTerms>
           <span>Termos de Uso e Políticas de Privacidade</span>
-          <span>Copyright &#169; 2021 | Sino – Marketing &#38; Tecnologia</span>
+          <span>
+            Copyright &#169; {new Date().getFullYear()} | Sino – Marketing &#38;
+            Tecnologia
+          </span>
         </ContainerTerms>
       </div>
 
