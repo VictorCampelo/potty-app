@@ -12,7 +12,7 @@ interface Props {
   recovery?: boolean
   size?: 'small' | 'medium'
   disabled?: boolean
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 const Checkbox = ({
@@ -38,7 +38,7 @@ const Checkbox = ({
           {confirm && <FaCheck color='var(--gray-800)' />}
         </button>
         {label && <label htmlFor={id}>{label}</label>}
-        <span>{children}</span>
+        {children && <span>{children}</span>}
       </div>
     </Container>
   )
