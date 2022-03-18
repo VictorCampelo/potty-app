@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
 import Header from '@/components/molecules/Header'
+import BannerStore from '@/components/molecules/BannerStore'
 import FooterContact from '@/components/organisms/FooterContact'
 
 import { Wrapper, Container } from '@/styles/GlobalStyle'
@@ -23,6 +24,8 @@ const StorePage: NextPage<Props> = ({ store }) => {
 
       <Container>
         <Header />
+
+        <BannerStore images={[store.background.url]} />
 
         <FooterContact
           title={store.name}
