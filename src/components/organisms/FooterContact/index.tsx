@@ -1,29 +1,74 @@
-import MapBdv from '@/components/organisms/MapBdv'
+import MapStore from '@/components/organisms/MapStore'
 
-import { AiFillPhone, AiOutlineWhatsApp } from 'react-icons/ai'
+import {
+  AiFillPhone,
+  AiOutlineFacebook,
+  AiOutlineInstagram,
+  AiOutlineWhatsApp
+} from 'react-icons/ai'
 
 import { Footer, ContainerTerms } from './styles'
 
-const FooterContact = () => {
+interface Props {
+  title: string
+  cnpj?: string
+  address?: string
+  phone?: string
+  whatsappLink?: string
+  instagramLink?: string
+  facebookLink?: string
+  lat?: number
+  lng?: number
+}
+
+const FooterContact = ({
+  title,
+  cnpj,
+  address,
+  phone,
+  whatsappLink,
+  instagramLink,
+  facebookLink,
+  lat,
+  lng
+}: Props) => {
   return (
     <Footer>
       <div>
-        <h1>Boa de Venda</h1>
+        <h1>{title}</h1>
 
-        <span>CNPJ: 26.745.054/0001-70</span>
-        <span>Avenida Paulista, 63892, São Paulo - SP</span>
+        {cnpj && <span>CNPJ: {cnpj}</span>}
+        <span>{address}</span>
 
         <h1>Contato</h1>
 
-        <span>
-          <AiFillPhone size={24} color='var(--gray-700)' />
-          +55 (86) 9 8178-9622
-        </span>
+        {phone && (
+          <span>
+            <AiFillPhone size={24} color='var(--gray-700)' />
+            {phone}
+          </span>
+        )}
 
-        <span>
-          <AiOutlineWhatsApp size={24} color='var(--gray-700)' />
-          Whatsapp
-        </span>
+        {whatsappLink && (
+          <span>
+            <AiOutlineWhatsApp size={24} color='var(--gray-700)' />
+            <a href={whatsappLink}>Whatsapp</a>
+          </span>
+        )}
+
+        {instagramLink && (
+          <span>
+            <AiOutlineInstagram size={24} color='var(--gray-700)' />
+            <a href={instagramLink}>Whatsapp</a>
+          </span>
+        )}
+
+        {facebookLink && (
+          <span>
+            <AiOutlineFacebook size={24} color='var(--gray-700)' />
+            <a href={facebookLink}>Whatsapp</a>
+          </span>
+        )}
 
         <ContainerTerms>
           <span>Termos de Uso e Políticas de Privacidade</span>
@@ -31,7 +76,7 @@ const FooterContact = () => {
         </ContainerTerms>
       </div>
 
-      <MapBdv />
+      {lat && lng && <MapStore lat={lat} lng={lng} />}
     </Footer>
   )
 }

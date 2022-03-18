@@ -25,7 +25,7 @@ export const Footer = styled.footer`
     }
   }
 
-  .map-bdv {
+  .map-container {
     width: 500px;
     height: 250px;
     border-radius: 36px;
@@ -38,7 +38,7 @@ export const Footer = styled.footer`
     border-radius: var(--border-radius-gg) var(--border-radius-gg) 0 0;
     flex-direction: column;
 
-    .map-bdv {
+    .map-container {
       width: 100%;
       height: 250px;
       margin-top: var(--spacing-xxs);

@@ -1,4 +1,4 @@
-import type { User } from '@/@types/entities'
+import type { User, Store } from '@/@types/entities'
 
 export interface SignInDTO {
   email: string
@@ -35,3 +35,5 @@ export interface GetMeResponse extends User {}
 export interface FindPlanResponse {
   url: string
 }
+
+export interface StoreResponse extends Store {}
