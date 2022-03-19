@@ -15,12 +15,12 @@ interface Props {
 const Dashboard = ({ children }: Props) => {
   const links = [
     {
-      name: 'Dashboard',
+      name: 'Início',
       icon: IoHomeOutline,
       href: '/dashboard'
     },
     {
-      name: 'Análise da loja',
+      name: 'Loja',
       icon: BiStore,
       href: '/dashboard/loja'
     },

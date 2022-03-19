@@ -99,7 +99,8 @@ export const Icon = styled.div<IconProps>`
   transition-duration: 150ms;
 
   &:hover {
-    background-color: var(--gray-150);
+    text-decoration: underline;
+    ${(props) => !props.showText && 'background-color: var(--gray-150);'}
   }
 
   ${(props) =>
