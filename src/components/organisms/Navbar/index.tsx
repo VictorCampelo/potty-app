@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Nav, Icon } from './styles'
+import { BsChevronDoubleRight } from 'react-icons/bs'
+
+import { Nav, ToggleButton, Icon } from './styles'
 
 import type { IconType } from 'react-icons'
 
@@ -21,8 +23,18 @@ interface Props {
 const Navbar = ({ links }: Props) => {
   const router = useRouter()
 
+  const [open, setOpen] = useState(false)
+
+  const toggleOpen = () => {
+    setOpen(!open)
+  }
+
   return (
-    <Nav>
+    <Nav open={open}>
+      <ToggleButton onClick={toggleOpen}>
+        <BsChevronDoubleRight color='white' />
+      </ToggleButton>
+
       {links.map((link, i) => {
         if (link.href) {
           const color = router.pathname.includes(link.href)
@@ -31,7 +43,7 @@ const Navbar = ({ links }: Props) => {
 
           return (
             <Link key={i} href={link.href} passHref>
-              <Icon color={color}>
+              <Icon color={color} showText={open}>
                 {link.icon({ color })}
                 <span>{link.name}</span>
               </Icon>
