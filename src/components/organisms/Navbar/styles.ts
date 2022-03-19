@@ -36,11 +36,11 @@ export const ToggleButton = styled.button`
   }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
   }
 
-  width: 50px;
+  width: 35px;
   height: 50px;
 
   display: flex;
@@ -48,8 +48,8 @@ export const ToggleButton = styled.button`
   align-items: center;
   justify-content: center;
 
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  border-top-left-radius: 100%;
+  border-bottom-left-radius: 100%;
 
   background-color: var(--color-primary);
 
