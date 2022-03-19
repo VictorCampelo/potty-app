@@ -18,7 +18,9 @@ class Http {
 
     this.http.interceptors.request.use(
       (config: any) => {
-        const { 'bdv.auth.token': token } = parseCookies()
+        const token =
+          parseCookies()['bdv.auth.token'] ||
+          sessionStorage.getItem('bdv.auth.token')
 
         config.headers.common.Authorization = `Bearer ${token}`
         return config

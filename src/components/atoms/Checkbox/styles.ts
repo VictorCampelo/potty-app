@@ -20,8 +20,12 @@ export const Container = styled.div<ContainerProps>`
   }
 
   .btn {
-    ${(props) => props.size === 'small' && 'min-width: 16px;min-height: 16px;'}
-    ${(props) => props.size === 'medium' && 'min-width: 20px;min-height: 20px;'}
+    ${(props) =>
+      props.size === 'small' &&
+      'min-width: 16px;width: 16px;height: 16px;height: 16px;'}
+    ${(props) =>
+      props.size === 'medium' &&
+      'min-width: 20px;width: 20px;min-height: 20px;height: 20px;'}
 
     display: flex;
     justify-content: center;

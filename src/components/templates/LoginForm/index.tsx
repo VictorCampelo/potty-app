@@ -47,10 +47,14 @@ const LoginForm = () => {
     try {
       const { user, jwtToken } = await authRepository.singIn(dto as SignInDTO)
 
-      setCookie(null, 'bdv.auth.token', jwtToken, {
-        maxAge: 60 * 60 * 24 * 30, // 1 month
-        path: '/'
-      })
+      if (rememberUser) {
+        setCookie(null, 'bdv.auth.token', jwtToken, {
+          maxAge: 60 * 60 * 24 * 30, // 1 month
+          path: '/'
+        })
+      } else {
+        sessionStorage.setItem('bdv.auth.token', jwtToken)
+      }
 
       if (user?.role === 'USER') {
         await Router.push('/')

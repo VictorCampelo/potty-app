@@ -20,6 +20,7 @@ export default class AuthRepository extends Http {
   }
 
   async singOut() {
+    sessionStorage.removeItem('bdv.auth.token')
     destroyCookie(null, 'bdv.auth.token')
     destroyCookie(null, 'bdv.auth.refreshToken')
 
