@@ -1,7 +1,5 @@
 import React from 'react'
 
-import withAuth from '@/HOC/withAuth'
-
 import Navbar from '@/components/organisms/Navbar'
 
 import { IoHomeOutline, IoExitOutline } from 'react-icons/io5'
@@ -51,4 +49,4 @@ const Dashboard = ({ children }: Props) => {
   )
 }
 
-export default withAuth(Dashboard)
+export default Dashboard
