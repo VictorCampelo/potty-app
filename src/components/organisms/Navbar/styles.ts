@@ -7,12 +7,10 @@ interface NavProps {
 
 export const Nav = styled.nav<NavProps>`
   height: 90vh;
-  max-height: 1440px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   padding: var(--spacing-xs) 0;
-  margin: auto 0;
 
   background-color: var(--white);
 
@@ -21,12 +19,16 @@ export const Nav = styled.nav<NavProps>`
   border-radius: var(--border-radius-gg);
 
   ${[sizes.down('md')]} {
+    position: fixed;
+    left: 0;
+    bottom: 0;
     width: 100%;
     height: 90px;
     flex-direction: row;
     padding: var(--spacing-xxxs) var(--spacing-nano);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+    z-index: 1;
   }
 `
 

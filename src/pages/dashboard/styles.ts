@@ -7,7 +7,6 @@ export const List = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: var(--spacing-nano);
   padding: var(--spacing-nano);
   overflow: auto;

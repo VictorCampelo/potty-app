@@ -6,11 +6,12 @@ interface Props {
   title: string
   subtitle?: React.ReactNode
   children: React.ReactNode
+  width?: string
 }
 
-const CardDashboard = ({ title, subtitle, children }: Props) => {
+const CardDashboard = ({ title, subtitle, children, width }: Props) => {
   return (
-    <Wrapper>
+    <Wrapper width={width}>
       <Title>{title}</Title>
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
       <Container>{children}</Container>

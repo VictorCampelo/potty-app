@@ -6,10 +6,11 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`
 
-  span {
-    color: #b2b5ba;
-    margin-top: 16px;
-    font-weight: 500;
-  }
+export const Text = styled.div`
+  text-align: center;
+  color: #b2b5ba;
+  margin-top: 16px;
+  font-weight: 500;
 `

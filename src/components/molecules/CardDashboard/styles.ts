@@ -1,6 +1,11 @@
 import styled from 'styled-components'
 
-export const Wrapper = styled.div`
+interface WrapperProps {
+  width?: string
+}
+
+export const Wrapper = styled.div<WrapperProps>`
+  ${({ width }) => width && `width: ${width}`};
   height: 100%;
   max-height: 44vh;
   background: var(--white);
@@ -10,7 +15,7 @@ export const Wrapper = styled.div`
 `
 
 export const Container = styled.div`
-  height: 100%;
+  height: 70%;
 `
 
 export const Title = styled.h2`
@@ -23,7 +28,8 @@ export const Title = styled.h2`
 
   color: var(--gray-700);
 
-  margin: var(--spacing-xxs) 0;
+  margin-top: var(--spacing-xxs);
+  margin-bottom: var(--spacing-xxxs);
 `
 
 export const Subtitle = styled.div`

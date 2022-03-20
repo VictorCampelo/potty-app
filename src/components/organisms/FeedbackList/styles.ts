@@ -4,7 +4,6 @@ export const Container = styled.div`
   position: relative;
   width: 100%;
   max-width: 315px;
-  margin-bottom: 10px;
 
   border: 1px solid #d8d9dd;
   box-sizing: border-box;
@@ -55,5 +54,5 @@ export const Time = styled.span`
   text-align: right;
   color: #b2b5ba;
 
-  margin: 5px 5px 0px 0px;
+  margin: 5px 0;
 `

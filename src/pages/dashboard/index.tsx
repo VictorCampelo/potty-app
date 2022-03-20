@@ -127,7 +127,7 @@ const DashboardPage = () => {
         <title>Dashboard | Boa de Venda</title>
       </Head>
       <Dashboard>
-        <CardDashboard title='Produtos mais vendidos'>
+        <CardDashboard title='Produtos mais vendidos' width='30%'>
           {mostSoldProducts.length ? (
             <List>
               {mostSoldProducts.map((product, i) => (
@@ -139,7 +139,7 @@ const DashboardPage = () => {
           )}
         </CardDashboard>
 
-        <CardDashboard title='Últimos produtos vendidos'>
+        <CardDashboard title='Últimos produtos vendidos' width='35%'>
           {lastSoldProducts.length ? (
             <List>
               {lastSoldProducts.map((product, i) => (
@@ -151,7 +151,7 @@ const DashboardPage = () => {
           )}
         </CardDashboard>
 
-        <CardDashboard title='Últimos Feedbacks'>
+        <CardDashboard title='Últimos Feedbacks' width='25%'>
           {lastFeedback.length ? (
             <List>
               {lastFeedback.map((feedback, i) => (
@@ -163,11 +163,11 @@ const DashboardPage = () => {
           )}
         </CardDashboard>
 
-        <CardDashboard title='Quantidade de acessos a loja'>
+        <CardDashboard title='Quantidade de acessos a loja' width='45%'>
           {storeAccess ? <StoreAccess {...storeAccess} /> : <NoneItems />}
         </CardDashboard>
 
-        <CardDashboard title='Rendimentos'>
+        <CardDashboard title='Rendimentos' width='45%'>
           {storeProfit ? <StoreProfit months={storeProfit} /> : <NoneItems />}
         </CardDashboard>
       </Dashboard>
