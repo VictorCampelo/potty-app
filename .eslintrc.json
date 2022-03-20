@@ -1,10 +1,19 @@
 {
   "env": {
-    "es2021": true
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
   "extends": [
     "prettier",
     "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
     "standard",
     "next/core-web-vitals"
   ],
