@@ -6,7 +6,7 @@ import { IoHomeOutline, IoExitOutline } from 'react-icons/io5'
 import { BiStore, BiClipboard } from 'react-icons/bi'
 import { FiBox } from 'react-icons/fi'
 
-import { Container } from './styles'
+import { Wrapper, Container } from './styles'
 
 interface Props {
   children: React.ReactNode
@@ -42,10 +42,10 @@ const Dashboard = ({ children }: Props) => {
   ]
 
   return (
-    <Container>
+    <Wrapper>
       <Navbar links={links} />
-      <div>{children}</div>
-    </Container>
+      <Container>{children}</Container>
+    </Wrapper>
   )
 }
 

@@ -2,44 +2,34 @@ import React from 'react'
 
 import formatToBrl from '@/utils/formatToBrl'
 
-import { Wrapper, Container } from './styles'
+import { Container } from './styles'
 
-type Products = {
+interface Props {
   image: string
   name: string
   code: string
   quantity: number
   price?: number
-}[]
-
-interface Props {
-  products: Products
 }
 
-const ProductList = ({ products }: Props) => {
+const ProductList = ({ image, name, code, quantity, price }: Props) => {
   return (
-    <Wrapper>
-      {products.map((product, i) => {
-        return (
-          <Container key={i}>
-            <div className='left-area'>
-              <img src={product.image} alt={product.name} />
+    <Container>
+      <div className='left-area'>
+        <img src={image} alt={name} />
 
-              <div className='titles'>
-                <h2>{product.name}</h2>
-                <h3>Cód.: {product.code}</h3>
-              </div>
-            </div>
+        <div className='titles'>
+          <h2>{name}</h2>
+          <h3>Cód.: {code}</h3>
+        </div>
+      </div>
 
-            <div className='right-area'>
-              <p>Qntd.: {product.quantity}</p>
+      <div className='right-area'>
+        <p>Qntd.: {quantity}</p>
 
-              {product.price && <span>Uni.: {formatToBrl(product.price)}</span>}
-            </div>
-          </Container>
-        )
-      })}
-    </Wrapper>
+        {price && <span>Uni.: {formatToBrl(price)}</span>}
+      </div>
+    </Container>
   )
 }
 

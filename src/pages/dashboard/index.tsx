@@ -6,6 +6,9 @@ import Dashboard from '@/components/templates/Dashboard'
 import CardDashboard from '@/components/molecules/CardDashboard'
 import ProductList from '@/components/organisms/ProductList'
 import NoneItems from '@/components/organisms/NoneItems'
+import FeedbackList from '@/components/organisms/FeedbackList'
+
+import { List } from './styles'
 
 const DashboardPage = () => {
   const [mostSoldProducts] = useState([])
@@ -69,6 +72,15 @@ const DashboardPage = () => {
     }
   ])
 
+  const [lastFeedback] = useState([
+    {
+      name: 'Mikael',
+      text: 'Adorei o café!',
+      stars: 4,
+      time: 'Há 1 hora'
+    }
+  ])
+
   return (
     <>
       <Head>
@@ -77,7 +89,11 @@ const DashboardPage = () => {
       <Dashboard>
         <CardDashboard title='Produtos mais vendidos'>
           {mostSoldProducts.length ? (
-            <ProductList products={mostSoldProducts} />
+            <List>
+              {mostSoldProducts.map((product, i) => (
+                <ProductList key={i} {...product} />
+              ))}
+            </List>
           ) : (
             <NoneItems />
           )}
@@ -85,7 +101,23 @@ const DashboardPage = () => {
 
         <CardDashboard title='Últimos produtos vendidos'>
           {lastSoldProducts.length ? (
-            <ProductList products={lastSoldProducts} />
+            <List>
+              {lastSoldProducts.map((product, i) => (
+                <ProductList key={i} {...product} />
+              ))}
+            </List>
+          ) : (
+            <NoneItems />
+          )}
+        </CardDashboard>
+
+        <CardDashboard title='Últimos Feedbacks'>
+          {lastFeedback.length ? (
+            <List>
+              {lastFeedback.map((feedback, i) => (
+                <FeedbackList key={i} {...feedback} />
+              ))}
+            </List>
           ) : (
             <NoneItems />
           )}

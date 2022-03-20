@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
-export const Container = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   max-width: 1440px;
   height: 100%;
@@ -18,4 +18,11 @@ export const Container = styled.div`
     padding: 0;
     gap: 0;
   }
+`
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 `
