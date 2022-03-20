@@ -9,6 +9,8 @@ import NoneItems from '@/components/organisms/NoneItems'
 import FeedbackList from '@/components/organisms/FeedbackList'
 
 import { List } from './styles'
+import StoreAccess from '@/components/organisms/StoreAccess'
+import StoreProfit from '@/components/organisms/StoreProfit'
 
 const DashboardPage = () => {
   const [mostSoldProducts] = useState([])
@@ -81,6 +83,44 @@ const DashboardPage = () => {
     }
   ])
 
+  const [storeAccess] = useState({
+    monday: 10,
+    tuesday: 10,
+    wednesday: 10,
+    thursday: 10,
+    friday: 10,
+    saturday: 10,
+    sunday: 10,
+    today: 10
+  })
+
+  const [storeProfit] = useState([
+    {
+      name: 'Fev',
+      value: 10360
+    },
+    {
+      name: 'Mar',
+      value: 13405
+    },
+    {
+      name: 'Abr',
+      value: 12580
+    },
+    {
+      name: 'Mai',
+      value: 12900
+    },
+    {
+      name: 'Jun',
+      value: 14562
+    },
+    {
+      name: 'Jul',
+      value: 16892
+    }
+  ])
+
   return (
     <>
       <Head>
@@ -121,6 +161,14 @@ const DashboardPage = () => {
           ) : (
             <NoneItems />
           )}
+        </CardDashboard>
+
+        <CardDashboard title='Quantidade de acessos a loja'>
+          {storeAccess ? <StoreAccess {...storeAccess} /> : <NoneItems />}
+        </CardDashboard>
+
+        <CardDashboard title='Rendimentos'>
+          {storeProfit ? <StoreProfit months={storeProfit} /> : <NoneItems />}
         </CardDashboard>
       </Dashboard>
     </>

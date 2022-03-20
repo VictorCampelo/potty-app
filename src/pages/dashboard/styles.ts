@@ -3,7 +3,7 @@ import sizes from '@/utils/sizes'
 
 export const List = styled.div`
   height: 100%;
-  max-height: 155px;
+  max-height: 30vh;
   display: flex;
   flex-direction: column;
   align-items: center;

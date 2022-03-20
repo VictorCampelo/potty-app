@@ -1,12 +1,16 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
+export const Wrapper = styled.div`
   height: 100%;
-  max-height: 46vh;
+  max-height: 44vh;
   background: var(--white);
   box-shadow: 0px 0px 20px rgba(54, 63, 78, 0.2);
   border-radius: var(--border-radius-gg);
   padding: var(--spacing-xxxs);
+`
+
+export const Container = styled.div`
+  height: 100%;
 `
 
 export const Title = styled.h2`

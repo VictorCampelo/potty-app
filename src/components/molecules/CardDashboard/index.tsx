@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Container, Title, Subtitle } from './styles'
+import { Wrapper, Container, Title, Subtitle } from './styles'
 
 interface Props {
   title: string
@@ -10,11 +10,11 @@ interface Props {
 
 const CardDashboard = ({ title, subtitle, children }: Props) => {
   return (
-    <Container>
+    <Wrapper>
       <Title>{title}</Title>
-      <Subtitle>{subtitle}</Subtitle>
-      <div>{children}</div>
-    </Container>
+      {subtitle && <Subtitle>{subtitle}</Subtitle>}
+      <Container>{children}</Container>
+    </Wrapper>
   )
 }
 
