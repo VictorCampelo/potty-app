@@ -1,7 +1,9 @@
 import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 export const Wrapper = styled.div`
-  max-height: 350px;
+  height: 100%;
+  max-height: 155px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,6 +11,10 @@ export const Wrapper = styled.div`
   gap: var(--spacing-nano);
   padding: var(--spacing-nano);
   overflow: auto;
+
+  ${sizes.up('2xl')} {
+    max-height: 240px;
+  }
 `
 
 export const Container = styled.div`
@@ -20,7 +26,6 @@ export const Container = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 10px;
   background: #f4f4f6;
 
   border-radius: var(--border-radius-sm);

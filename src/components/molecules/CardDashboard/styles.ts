@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
-  max-height: 500px;
+  height: 100%;
+  max-height: 46vh;
   background: var(--white);
   box-shadow: 0px 0px 20px rgba(54, 63, 78, 0.2);
   border-radius: var(--border-radius-gg);
