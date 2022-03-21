@@ -18,6 +18,12 @@ export const Nav = styled.nav<NavProps>`
 
   border-radius: var(--border-radius-gg);
 
+  ${[sizes.up('md')]} {
+    ${({ open }) =>
+      open &&
+      'position: fixed; top: var(--spacing-md); left: var(--spacing-xs); bottom: var(--spacing-md); z-index: 1;'}
+  }
+
   ${[sizes.down('md')]} {
     position: fixed;
     left: 0;
@@ -59,7 +65,7 @@ export const ToggleButton = styled.button`
   margin-left: auto;
 
   transition-property: opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic- bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 
   &:hover {
@@ -91,13 +97,13 @@ export const Icon = styled.div<IconProps>`
 
   cursor: pointer;
 
-  border-radius: 100%;
+  border-radius: 10%;
 
   padding: var(--spacing-xxxs);
 
   transition-property: color, background-color, border-color,
     text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic- bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 
   &:hover {

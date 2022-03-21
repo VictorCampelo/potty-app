@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
   gap: var(--spacing-xs);
   margin: auto;
 
-  ${[sizes.down('md')]} {
+  ${[sizes.down('lg')]} {
     flex-direction: column-reverse;
     padding: 0;
     gap: 0;
@@ -29,7 +29,9 @@ export const Container = styled.div`
   gap: var(--spacing-md);
   flex-wrap: wrap;
 
-  ${[sizes.down('md')]} {
+  padding-bottom: var(--spacing-md);
+
+  ${[sizes.down('lg')]} {
     flex-direction: column;
     align-items: center;
     justify-items: center;
