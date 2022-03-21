@@ -18,11 +18,14 @@ class Http {
 
     this.http.interceptors.request.use(
       (config: any) => {
-        const token =
-          parseCookies()['bdv.auth.token'] ||
-          sessionStorage.getItem('bdv.auth.token')
+        let token = ''
+        token = parseCookies()['bdv.auth.token'] || ''
+        if (!token && typeof window !== 'undefined') {
+          token = sessionStorage?.getItem('bdv.auth.token') || ''
+        }
 
         config.headers.common.Authorization = `Bearer ${token}`
+
         return config
       },
       (error) => {
