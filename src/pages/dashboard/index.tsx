@@ -8,7 +8,7 @@ import ProductList from '@/components/organisms/ProductList'
 import NoneItems from '@/components/organisms/NoneItems'
 import FeedbackList from '@/components/organisms/FeedbackList'
 
-import { List } from './styles'
+import { List } from '@/styles/pages/dashboard/styles'
 import StoreAccess from '@/components/organisms/StoreAccess'
 import StoreProfit from '@/components/organisms/StoreProfit'
 

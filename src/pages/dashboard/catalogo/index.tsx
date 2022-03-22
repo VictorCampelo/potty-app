@@ -51,7 +51,7 @@ import {
   EditCategoryModalContainer,
   ExcludeModalContainer,
   EmptyContainer
-} from './styles'
+} from '@/styles/pages/dashboard/catalogo/styles'
 
 import type { Point } from 'react-easy-crop/types'
 import type { NextPage } from 'next/types'
