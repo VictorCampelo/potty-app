@@ -22,7 +22,7 @@ const CatalogTabs = ({
   toggleState,
   setToggleState
 }: CatalogProps) => {
-  const toggleTab = (index) => {
+  const toggleTab = (index: number) => {
     setToggleState(index)
   }
 

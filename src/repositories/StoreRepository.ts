@@ -5,4 +5,8 @@ export default class StoreRepository extends Http {
   findByName(name: string) {
     return this.get<StoreResponse>(`/stores/find/${name}`)
   }
+
+  findById(id: string) {
+    return this.get(`/stores/id/${id}`)
+  }
 }

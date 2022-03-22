@@ -4,7 +4,7 @@ import Creatable from 'react-select/creatable'
 
 import { Container, SelectStylesMulti } from './styles'
 
-interface Option {
+export interface Option {
   value: string
   label: string
 }
@@ -12,7 +12,7 @@ interface Option {
 interface SelectInterface extends React.InputHTMLAttributes<HTMLSelectElement> {
   placeholder: string
   name: string
-  selectedValue: string[]
+  selectedValue?: string[] | string | null
   loading: boolean
   setSelectedValue: (option: Option) => void
   options: Option[]
@@ -37,12 +37,12 @@ const MultiSelect = ({
   const props = {
     placeholderButtonLabel: placeholder,
     value: selectedValue,
-    onChange: (values) => setSelectedValue(values),
+    onChange: (values: any) => setSelectedValue(values),
     options: options,
     placeholder: placeholder,
     noOptionsMessage: () => 'Nenhum resultado encontrado',
     styles: SelectStylesMulti,
-    theme: (theme) => {
+    theme: (theme: any) => {
       switch (colorTheme) {
         case 'red':
           return {
@@ -78,7 +78,7 @@ const MultiSelect = ({
     isLoading: loading,
     closeMenuOnSelect: false,
     isMulti: true
-  }
+  } as any
 
   return (
     <Container>

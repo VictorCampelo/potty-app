@@ -1,8 +1,8 @@
-export function getFileURL(file: File) {
+export function getFileURL(file: File): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader()
-    reader.addEventListener('load', () => resolve(reader.result), false)
     reader.readAsDataURL(file)
+    reader.onload = () => resolve(String(reader.result))
   })
 }
 

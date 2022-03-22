@@ -58,8 +58,12 @@ class Http {
     return (await this.http.put(route, data)).data
   }
 
-  public async patch<T, R>(route: string, data: T): Promise<R> {
-    return (await this.http.patch(route, data)).data
+  public async patch<T, R>(
+    route: string,
+    data: T,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return (await this.http.patch(route, data, config)).data
   }
 
   public async delete<R>(route: string): Promise<R> {

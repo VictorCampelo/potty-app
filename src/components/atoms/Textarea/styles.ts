@@ -1,8 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 interface ContainerProps {
-  error: boolean;
-  flex: number;
+  error: boolean
 }
 
 export const Container = styled.div<ContainerProps>`
@@ -10,7 +9,6 @@ export const Container = styled.div<ContainerProps>`
   max-width: 500px;
   display: flex;
   flex-direction: column;
-  ${(props) => 'flex: '+ props.flex + ';'}
 
   .labelContent {
     margin-top: 10px;
@@ -22,7 +20,7 @@ export const Container = styled.div<ContainerProps>`
 
     label {
       font-size: 1rem;
-      ${(props) => props.error && "color: var(--red);"}
+      ${(props) => props.error && 'color: var(--red);'}
     }
 
     span {
@@ -47,7 +45,7 @@ export const Container = styled.div<ContainerProps>`
 
     cursor: text;
 
-    textarea{
+    textarea {
       width: 100%;
       height: 100%;
       border: none;
@@ -58,13 +56,13 @@ export const Container = styled.div<ContainerProps>`
 
     svg {
       margin-right: 1rem;
-      ${(props) => props.error && "color: var(--red) !important;"}
+      ${(props) => props.error && 'color: var(--red) !important;'}
 
       &:last-child:hover {
         cursor: pointer;
       }
     }
-    
-    ${(props) => props.error && "border: 1px solid var(--red);"}
+
+    ${(props) => props.error && 'border: 1px solid var(--red);'}
   }
 `

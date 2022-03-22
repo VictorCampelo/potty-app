@@ -4,26 +4,17 @@ import { Container } from './styles'
 
 interface TextArea extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string
-  error?: boolean
   textError?: string
   icon?: React.ReactElement
-  flex?: number
 }
 
-const Textarea = ({
-  label,
-  icon,
-  error,
-  textError = '',
-  flex = 1,
-  ...rest
-}: TextArea) => {
+const Textarea = ({ label, icon, textError = '', ...rest }: TextArea) => {
   return (
-    <Container flex={flex} error={error}>
+    <Container error={!!textError.length}>
       <section className='labelContent'>
         <label>{label}</label>
 
-        {error && textError && <span>{textError}</span>}
+        {textError && <span>{textError}</span>}
       </section>
 
       <label className='inputContainter'>

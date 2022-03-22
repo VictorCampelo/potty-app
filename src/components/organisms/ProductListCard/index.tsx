@@ -156,7 +156,7 @@ const ProductListCard = ({
                 <td className='children'>{ellipsis(name, 10)}</td>
                 <td className='children'>{formatToBrl(price)}</td>
                 <td className='children'>{ellipsis(String(amount), 10)}</td>
-                <td className='children'>{ellipsis(category.join(''), 10)}</td>
+                <td className='children'>{ellipsis(category, 10)}</td>
                 <td className='children'>{ellipsis(code, 8)}</td>
               </tr>
             </div>

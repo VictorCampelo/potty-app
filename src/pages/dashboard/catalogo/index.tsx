@@ -24,9 +24,11 @@ import CategoryListCard from '@/components/molecules/CategoryListCard'
 import Modal from '@/components/molecules/Modal'
 import ProductListCard from '@/components/organisms/ProductListCard'
 import Textarea from '@/components/atoms/Textarea'
-import Select from 'react-select'
 
 import UserRepository from '@/repositories/UserRepository'
+import ProductRepository from '@/repositories/ProductRepository'
+import CouponRepository from '@/repositories/CouponRepository'
+import CategoryRepository from '@/repositories/CategoryRepository'
 
 import cropImage from '@/utils/cropImage'
 import randomString from '@/utils/randomString'
@@ -54,6 +56,7 @@ import {
 import type { Point } from 'react-easy-crop/types'
 import type { NextPage } from 'next/types'
 import type { Store } from '@/@types/entities'
+import type { Option } from '@/components/atoms/MultiSelect'
 
 interface ServerProps {
   store: Store
@@ -69,6 +72,9 @@ const createProductFormSchema = yup.object().shape({
 })
 
 const userRepository = new UserRepository()
+const productRepository = new ProductRepository()
+const couponRepository = new CouponRepository()
+const categoryRepository = new CategoryRepository()
 
 const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   const [excludeModal, setExcludeModal] = useState(false)
@@ -94,20 +100,20 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   const [loadingProducts, setLoadingProducts] = useState(true)
 
-  const [categories, setCategories] = useState<any>([])
-  const [installments, setInstallments] = useState({
+  const [categories, setCategories] = useState<Option[]>([])
+  const [installments, setInstallments] = useState<any>({
     value: '1',
     label: '1x'
   })
 
-  const [cupons, setCupons] = useState<any>([])
+  const [cupons, setCupons] = useState<any[]>([])
 
   const [cupomCode, setCupomCode] = useState('')
   const [discountPorcent, setDiscountPorcent] = useState('')
   const [maxUsage, setMaxUsage] = useState('')
   const [validate, setValidate] = useState('')
 
-  const [previewImage, setPreviewImage] = useState<any>('')
+  const [previewImage, setPreviewImage] = useState('')
   const [imageSrc, setImageSrc] = useState('')
   const [imageSrc1, setImageSrc1] = useState('')
   const [imageSrc2, setImageSrc2] = useState('')
@@ -120,7 +126,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   const [toggleState, setToggleState] = useState(1)
   const [selectedCategories, setSelectedCategories] = useState<any>([])
 
-  const Installments = [...Array(12)].map((it, idx) => ({
+  const productParcels = [...Array(12)].map((_, idx) => ({
     value: String(idx + 1),
     label: idx + 1 + 'x'
   }))
@@ -147,7 +153,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
     const catSelecteds = categories
       .filter((cat: any) =>
-        product.categories.some((selected) => selected == cat.name)
+        product.categories.some((selected: any) => selected === cat.name)
       )
       .map((item: any) => ({ label: item.name, value: item.id }))
 
@@ -166,7 +172,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   function toggleAddModal() {
     setAddModal(!addModal)
-    setPreviewImage(null)
+    setPreviewImage('')
     setImageSrc('')
     setImageSrc1('')
     setImageSrc2('')
@@ -174,7 +180,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   function toggleEditProduct() {
     setEditProduct(!editProduct)
-    setPreviewImage(null)
+    setPreviewImage('')
     setImageSrc('')
     setImageSrc1('')
     setImageSrc2('')
@@ -210,7 +216,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   }
 
   function toggleImageModal() {
-    setPreviewImage(!previewImage)
+    setPreviewImage('')
   }
 
   function onZoomChange(newValue: number) {
@@ -221,12 +227,12 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
-  const onFileChange = async (e) => {
-    if (e.target.files && e.target.files.length === 1) {
+  const onFileChange = async (e: any) => {
+    if (e.target.files?.length === 1) {
       const file = await getFileURL(e.target.files[0])
       setPreviewImage(file)
     } else {
-      toast({ message: 'Selecione apenas 1 imagem pro vez', type: 'error' })
+      toast({ message: 'Selecione apenas uma imagem pro vez!', type: 'error' })
     }
   }
 
@@ -242,7 +248,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
         setImageSrc2(image)
       }
       toast({ message: 'Foto recortada com sucesso!', type: 'success' })
-      setPreviewImage(null)
+      setPreviewImage('')
       toggleImageModal()
     } catch {
       toast({
@@ -254,49 +260,45 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   async function handleCreateCategory(newCategory?: string) {
     try {
-      await createCategory(category || newCategory, store.id)
+      await categoryRepository.createCategory(newCategory || category, store.id)
 
       toast({ message: 'Categoria criada com sucesso!', type: 'success' })
 
       setCategory('')
       loadData()
       toggleAddCategoryModal()
-    } catch (e) {
-      console.error(e)
-
+    } catch {
       toast({ message: 'Erro ao criar categoria', type: 'error' })
     }
   }
 
   async function handleCreateCupom() {
     try {
-      await createCupom({
+      await couponRepository.createCoupon({
         code: cupomCode,
         discountPorcent: Number(discountPorcent),
         maxUsage: Number(maxUsage),
         validate: new Date(validate + '-3:00'),
         type: 'percentage',
         range: 'store',
-        categoriesIds: selectedCategories.map((it) => it.value)
+        categoriesIds: selectedCategories.map((it: any) => it.value)
       })
 
       toast({ message: 'Cupom criado com sucesso!', type: 'success' })
 
       loadData()
       toggleAddCategoryModal()
-    } catch (e) {
-      console.error(e)
-
+    } catch {
       toast({ message: 'Erro ao criar cupom', type: 'error' })
     }
   }
 
   const handleDeleteCategory = async () => {
     try {
-      await deleteCategory(deleteCategoryId, store.id)
+      await categoryRepository.deleteCategory(deleteCategoryId, store.id)
 
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
-    } catch (e) {
+    } catch {
       toast({
         message: 'Erro ao excluir produto, tente novamente!',
         type: 'error'
@@ -308,24 +310,25 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   }
 
   const handleUpdateCategory = async () => {
-    const body = {
-      name: category,
-      storeId: store.id
-    }
-
     try {
-      await updateCategory(editCategoryId, store.id, body)
+      const body = {
+        name: category,
+        storeId: store.id
+      }
+
+      await categoryRepository.updateCategory(editCategoryId, store.id, body)
 
       toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
-    } catch (e) {
+    } catch {
       toast({
         message: 'Erro ao editar produto, tente novamente!',
         type: 'error'
       })
+    } finally {
+      setCategory('')
+      loadData()
+      setEditCategoryModal(false)
     }
-    setCategory('')
-    loadData()
-    setEditCategoryModal(false)
   }
 
   const { register, handleSubmit, getValues, setValue, reset } = useForm({
@@ -333,61 +336,55 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   })
 
   const handleCreateProduct = async (values: any) => {
-    const formData = new FormData()
-    formData.append('title', values.title)
-    formData.append('price', String(formatToNumber(String(values.price))))
-    formData.append('description', values.description)
-    formData.append('inventory', values.inventory)
-    formData.append('discount', values.discount || '0')
-    formData.append(
-      'categoriesIds',
-      JSON.stringify(selectedCategories.map((cat: any) => cat.value))
-    )
-    formData.append('parcelAmount', installments.value)
-    formData.append(
-      'files',
-      imageSrc ? dataURLtoFile(imageSrc, randomString()) : ''
-    )
-    formData.append(
-      'files',
-      imageSrc1 ? dataURLtoFile(imageSrc1, randomString()) : ''
-    )
-    formData.append(
-      'files',
-      imageSrc2 ? dataURLtoFile(imageSrc2, randomString()) : ''
-    )
-
     try {
-      await createProduct(formData)
+      const formData = new FormData()
+      formData.append('title', values.title)
+      formData.append('price', String(formatToNumber(String(values.price))))
+      formData.append('description', values.description)
+      formData.append('inventory', values.inventory)
+      formData.append('discount', values.discount || '0')
+      formData.append(
+        'categoriesIds',
+        JSON.stringify(selectedCategories.map((cat: any) => cat.value))
+      )
+      formData.append('parcelAmount', String(installments?.value || 0))
+      formData.append(
+        'files',
+        imageSrc ? dataURLtoFile(imageSrc, randomString()) : ''
+      )
+      formData.append(
+        'files',
+        imageSrc1 ? dataURLtoFile(imageSrc1, randomString()) : ''
+      )
+      formData.append(
+        'files',
+        imageSrc2 ? dataURLtoFile(imageSrc2, randomString()) : ''
+      )
+
+      await productRepository.createProduct(formData)
 
       toast({ message: 'Produto criado com sucesso', type: 'success' })
 
       setAddModal(false)
       setSelectedCategories([])
-    } catch (e) {
-      console.error(e)
-
-      if (e.status == 401) {
-        return toast({
-          message: 'Usuário deslogado, faça o seu login para prosseguir',
-          type: 'error'
-        })
-      }
-
-      toast({ message: 'Erro ao criar produto', type: 'error' })
+    } catch {
+      toast({
+        message: 'Erro ao criar produto, tente novamente!',
+        type: 'error'
+      })
+    } finally {
+      loadData()
     }
-
-    loadData()
   }
 
   const handleDeleteProduct = async () => {
     try {
-      await deleteProduct(deleteProductId)
+      await productRepository.deleteProduct(deleteProductId)
 
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
       setExcludeModal(false)
       loadData()
-    } catch (e) {
+    } catch {
       toast({
         message: 'Erro ao excluir produto, tente novamente!',
         type: 'error'
@@ -397,16 +394,15 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   const handleDeleteCupom = async (code: string) => {
     try {
-      await deleteCupom(code)
+      await couponRepository.deleteCoupon(code)
 
       toast({ message: 'Cupom deletado com sucesso!', type: 'success' })
       loadData()
-    } catch (e) {
+    } catch {
       toast({
         message: 'Erro ao excluir cupom, tente novamente!',
         type: 'error'
       })
-      console.error(e)
     }
   }
 
@@ -418,16 +414,14 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
         description: productEditValue,
         inventory: Number(values.inventory || '0'),
         discount: Number(values.discount),
-        categoriesIds: selectedCategories.map((cat) => cat.value),
-        parcelAmount: Number(installments.value)
+        categoriesIds: selectedCategories.map((cat: any) => cat.value),
+        parcelAmount: installments?.value || '0'
       }
 
-      await updateProduct(editProductId, body)
+      await productRepository.updateProduct(editProductId, body)
 
       toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
-    } catch (e) {
-      console.error(e)
-
+    } catch {
       toast({
         message: 'Erro ao editar produto, tente novamente!',
         type: 'error'
@@ -443,33 +437,34 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   const loadData = async () => {
     try {
       if (!store) Router.push('/')
-      const { data } = await getProducts(store.id)
 
-      const formattedData = data.map((it) => ({
+      const data = await productRepository.getProducts(store.id)
+
+      const formattedData = data.map((it: any) => ({
         ...it,
         categories: it.categories.map((cat: any) => cat.name)
       }))
 
       setProducts(formattedData)
-    } catch (e) {
+    } catch {
       toast({ message: 'Erro ao buscar produtos', type: 'error' })
     } finally {
       setLoadingProducts(false)
     }
 
     try {
-      const { data } = await getCategories(store.id)
+      const data = await categoryRepository.getCategories(store.id)
 
       setCategories(data)
-    } catch (e) {
+    } catch {
       toast({ message: 'Erro ao buscar categorias', type: 'error' })
     }
 
     try {
-      const { data } = await getCupom()
+      const data = await couponRepository.getCoupon()
 
       setCupons(data)
-    } catch (e) {
+    } catch {
       toast({ message: 'Erro ao buscar cupons', type: 'error' })
     }
   }
@@ -651,7 +646,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
             <div className='left-area'>
               <Input
                 label='Nome do produto'
-                flex={0}
                 icon={<FiBox />}
                 placeholder='Nome do produto'
                 {...register('title')}
@@ -662,7 +656,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                 maxLength={600}
                 placeholder='Descrição'
                 icon={<GiHamburgerMenu />}
-                flex={0}
                 {...register('description')}
               />
 
@@ -675,10 +668,10 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                   {...register('price')}
                 />
 
-                <Select
+                <MultiSelect
                   name='Parcelamento'
-                  options={Installments}
-                  selectedValue={installments}
+                  options={productParcels}
+                  selectedValue={installments?.value}
                   setSelectedValue={setInstallments}
                   loading={false}
                   placeholder='Selecione o número de parcelas'
@@ -705,7 +698,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
                 <Input
                   label='Preço com desconto'
-                  mask='monetary'
+                  mask='monetaryBRL'
                   disabled
                   icon={<FaMoneyBill />}
                   value={priceWithDiscount}
@@ -736,12 +729,14 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
               <MultiSelect
                 loading={false}
                 name='Categorias'
-                options={categories.map((cat) => ({
+                options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories}
+                selectedValue={selectedCategories.map(
+                  ({ value }: any) => value
+                )}
                 setSelectedValue={setSelectedCategories}
                 creatable={true}
                 formatCreateLabel={(inputValue) =>
@@ -867,10 +862,8 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
               <Textarea
                 label='Descrição do produto'
                 maxLength={600}
-                name='description'
                 placeholder='Descrição'
                 icon={<GiHamburgerMenu />}
-                flex={0}
                 {...register('description')}
                 value={productEditValue}
                 onChange={(e) => setProductEditValue(e.target.value)}
@@ -881,13 +874,13 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                   label='Preço'
                   icon={<FaMoneyBill />}
                   placeholder='R$ 0'
-                  mask='monetary'
+                  mask='monetaryBRL'
                   {...register('price')}
                 />
 
-                <Select
+                <MultiSelect
                   name='Parcelamento'
-                  options={Installments}
+                  options={productParcels}
                   selectedValue={installments}
                   setSelectedValue={setInstallments}
                   loading={false}
@@ -914,7 +907,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
                 <Input
                   label='Preço com desconto'
-                  mask='monetary'
+                  mask='monetaryBRL'
                   value={priceWithDiscount}
                   disabled
                   icon={<FaMoneyBill />}
@@ -1168,7 +1161,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
               <MultiSelect
                 loading={false}
                 name='Categorias'
-                options={categories.map((cat) => ({
+                options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
                 }))}
@@ -1211,7 +1204,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       <Modal
         buttons={false}
         setModalOpen={toggleImageModal}
-        modalVisible={previewImage}
+        modalVisible={!!previewImage.length}
       >
         <CropModalContainer>
           <section className='crops'>
@@ -1279,7 +1272,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                     setPriceWithDiscount(formatToBrl(0))
                     if (toggleState === 1) handleOpenAddModal()
                     else {
-                      if (toggleState == 2) toggleAddCategoryModal()
+                      if (toggleState === 2) toggleAddCategoryModal()
                       else toggleAddCupomModal()
                     }
                   }}
@@ -1307,13 +1300,13 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                   content1={
                     <div className='products-container'>
                       {products.length ? (
-                        products.map((product) => (
+                        products.map((product: any) => (
                           <ProductListCard
                             key={product?.id}
                             icon={product?.files[0]?.url}
                             name={product?.title}
                             code={product?.id}
-                            category={product?.categories}
+                            category={product?.categories?.join('')}
                             amount={product?.inventory}
                             price={product?.price}
                             excludeBtn={() => {
@@ -1365,16 +1358,16 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                   }
                   content2={
                     <div className='categories-container'>
-                      {categories.length > 0 ? (
-                        categories.map((cat, index) => {
+                      {categories.length ? (
+                        categories.map((cat: any, index) => {
                           return (
                             <CategoryListCard
                               key={cat.id + '-' + index}
                               date={products
-                                .filter((prd) =>
+                                .filter((prd: any) =>
                                   prd.categories.includes(cat.name)
                                 )
-                                .map((data) => {
+                                .map((data: any) => {
                                   return {
                                     name: data.title,
                                     amount: String(data.inventory)
