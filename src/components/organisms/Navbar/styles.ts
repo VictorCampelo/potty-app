@@ -20,8 +20,8 @@ export const Nav = styled.nav<NavProps>`
 
   ${[sizes.up('md')]} {
     ${({ open }) =>
-      open &&
-      'position: fixed; top: var(--spacing-md); left: var(--spacing-xs); bottom: var(--spacing-md); z-index: 1;'}
+    open &&
+    'position: fixed; top: var(--spacing-md); left: var(--spacing-xs); bottom: var(--spacing-md); z-index: 1;'}
   }
 
   ${[sizes.down('md')]} {
@@ -97,7 +97,7 @@ export const Icon = styled.div<IconProps>`
 
   cursor: pointer;
 
-  border-radius: 10%;
+  border-radius: 100%;
 
   padding: var(--spacing-xxxs);
 

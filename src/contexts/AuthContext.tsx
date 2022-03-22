@@ -85,9 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [signUpMeta])
 
   useEffect(() => {
-    const token =
-      parseCookies()['bdv.auth.token'] ||
-      sessionStorage.getItem('bdv.auth.token')
+    const token = parseCookies()['bdv.auth.token']
     const sessionSingUpMeta = sessionStorage.getItem('bdv.auth.register.meta')
 
     if (!user && token) {

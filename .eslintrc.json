@@ -12,7 +12,6 @@
   "extends": [
     "prettier",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended",
     "standard",
     "next/core-web-vitals"

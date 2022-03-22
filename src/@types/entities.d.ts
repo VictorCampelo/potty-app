@@ -98,3 +98,8 @@ export interface Store {
   avatar: Avatar
   background: Background
 }
+
+export interface Category {
+  name: string
+  storeId: string
+}

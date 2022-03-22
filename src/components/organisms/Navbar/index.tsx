@@ -37,9 +37,8 @@ const Navbar = ({ links }: Props) => {
 
       {links.map((link, i) => {
         if (link.href) {
-          const color = router.pathname.includes(link.href)
-            ? 'var(--color-primary)'
-            : ''
+          const color =
+            router.pathname === link.href ? 'var(--color-primary)' : ''
 
           return (
             <Link key={i} href={link.href} passHref>
