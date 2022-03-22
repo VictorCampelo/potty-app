@@ -3,7 +3,7 @@ import React from 'react'
 import { Wrapper, Container, Title, Subtitle } from './styles'
 
 interface Props {
-  title: string
+  title?: string
   subtitle?: React.ReactNode
   children: React.ReactNode
   width?: string
@@ -12,7 +12,7 @@ interface Props {
 const CardDashboard = ({ title, subtitle, children, width }: Props) => {
   return (
     <Wrapper width={width}>
-      <Title>{title}</Title>
+      {title && <Title>{title}</Title>}
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
       <Container>{children}</Container>
     </Wrapper>

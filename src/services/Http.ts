@@ -1,6 +1,5 @@
 import { setup } from 'axios-cache-adapter'
 import { parseCookies, destroyCookie } from 'nookies'
-import Router from 'next/router'
 
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
 
@@ -18,12 +17,7 @@ class Http {
 
     this.http.interceptors.request.use(
       (config: any) => {
-        let token = ''
-        token = parseCookies()['bdv.auth.token'] || ''
-        if (!token && typeof window !== 'undefined') {
-          token = sessionStorage?.getItem('bdv.auth.token') || ''
-        }
-
+        const token = parseCookies()['bdv.auth.token']
         config.headers.common.Authorization = `Bearer ${token}`
 
         return config
@@ -38,13 +32,11 @@ class Http {
         return response
       },
       async (error) => {
-        const { 'bdv.auth.token': token } = parseCookies()
-
-        if (error.response?.status === 401 && token) {
+        if (error.response?.status === 401) {
           destroyCookie(null, 'bdv.auth.token')
           destroyCookie(null, 'bdv.auth.refreshToken')
-          await Router.push('/')
         }
+
         return Promise.reject(error)
       }
     )
