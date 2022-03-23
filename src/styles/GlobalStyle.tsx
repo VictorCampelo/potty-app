@@ -133,6 +133,7 @@ export default createGlobalStyle`
   }
 
   body {
+    position: relative;
     background: var(--background);
   }
 

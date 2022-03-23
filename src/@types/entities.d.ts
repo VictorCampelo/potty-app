@@ -24,48 +24,54 @@ export interface Avatar {
   id: string
   name: string
   filename: string
-  alternativeText: any
-  caption: any
-  hash: any
-  ext: any
-  mime: any
-  provider: any
+  alternativeText: string
+  caption: string
+  hash: string
+  ext: string
+  mime: string
+  provider: string
   url: string
-  previewUrl: any
-  width: any
-  height: any
-  createdBy: any
-  updatedBy: any
-  formats: any
-  providerMetadata: any
-  tags: any
+  previewUrl: string
+  width: string
+  height: string
+  createdBy: string
+  updatedBy: string
+  formats: string
+  providerMetadata: string
+  tags: string
   createdAt: string
   updatedAt: string
-  deletedAt: any
+  deletedAt: string
 }
 
 export interface Background {
   id: string
   name: string
   filename: string
-  alternativeText: any
-  caption: any
-  hash: any
-  ext: any
-  mime: any
-  provider: any
+  alternativeText: string
+  caption: string
+  hash: string
+  ext: string
+  mime: string
+  provider: string
   url: string
-  previewUrl: any
-  width: any
-  height: any
-  createdBy: any
-  updatedBy: any
-  formats: any
-  providerMetadata: any
-  tags: any
+  previewUrl: string
+  width: string
+  height: string
+  createdBy: string
+  updatedBy: string
+  formats: string
+  providerMetadata: string
+  tags: string
   createdAt: string
   updatedAt: string
-  deletedAt: any
+  deletedAt: string
+}
+
+interface PaymentMethod {
+  id: string
+  methodName: string
+  allowParcels: boolean
 }
 
 export interface Store {
@@ -86,9 +92,9 @@ export interface Store {
   sumFeedbacks: number
   sumStars: number
   avgStars: number
-  facebookLink: any
-  instagramLink: any
-  whatsappLink: any
+  facebookLink: string
+  instagramLink: string
+  whatsappLink: string
   schedules: Schedules
   createdAt: string
   updatedAt: string
@@ -97,9 +103,21 @@ export interface Store {
   dispatch: string
   avatar: Avatar
   background: Background
+  paymentMethods: PaymentMethod[]
 }
 
 export interface Category {
   name: string
   storeId: string
+}
+
+export interface Product {
+  storeId: string
+  id: string
+  amount: number
+  title: string
+  price: number
+  enabled?: boolean
+  image?: string
+  discount?: number
 }

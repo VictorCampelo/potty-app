@@ -26,12 +26,12 @@ const authRepository = new AuthRepository()
 const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
-  signOut: async () => {},
+  signOut: async () => undefined,
   isAuthenticated: false,
   user: null,
   signUpMeta: null,
-  setSignUpMeta: () => {},
-  clearSignUpMeta: () => {},
+  setSignUpMeta: () => undefined,
+  clearSignUpMeta: () => undefined,
   isLoading: false
 })
 

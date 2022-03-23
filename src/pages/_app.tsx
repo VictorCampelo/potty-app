@@ -1,50 +1,58 @@
 import Head from 'next/head'
 import Script from 'next/script'
 
+import CartButton from '@/components/molecules/CartButton'
+
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CartProvider } from '@/contexts/CartContext'
 import { ToastContainer } from 'react-toastify'
 
 import GlobalStyle from '@/styles/GlobalStyle'
 import 'react-toastify/dist/ReactToastify.css'
 
-function MyApp({ Component, pageProps }: any) {
+import type { AppProps } from 'next/app'
+
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <AuthProvider>
-        <Head>
-          <meta
-            name='viewport'
-            content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        <CartProvider>
+          <Head>
+            <meta
+              name='viewport'
+              content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+            />
+          </Head>
+          <Script
+            async
+            src='https://www.googletagmanager.com/gtag/js?id=G-PZVRKLPMDN'
           />
-        </Head>
-        <Script
-          async
-          src='https://www.googletagmanager.com/gtag/js?id=G-PZVRKLPMDN'
-        />
-        <Script
-          id='gtag-script'
-          dangerouslySetInnerHTML={{
-            __html: `
+          <Script
+            id='gtag-script'
+            dangerouslySetInnerHTML={{
+              __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag() { dataLayer.push(arguments); }
               gtag('js', new Date());
               gtag('config', 'G-PZVRKLPMDN');
             `
-          }}
-        />
-        <GlobalStyle />
-        <Component {...pageProps} />
-        <ToastContainer
-          position='top-right'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+            }}
+          />
+          <GlobalStyle />
+          <Component {...pageProps} />
+          <ToastContainer
+            position='top-right'
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+          <CartButton />
+        </CartProvider>
       </AuthProvider>
     </>
   )

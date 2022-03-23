@@ -1,4 +1,5 @@
 import Http from '@/services/Http'
+import type { Store } from '@/@types/entities'
 import type { StoreResponse } from '@/@types/requests'
 
 export default class StoreRepository extends Http {
@@ -7,6 +8,6 @@ export default class StoreRepository extends Http {
   }
 
   findById(id: string) {
-    return this.get(`/stores/id/${id}`)
+    return this.get<Store>(`/stores/id/${id}`)
   }
 }
