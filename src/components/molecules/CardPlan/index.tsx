@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import React from 'react'
 
 import PlanRepository from '@/repositories/PlanRepository'
 
@@ -46,7 +46,7 @@ const CardPlan = ({
   return (
     <Container crown={crown} colors={colors}>
       {crown && (
-        <Image
+        <img
           className='crown'
           width={70}
           height={65}
