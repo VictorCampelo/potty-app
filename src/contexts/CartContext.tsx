@@ -4,21 +4,25 @@ import StoreRepository from '@/repositories/StoreRepository'
 
 import _ from 'lodash'
 
-import type { Product, PaymentMethod } from '@/@types/entities'
+import type { CartProduct, PaymentMethod } from '@/@types/entities'
 
 interface Store {
   id: string
   name: string
-  products: Product[]
+  products: CartProduct[]
   paymentMethods: PaymentMethod[]
 }
 
 interface CartContextData {
   loading: boolean
   totalPrice: number
-  products: Product[]
+  products: CartProduct[]
   stores: Store[]
-  setProducts: (products: Product[]) => void
+  setProducts: (products: CartProduct[]) => void
+  selectAllProducts: () => void
+  toggleSelectProduct: (id: string) => void
+  removeProduct: (id: string) => void
+  clearCart: () => void
 }
 
 interface CartProviderProps {
@@ -32,11 +36,15 @@ export const CartContext = createContext<CartContextData>({
   totalPrice: 0,
   products: [],
   stores: [],
-  setProducts: () => undefined
+  setProducts: () => undefined,
+  removeProduct: () => undefined,
+  selectAllProducts: () => undefined,
+  toggleSelectProduct: () => undefined,
+  clearCart: () => undefined
 })
 
 export const CartProvider = ({ children }: CartProviderProps) => {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<CartProduct[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [stores, setStores] = useState<Store[]>([])
   const [loading, setLoading] = useState(false)
@@ -45,7 +53,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       setLoading(true)
 
-      const newProducts: Product[] = JSON.parse(
+      const newProducts: CartProduct[] = JSON.parse(
         localStorage.getItem('bdv.cart.products') || '[]'
       )
 
@@ -80,6 +88,32 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   }
 
+  const selectAllProducts = () => {
+    setProducts(products.map((product) => ({ ...product, selected: true })))
+  }
+
+  const toggleSelectProduct = (id: string) => {
+    setProducts(
+      products.map((product) =>
+        product.id === id
+          ? { ...product, selected: !product.selected }
+          : product
+      )
+    )
+  }
+
+  const removeProduct = (id: string) => {
+    setProducts(products.filter((product) => product.id !== id))
+  }
+
+  const clearCart = () => {
+    setProducts([])
+  }
+
+  useEffect(() => {
+    localStorage.setItem('bdv.cart.products', JSON.stringify(products))
+  }, [products])
+
   useEffect(() => {
     loadData()
   }, [])
@@ -91,7 +125,11 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         totalPrice,
         products,
         stores,
-        setProducts
+        setProducts,
+        selectAllProducts,
+        toggleSelectProduct,
+        removeProduct,
+        clearCart
       }}
     >
       {children}

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^2.8.8",
+    "@lottiefiles/react-lottie-player": "^3.4.2",
     "@types/react-toastify": "^4.1.0",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "axios": "^0.26.1",
@@ -35,6 +36,7 @@
     "recharts": "^2.1.9",
     "styled-components": "^5.3.3",
     "swiper": "^8.0.7",
+    "use-media": "^1.4.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {

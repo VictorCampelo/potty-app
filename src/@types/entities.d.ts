@@ -111,13 +111,13 @@ export interface Category {
   storeId: string
 }
 
-export interface Product {
+export interface CartProduct {
   storeId: string
   id: string
   amount: number
   title: string
   price: number
-  enabled?: boolean
+  selected?: boolean
   image?: string
   discount?: number
 }
