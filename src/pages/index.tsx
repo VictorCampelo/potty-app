@@ -19,17 +19,18 @@ const Home: NextPage<ServerProps> = ({ store }) => {
 const storeRepository = new StoreRepository()
 
 Home.getInitialProps = async (ctx) => {
-  const storeName =
-    ctx.req?.headers.host
-      ?.replace('localhost:3000', '')
-      ?.replace('boadevenda.com.br', '')
-      ?.replace('boa-de-venda-app.vercel.app', '')
-      ?.replaceAll('.', '') || ''
+  try {
+    const storeName = ctx.req?.headers.host?.split('.')[0]
 
-  const store = storeName ? await storeRepository.findByName(storeName) : null
+    const store = storeName ? await storeRepository.findByName(storeName) : null
 
-  return {
-    store
+    return {
+      store
+    }
+  } catch {
+    return {
+      store: null
+    }
   }
 }
 
