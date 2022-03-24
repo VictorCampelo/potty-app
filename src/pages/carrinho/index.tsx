@@ -59,7 +59,8 @@ const CartPage = () => {
       <Container>
         <Content>
           <div className='header' onClick={() => Router.push('/')}>
-            <FiArrowLeft size={28} color='var(--black-800)' />
+            {!widthScreen && <FiArrowLeft size={28} color='var(--black-800)' />}
+
             <h1>Meu carrinho</h1>
           </div>
 
@@ -77,10 +78,9 @@ const CartPage = () => {
                 Você ainda não possui itens no seu <br /> carrinho
               </p>
 
-              <SeeProductsButton
-                title='Ver produtos'
-                onClick={() => Router.push('/')}
-              />
+              <SeeProductsButton onClick={() => Router.push('/')}>
+                Ver produtos
+              </SeeProductsButton>
             </EmptyCartContainer>
           ) : (
             <>

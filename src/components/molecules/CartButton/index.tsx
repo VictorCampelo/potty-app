@@ -28,7 +28,7 @@ const CartButton = () => {
             <Quantity>{products.length}</Quantity>
           </Container>
 
-          <Price>| {formatToBrl(totalPrice)}</Price>
+          {totalPrice ? <Price>| {formatToBrl(totalPrice)}</Price> : null}
         </>
       )}
     </Wrapper>

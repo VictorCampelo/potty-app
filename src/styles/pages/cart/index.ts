@@ -56,9 +56,7 @@ export const Content = styled.section`
 
   ${[sizes.down('sm')]} {
     padding-top: 1rem;
-    svg {
-      display: none;
-    }
+
     h1 {
       font-size: var(--font-size-md);
     }
