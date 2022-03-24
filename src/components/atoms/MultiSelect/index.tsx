@@ -15,7 +15,7 @@ interface SelectInterface extends React.InputHTMLAttributes<HTMLSelectElement> {
   selectedValue?: Option | null
   loading: boolean
   setSelectedValue: (option: Option) => void
-  options: Option[]
+  options?: Option[]
   colorTheme?: string
   creatable?: boolean
   formatCreateLabel?: (inputValue: string) => string

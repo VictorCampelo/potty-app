@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
+import Input from '@/components/atoms/Input'
+
 export const CardsContainer = styled.section`
   width: 100%;
   height: 100%;
