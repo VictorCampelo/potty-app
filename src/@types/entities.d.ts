@@ -1,4 +1,16 @@
-export interface User {
+
+export interface UserAddress {
+  uf: string
+  street: string
+  city: string
+  zipcode: string
+  neighborhood: string
+  complement: string
+  addressNumber: number
+  logradouro: string
+}
+
+export interface User extends UserAddress {
   email: string
   firstName?: string
   lastName?: string

@@ -4,10 +4,14 @@ import type { StoreResponse } from '@/@types/requests'
 
 export default class StoreRepository extends Http {
   findByName(name: string) {
-    return this.get<StoreResponse>(`/stores/find/${name}`)
+    return this.get<StoreResponse>(`stores/find/${name}`)
   }
 
   findById(id: string) {
-    return this.get<Store>(`/stores/id/${id}`)
+    return this.get<Store>(`stores/id/${id}`)
+  }
+
+  orders(dto: any) {
+    return this.post<any, any>('orders', { products: dto })
   }
 }

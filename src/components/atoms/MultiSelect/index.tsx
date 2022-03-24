@@ -12,7 +12,7 @@ export interface Option {
 interface SelectInterface extends React.InputHTMLAttributes<HTMLSelectElement> {
   placeholder: string
   name: string
-  selectedValue?: string[] | string | null
+  selectedValue?: Option | null
   loading: boolean
   setSelectedValue: (option: Option) => void
   options: Option[]

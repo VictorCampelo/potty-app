@@ -12,6 +12,7 @@ interface AuthContextData {
   signOut: () => Promise<void>
   isAuthenticated: boolean
   user: User | null
+  fetchUser: () => Promise<void>
   signUpMeta: UserSignUpMeta | null
   setSignUpMeta: (meta: UserSignUpMeta) => void
   clearSignUpMeta: () => void
@@ -30,6 +31,7 @@ export const AuthContext = createContext<AuthContextData>({
   isAuthenticated: false,
   user: null,
   signUpMeta: null,
+  fetchUser: async () => undefined,
   setSignUpMeta: () => undefined,
   clearSignUpMeta: () => undefined,
   isLoading: false
@@ -105,6 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider
       value={{
         signUpMeta,
+        fetchUser,
         setSignUpMeta,
         clearSignUpMeta,
         signOut,
