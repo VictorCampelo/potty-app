@@ -23,6 +23,7 @@ Home.getInitialProps = async (ctx) => {
     ctx.req?.headers.host
       ?.replace('localhost:3000', '')
       ?.replace('boadevenda.com.br', '')
+      ?.replace('boa-de-venda-app.vercel.app', '')
       ?.replaceAll('.', '') || ''
 
   const store = storeName ? await storeRepository.findByName(storeName) : null
