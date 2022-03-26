@@ -4,7 +4,7 @@ import StoreRepository from '@/repositories/StoreRepository'
 
 import _ from 'lodash'
 
-import type { CartProduct, PaymentMethod } from '@/@types/entities'
+import type { Product, CartProduct, PaymentMethod } from '@/@types/entities'
 
 interface Store {
   id: string
@@ -21,6 +21,7 @@ interface CartContextData {
   setProducts: (products: CartProduct[]) => void
   selectAllProducts: () => void
   toggleSelectProduct: (id: string) => void
+  addProduct: (product: Product) => void
   removeProduct: (id: string) => void
   clearCart: () => void
 }
@@ -37,6 +38,7 @@ export const CartContext = createContext<CartContextData>({
   products: [],
   stores: [],
   setProducts: () => undefined,
+  addProduct: () => undefined,
   removeProduct: () => undefined,
   selectAllProducts: () => undefined,
   toggleSelectProduct: () => undefined,
@@ -106,6 +108,22 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setProducts(products.filter((product) => product.id !== id))
   }
 
+  const addProduct = (product: Product) => {
+    const newProduct = {
+      storeId: product.storeId,
+      id: product.id,
+      amount: products.filter((p) => p.id === product.id).length + 1,
+      title: product.title,
+      price: product.price,
+      priceWithDiscount: product.priceWithDiscount,
+      selected: false,
+      image: product.files[0]?.url,
+      discount: product.discount
+    }
+
+    setProducts([...products, newProduct])
+  }
+
   const clearCart = () => {
     setProducts([])
   }
@@ -128,6 +146,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         setProducts,
         selectAllProducts,
         toggleSelectProduct,
+        addProduct,
         removeProduct,
         clearCart
       }}

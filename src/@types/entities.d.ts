@@ -32,52 +32,28 @@ export interface Schedules {
   ter: string[]
 }
 
-export interface Avatar {
+export interface File {
   id: string
   name: string
   filename: string
-  alternativeText: string
-  caption: string
-  hash: string
-  ext: string
-  mime: string
-  provider: string
+  alternativeText?: string
+  caption?: string
+  hash?: string
+  ext?: string
+  mime?: string
+  provider?: string
   url: string
-  previewUrl: string
-  width: string
-  height: string
-  createdBy: string
-  updatedBy: string
-  formats: string
-  providerMetadata: string
-  tags: string
+  previewUrl?: string
+  width?: string
+  height?: string
+  createdBy?: string
+  updatedBy?: string
+  formats?: string
+  providerMetadata?: string
+  tags?: string[]
   createdAt: string
   updatedAt: string
-  deletedAt: string
-}
-
-export interface Background {
-  id: string
-  name: string
-  filename: string
-  alternativeText: string
-  caption: string
-  hash: string
-  ext: string
-  mime: string
-  provider: string
-  url: string
-  previewUrl: string
-  width: string
-  height: string
-  createdBy: string
-  updatedBy: string
-  formats: string
-  providerMetadata: string
-  tags: string
-  createdAt: string
-  updatedAt: string
-  deletedAt: string
+  deletedAt?: string
 }
 
 interface PaymentMethod {
@@ -90,6 +66,7 @@ export interface Store {
   id: string
   name: string
   formatedName: string
+  formattedAddress: string
   CNPJ: string
   phone: string
   street: string
@@ -113,8 +90,8 @@ export interface Store {
   likes: number
   deliveryFee: number
   dispatch: string
-  avatar: Avatar
-  background: Background
+  avatar: File
+  background: File
   paymentMethods: PaymentMethod[]
 }
 
@@ -129,7 +106,30 @@ export interface CartProduct {
   amount: number
   title: string
   price: number
+  priceWithDiscount?: number
   selected?: boolean
   image?: string
   discount?: number
+}
+
+export interface Product {
+  id: string
+  title: string
+  description: string
+  tags?: string
+  price: number
+  priceWithDiscount?: number
+  discount: number
+  sumOrders: number
+  sumFeedbacks: number
+  sumStars: number
+  avgStars: number
+  inventory: number
+  lastSold?: string
+  parcelAmount: number
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string
+  storeId: string
+  files: File[]
 }

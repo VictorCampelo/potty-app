@@ -14,8 +14,6 @@ interface Props {
 }
 
 const StorePage: NextPage<Props> = ({ store }) => {
-  const formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${store.city} - ${store.state}`
-
   return (
     <Wrapper>
       <Head>
@@ -30,7 +28,7 @@ const StorePage: NextPage<Props> = ({ store }) => {
         <FooterContact
           title={store.name}
           cnpj={store.CNPJ}
-          address={formattedAddress}
+          address={store.formattedAddress}
           phone={store.phone}
           whatsappLink={store.whatsappLink}
           instagramLink={store.instagramLink}

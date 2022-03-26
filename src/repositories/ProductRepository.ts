@@ -1,26 +1,41 @@
 import Http from '@/services/Http'
 
-import type {} from '@/@types/requests'
+import getDiscount from '@/utils/getDiscount'
+
+import type { } from '@/@types/requests'
+import type { Product } from '@/@types/entities'
 
 const config = {
   headers: { 'content-type': 'multipart/form-data' }
 }
 
 export default class ProductRepository extends Http {
-  getProducts(id: string) {
-    return this.get<any>(
+  async getProducts(id: string) {
+    const products = await this.get<Product[]>(
       `/products/store/${id}?limit=10&offset=0&loadRelations=true&loadLastSolds=false`
     )
+
+    return products.map(product => {
+      if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
+      return product
+    })
   }
 
-  getProduct(id: string) {
-    return this.get(`/products/${id}?files=true`)
+  async getProduct(id: string) {
+    const product = await this.get<Product>(`/products/${id}?files=true`)
+    if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
+    return product
   }
 
-  getRecommendProducts(id: string) {
-    return this.get(
+  async getRecommendProducts(id: string) {
+    const products = await this.get<Product[]>(
       `/products/store/${id}?limit=6&offset=0&loadRelations=true&loadLastSolds=false`
     )
+
+    return products.map(product => {
+      if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
+      return product
+    })
   }
 
   createProduct(data: any) {

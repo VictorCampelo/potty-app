@@ -1,4 +1,5 @@
 interface Breakpoints {
+  xs: '475px',
   sm: '640px'
   md: '768px'
   lg: '1024px'
@@ -6,9 +7,10 @@ interface Breakpoints {
   '2xl': '1536px'
 }
 
-type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 
 const breakpoints: Breakpoints = {
+  xs: '475px',
   sm: '640px',
   md: '768px',
   lg: '1024px',

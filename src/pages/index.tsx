@@ -1,7 +1,7 @@
 import StorePage from '@/components/templates/Store'
 import LandingPage from '@/components/templates/Landing'
 
-import StoreRepository from '@/repositories/StoreRepository'
+import getStoreFromInitialProps from '@/utils/getStoreFromInitialProps'
 
 import type { NextPage } from 'next'
 import type { Store } from '@/@types/entities'
@@ -16,22 +16,9 @@ const Home: NextPage<ServerProps> = ({ store }) => {
   return <LandingPage />
 }
 
-const storeRepository = new StoreRepository()
-
 Home.getInitialProps = async (ctx) => {
-  try {
-    const storeName = ctx.req?.headers.host?.split('.')[0]
-
-    const store = storeName ? await storeRepository.findByName(storeName) : null
-
-    return {
-      store
-    }
-  } catch {
-    return {
-      store: null
-    }
-  }
+  const store = await getStoreFromInitialProps(ctx)
+  return { store }
 }
 
 export default Home
