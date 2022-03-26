@@ -1,4 +1,3 @@
-
 export interface UserAddress {
   uf: string
   street: string
@@ -115,7 +114,7 @@ export interface CartProduct {
 export interface Product {
   id: string
   title: string
-  description: string
+  description?: string
   tags?: string
   price: number
   priceWithDiscount?: number

@@ -40,6 +40,7 @@ export const Container = styled.main`
 
 export const Content = styled.section`
   max-width: 1420px;
+  min-height: 100vmin;
   height: 100%;
   width: 100%;
   padding-top: 1.5rem;

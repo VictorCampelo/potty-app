@@ -59,7 +59,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         localStorage.getItem('bdv.cart.products') || '[]'
       )
 
-      if (products.length && products.length === newProducts.length) return
+      if (products.length === newProducts.length) return
 
       setProducts(newProducts)
 
@@ -122,6 +122,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
 
     setProducts([...products, newProduct])
+
+    setTotalPrice(totalPrice + Number(product.price))
   }
 
   const clearCart = () => {

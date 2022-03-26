@@ -45,9 +45,6 @@ const CartPage = () => {
     Router.push('carrinho/continuar')
   }
 
-  const getDiscount = (price: number, discount: number) =>
-    price - (price * discount) / 100
-
   return (
     <>
       <Head>
@@ -64,25 +61,7 @@ const CartPage = () => {
             <h1>Meu carrinho</h1>
           </div>
 
-          {!products.length ? (
-            <EmptyCartContainer>
-              <Player
-                autoplay
-                loop
-                src='/animations/cart-animation.json'
-                style={{ width: '250px', marginBottom: '40px' }}
-              />
-              <h1>Carrinho vazio!</h1>
-
-              <p>
-                Você ainda não possui itens no seu <br /> carrinho
-              </p>
-
-              <SeeProductsButton onClick={() => Router.push('/')}>
-                Ver produtos
-              </SeeProductsButton>
-            </EmptyCartContainer>
-          ) : (
+          {products.length ? (
             <>
               <div className='checkbox'>
                 <div className='check'>
@@ -148,11 +127,7 @@ const CartPage = () => {
 
                           <section>
                             <strong>
-                              {formatToBrl(
-                                it.discount
-                                  ? getDiscount(it.price, it.discount)
-                                  : it.price * it.amount
-                              )}
+                              {formatToBrl(it.priceWithDiscount || it.price)}
                             </strong>
                           </section>
 
@@ -200,11 +175,7 @@ const CartPage = () => {
                           >
                             <span>{it.title}</span>
                             <strong>
-                              {formatToBrl(
-                                it.discount
-                                  ? getDiscount(it.price, it.discount)
-                                  : it.price
-                              )}
+                              {formatToBrl(it.priceWithDiscount || it.price)}
                             </strong>
                             <Counter id={it.id} />
                           </section>
@@ -217,9 +188,7 @@ const CartPage = () => {
                         Subtotal:{' '}
                         <strong style={{ color: 'var(--color-primary)' }}>
                           {formatToBrl(
-                            (it.discount
-                              ? getDiscount(it.price, it.discount)
-                              : it.price) * it.amount
+                            (it.priceWithDiscount || it.price) * it.amount
                           )}
                         </strong>
                       </p>
@@ -227,56 +196,72 @@ const CartPage = () => {
                   </>
                 ))}
               </CartContainer>
-            </>
-          )}
 
-          {products.length && (
-            <CartContainerFooter
-              disabled={products.findIndex(({ selected }) => selected) !== -1}
-            >
-              <div className='info'>
-                <div>
-                  <span>Total: </span>
-                  <strong>{formatToBrl(totalPrice)}</strong>
+              <CartContainerFooter
+                disabled={products.findIndex(({ selected }) => selected) !== -1}
+              >
+                <div className='info'>
+                  <div>
+                    <span>Total: </span>
+                    <strong>{formatToBrl(totalPrice)}</strong>
+                  </div>
+                  <span className='spanBottom'>
+                    {products.filter((it) => it.selected).length <= 1
+                      ? products.length + ' item'
+                      : products.length + ' itens'}
+                    {!widthScreen && (
+                      <a onClick={() => clearCart()}>Esvaziar Carrinho</a>
+                    )}
+                  </span>
                 </div>
-                <span className='spanBottom'>
-                  {products.filter((it) => it.selected).length <= 1
-                    ? products.length + ' item'
-                    : products.length + ' itens'}
-                  {!widthScreen && (
-                    <a onClick={() => clearCart()}>Esvaziar Carrinho</a>
-                  )}
-                </span>
-              </div>
 
-              <div
-                className='buttonContainer'
-                style={widthScreen ? undefined : { display: 'none' }}
-              >
-                <button
-                  className='empty'
-                  onClick={() => {
-                    clearCart()
-                  }}
+                <div
+                  className='buttonContainer'
+                  style={widthScreen ? undefined : { display: 'none' }}
                 >
-                  <IoTrashOutline size={24} color='var(--red)' />
-                  ESVAZIAR CARRINHO
-                </button>
+                  <button
+                    className='empty'
+                    onClick={() => {
+                      clearCart()
+                    }}
+                  >
+                    <IoTrashOutline size={24} color='var(--red)' />
+                    ESVAZIAR CARRINHO
+                  </button>
 
-                <button className='finish' onClick={handleMakeCheckout}>
-                  CONTINUAR
-                </button>
-              </div>
-              <div
-                className='buttonContainerMob'
-                style={widthScreen ? { display: 'none' } : undefined}
-              >
-                <button className='finish' onClick={handleMakeCheckout}>
-                  <FiArrowRight size={24} color='white' />
-                  <p>CONTINUAR</p>
-                </button>
-              </div>
-            </CartContainerFooter>
+                  <button className='finish' onClick={handleMakeCheckout}>
+                    CONTINUAR
+                  </button>
+                </div>
+                <div
+                  className='buttonContainerMob'
+                  style={widthScreen ? { display: 'none' } : undefined}
+                >
+                  <button className='finish' onClick={handleMakeCheckout}>
+                    <FiArrowRight size={24} color='white' />
+                    <p>CONTINUAR</p>
+                  </button>
+                </div>
+              </CartContainerFooter>
+            </>
+          ) : (
+            <EmptyCartContainer>
+              <Player
+                autoplay
+                loop
+                src='/animations/cart-animation.json'
+                style={{ width: '250px', marginBottom: '40px' }}
+              />
+              <h1>Carrinho vazio!</h1>
+
+              <p>
+                Você ainda não possui itens no seu <br /> carrinho
+              </p>
+
+              <SeeProductsButton onClick={() => Router.push('/')}>
+                Ver produtos
+              </SeeProductsButton>
+            </EmptyCartContainer>
           )}
         </Content>
       </Container>

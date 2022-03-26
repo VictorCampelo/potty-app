@@ -59,14 +59,14 @@ const FooterContact = ({
         {instagramLink && (
           <span>
             <AiOutlineInstagram size={24} color='var(--gray-700)' />
-            <a href={instagramLink}>Whatsapp</a>
+            <a href={instagramLink}>Instagram</a>
           </span>
         )}
 
         {facebookLink && (
           <span>
             <AiOutlineFacebook size={24} color='var(--gray-700)' />
-            <a href={facebookLink}>Whatsapp</a>
+            <a href={facebookLink}>Facebook</a>
           </span>
         )}
 
