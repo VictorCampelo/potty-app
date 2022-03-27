@@ -10,9 +10,9 @@ const config = {
 }
 
 export default class ProductRepository extends Http {
-  async getProducts(id: string) {
+  async findAllByStoreId(storeId: string) {
     const products = await this.get<Product[]>(
-      `/products/store/${id}?limit=10&offset=0&loadRelations=true&loadLastSolds=false`
+      `/products/store/${storeId}?limit=10&offset=0&loadRelations=true&loadLastSolds=false`
     )
 
     return products.map(product => {
@@ -21,7 +21,7 @@ export default class ProductRepository extends Http {
     })
   }
 
-  async getProduct(id: string) {
+  async findById(id: string) {
     const product = await this.get<Product>(`/products/${id}?files=true`)
     if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
     return product

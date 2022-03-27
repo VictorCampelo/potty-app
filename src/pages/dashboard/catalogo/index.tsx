@@ -438,7 +438,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
     try {
       if (!store) Router.push('/')
 
-      const data = await productRepository.getProducts(store.id)
+      const data = await productRepository.findAllByStoreId(store.id)
 
       const formattedData = data.map((it: any) => ({
         ...it,

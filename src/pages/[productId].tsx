@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Head from 'next/head'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
@@ -28,12 +28,14 @@ import ReactStars from 'react-stars'
 
 import getNumberArray from '@/utils/getNumberArray'
 import formatToBrl from '@/utils/formatToBrl'
-import getProductAndStoreFromInitialProps from '@/utils/getProductAndStoreFromInitialProps'
 import useMedia from 'use-media'
 
 import { useCart } from '@/contexts/CartContext'
 
 import useActiveModal from '@/hooks/useModalActive'
+
+import ProductRepository from '@/repositories/ProductRepository'
+import StoreRepository from '@/repositories/StoreRepository'
 
 import {
   Wrapper,
@@ -47,15 +49,21 @@ import {
   MenuBottom
 } from '@/styles/pages/product'
 
-import type { NextPage, NextPageContext } from 'next'
 import type { File, Store, Product } from '@/@types/entities'
 
-export interface ServerProps {
-  store: Store | null
-  product: Product | null
-}
+const productRepository = new ProductRepository()
+const storeRepository = new StoreRepository()
 
-const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
+const ProductPage = () => {
+  const router = useRouter()
+  const productId =
+    typeof router.query.productId === 'string'
+      ? router.query.productId
+      : router.query.productId?.shift() || ''
+  const [store, setStore] = useState<Store | null>(null)
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loadingData, setLoadingData] = useState(false)
+
   const { loading, addProduct } = useCart()
 
   const widthScreen = useMedia({ minWidth: '640px' })
@@ -73,8 +81,8 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
     toast({ message: 'Produto adicionado ao carrinho!', type: 'success' })
   }
 
-  const handleDirectBuy = async () => {
-    await Router.push('carrinho/continuar')
+  const handleDirectBuy = () => {
+    router.push('carrinho/continuar')
   }
 
   const [toggleState, setToggleState] = useState(1)
@@ -118,6 +126,28 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
       setActualFileDesc(product?.files[index + 1])
     }
   }
+
+  const loadData = async () => {
+    try {
+      setLoadingData(true)
+
+      setProduct(await productRepository.findById(productId))
+
+      if (product) {
+        setStore(await storeRepository.findById(product.storeId))
+      } else {
+        router.push('/')
+      }
+    } catch {
+      router.push('/')
+    } finally {
+      setLoadingData(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
 
   return (
     <Wrapper>
@@ -261,11 +291,12 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
                 )}
 
                 <div className='installments'>
-                  {product?.parcelAmount > 1 && (
-                    <a onClick={() => setShowInstallment(!showInstallment)}>
-                      Ver parcelas
-                    </a>
-                  )}
+                  {product?.parcelAmount ||
+                    (0 > 1 && (
+                      <a onClick={() => setShowInstallment(!showInstallment)}>
+                        Ver parcelas
+                      </a>
+                    ))}
 
                   {showInstallment && (
                     <Installments>
@@ -294,9 +325,9 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
                           <br />
                           {getNumberArray({
                             size:
-                              product?.parcelAmount > 6
+                              product?.parcelAmount || 0 > 6
                                 ? 6
-                                : product?.parcelAmount,
+                                : product?.parcelAmount || 0,
                             startAt: 2
                           }).map((month) => {
                             return (
@@ -304,7 +335,8 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
                                 {month}x de{' '}
                                 {formatToBrl(
                                   (product?.priceWithDiscount ||
-                                    product?.price) / month
+                                    product?.price ||
+                                    1) / month
                                 )}{' '}
                                 sem juros.
                                 <br />
@@ -313,26 +345,28 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
                           })}
                         </p>
 
-                        {product?.parcelAmount > 6 && (
-                          <p className='list2'>
-                            {getNumberArray({
-                              size: product?.parcelAmount - 6,
-                              startAt: 7
-                            }).map((month) => {
-                              return (
-                                <>
-                                  {month}x de{' '}
-                                  {formatToBrl(
-                                    (product?.priceWithDiscount ||
-                                      product?.price) / month
-                                  )}{' '}
-                                  sem juros.
-                                  <br />
-                                </>
-                              )
-                            })}
-                          </p>
-                        )}
+                        {product?.parcelAmount ||
+                          (0 > 6 && (
+                            <p className='list2'>
+                              {getNumberArray({
+                                size: product?.parcelAmount || 0 - 6,
+                                startAt: 7
+                              }).map((month) => {
+                                return (
+                                  <>
+                                    {month}x de{' '}
+                                    {formatToBrl(
+                                      (product?.priceWithDiscount ||
+                                        product?.price ||
+                                        1) / month
+                                    )}{' '}
+                                    sem juros.
+                                    <br />
+                                  </>
+                                )
+                              })}
+                            </p>
+                          ))}
                       </div>
                     </Installments>
                   )}
@@ -781,26 +815,6 @@ const ProductPage: NextPage<ServerProps> = ({ store, product }) => {
       )}
     </Wrapper>
   )
-}
-
-const redirectToHome = (ctx: NextPageContext) => {
-  ctx.res?.writeHead(307, { Location: '/' })
-  ctx.res?.end()
-}
-
-ProductPage.getInitialProps = async (ctx) => {
-  try {
-    const { product, store } = await getProductAndStoreFromInitialProps(ctx)
-
-    if (!product || !store) {
-      redirectToHome(ctx)
-    }
-
-    return { store, product }
-  } catch {
-    redirectToHome(ctx)
-    return { store: null, product: null }
-  }
 }
 
 export default ProductPage
