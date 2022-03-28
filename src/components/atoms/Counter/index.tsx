@@ -16,6 +16,7 @@ const Counter = ({ product }: Props) => {
   return (
     <Container>
       <Button
+        disabled={product?.amount === 1}
         className={product?.amount === 1 ? 'inactive' : ''}
         onClick={() => {
           removeProduct(product.id, false)

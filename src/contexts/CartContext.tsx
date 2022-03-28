@@ -157,24 +157,25 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     try {
       setLoading(true)
 
-      const newProducts: CartProduct[] = JSON.parse(
+      const productsCache: CartProduct[] = JSON.parse(
         localStorage.getItem('bdv.cart.products') || '[]'
       )
 
-      const newStores: CartStore[] = JSON.parse(
+      const storesCache: CartStore[] = JSON.parse(
         localStorage.getItem('bdv.cart.stores') || '[]'
       )
 
-      if (products.length !== newProducts.length) {
-        updateProducts(newProducts)
+      if (products.length !== productsCache.length) {
+        updateProducts(productsCache)
       }
 
-      if (
-        stores.length !== newStores.length ||
-        (!stores.length && newProducts.length)
-      ) {
-        const newStoresFormatted = await Promise.all(
-          Object.entries(_.groupBy(newProducts, 'storeId')).map(
+      if (stores.length !== storesCache.length) {
+        setStores(storesCache)
+      }
+
+      if (!storesCache.length && productsCache.length) {
+        const newStores = await Promise.all(
+          Object.entries(_.groupBy(productsCache, 'storeId')).map(
             async ([id, products]) => {
               const { name, paymentMethods } = await storeRepository.findById(
                 id
@@ -190,9 +191,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           )
         )
 
-        // console.log('new stores formatted')
-
-        setStores(newStoresFormatted)
+        setStores(newStores)
       }
     } finally {
       setLoading(false)
