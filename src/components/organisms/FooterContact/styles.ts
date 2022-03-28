@@ -11,6 +11,8 @@ export const Footer = styled.footer`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   padding: var(--spacing-xs) var(--spacing-md);
 
+  border-radius: 50%;
+
   h1 {
     margin-bottom: var(--spacing-xxxs);
   }

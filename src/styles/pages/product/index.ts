@@ -17,6 +17,7 @@ export const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--spacing-xxs);
   width: 100%;
   padding: var(--spacing-nano) var(--spacing-lg);
   display: flex;
@@ -33,10 +34,13 @@ export const Container = styled.main`
     width: 100%;
     height: 80px;
 
-
     ${[sizes.down('sm')]} {
       width: 50%;
     }
+  }
+
+  footer {
+    border-radius: var(--border-radius-gg);
   }
 `
 
@@ -121,7 +125,6 @@ export const MenuBottom = styled.div`
         font-size: var(--font-size-sm);
 
         color: var(--gray-300);
-
       }
     }
   }
@@ -496,7 +499,6 @@ export const CardDesc = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: var(--border-radius-gg);
 
-  margin-top: var(--spacing-xxs);
   padding: var(--spacing-xxs) 0;
 
   .description-container {

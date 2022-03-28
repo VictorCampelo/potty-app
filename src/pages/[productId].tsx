@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
@@ -49,17 +49,17 @@ import {
   MenuBottom
 } from '@/styles/pages/product'
 
+import type { NextPage } from 'next'
 import type { File, Store, Product } from '@/@types/entities'
 
 const productRepository = new ProductRepository()
 const storeRepository = new StoreRepository()
 
-const ProductPage = () => {
-  const router = useRouter()
-  const productId =
-    typeof router.query.productId === 'string'
-      ? router.query.productId
-      : router.query.productId?.shift() || ''
+interface ServerProps {
+  productId: string
+}
+
+const ProductPage: NextPage<ServerProps> = ({ productId }) => {
   const [store, setStore] = useState<Store | null>(null)
   const [product, setProduct] = useState<Product | null>(null)
   const [loadingData, setLoadingData] = useState(false)
@@ -82,7 +82,7 @@ const ProductPage = () => {
   }
 
   const handleDirectBuy = () => {
-    router.push('carrinho/continuar')
+    Router.push('carrinho/continuar')
   }
 
   const [toggleState, setToggleState] = useState(1)
@@ -131,15 +131,17 @@ const ProductPage = () => {
     try {
       setLoadingData(true)
 
-      setProduct(await productRepository.findById(productId))
+      const fetchProduct = await productRepository.findById(productId)
 
-      if (product) {
-        setStore(await storeRepository.findById(product.storeId))
+      setProduct(fetchProduct)
+
+      if (fetchProduct?.storeId) {
+        setStore(await storeRepository.findById(fetchProduct.storeId))
       } else {
-        router.push('/')
+        Router.push('/')
       }
     } catch {
-      router.push('/')
+      Router.push('/')
     } finally {
       setLoadingData(false)
     }
@@ -147,6 +149,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     loadData()
+    console.log(loadingData)
   }, [])
 
   return (
@@ -815,6 +818,17 @@ const ProductPage = () => {
       )}
     </Wrapper>
   )
+}
+
+ProductPage.getInitialProps = async ({ query }) => {
+  const productId =
+    typeof query.productId === 'string'
+      ? query.productId
+      : query.productId?.shift() || ''
+
+  return {
+    productId
+  }
 }
 
 export default ProductPage
