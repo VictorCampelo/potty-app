@@ -672,7 +672,7 @@ const CartContinue = () => {
                             >
                               <div className='img-container'>
                                 <img
-                                  src={product?.image}
+                                  src={product?.files[0]?.url}
                                   alt='Foto do produto'
                                 />
                               </div>

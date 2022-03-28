@@ -50,7 +50,7 @@ import {
 } from '@/styles/pages/product'
 
 import type { NextPage } from 'next'
-import type { File, Store, Product } from '@/@types/entities'
+import type { File, Store, CartProduct } from '@/@types/entities'
 
 const productRepository = new ProductRepository()
 const storeRepository = new StoreRepository()
@@ -61,7 +61,7 @@ interface ServerProps {
 
 const ProductPage: NextPage<ServerProps> = ({ productId }) => {
   const [store, setStore] = useState<Store | null>(null)
-  const [product, setProduct] = useState<Product | null>(null)
+  const [product, setProduct] = useState<CartProduct | null>(null)
   const [loadingData, setLoadingData] = useState(false)
 
   const { loading, addProduct } = useCart()
@@ -133,7 +133,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
 
       const fetchProduct = await productRepository.findById(productId)
 
-      setProduct(fetchProduct)
+      setProduct({ ...fetchProduct, amount: 1 })
 
       if (fetchProduct?.storeId) {
         setStore(await storeRepository.findById(fetchProduct.storeId))
@@ -177,6 +177,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
           <header className='header'>
             <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
           </header>
+
           <CardProduct>
             <div className='image-container'>
               {!widthScreen && (

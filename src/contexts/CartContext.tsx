@@ -10,7 +10,7 @@ import StoreRepository from '@/repositories/StoreRepository'
 
 import _ from 'lodash'
 
-import type { Product, CartProduct, PaymentMethod } from '@/@types/entities'
+import type { CartProduct, PaymentMethod } from '@/@types/entities'
 
 interface Store {
   id: string
@@ -27,7 +27,7 @@ interface CartContextData {
   stores: Store[]
   selectAllProducts: () => void
   toggleSelectProduct: (id: string) => void
-  addProduct: (product: Product | CartProduct) => void
+  addProduct: (product: CartProduct) => void
   removeProduct: (id: string, all?: boolean) => void
   clearCart: () => void
 }
@@ -103,21 +103,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   }
 
-  const addProduct = (newProduct: Product | CartProduct) => {
+  const addProduct = (newProduct: CartProduct) => {
     if (products.findIndex(({ id }) => id === newProduct.id) === -1) {
-      const formatted = {
-        storeId: newProduct.storeId,
-        id: newProduct.id,
-        amount: 1,
-        title: newProduct.title,
-        price: newProduct.price,
-        priceWithDiscount: newProduct.priceWithDiscount,
-        selected: false,
-        image: newProduct.image || newProduct.files?.shift()?.url,
-        discount: newProduct.discount
-      }
+      newProduct.amount = 1
+      newProduct.selected = false
 
-      updateProducts([...products, formatted])
+      updateProducts([...products, newProduct])
     } else {
       updateProducts(
         products.map((product) => {

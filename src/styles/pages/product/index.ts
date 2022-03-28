@@ -17,7 +17,7 @@ export const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xxs);
+  gap: var(--spacing-md);
   width: 100%;
   padding: var(--spacing-nano) var(--spacing-lg);
   display: flex;

@@ -118,7 +118,10 @@ const CartPage = () => {
                             style={{ flex: 5, justifyContent: 'flex-start' }}
                           >
                             <div className='imgContainer'>
-                              <img src={it?.image} alt='Imagem do produto' />
+                              <img
+                                src={it?.files[0]?.url}
+                                alt='Imagem do produto'
+                              />
                             </div>
 
                             <span>{it.title}</span>

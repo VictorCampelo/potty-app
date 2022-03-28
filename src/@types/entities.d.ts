@@ -99,19 +99,6 @@ export interface Category {
   storeId: string
 }
 
-export interface CartProduct {
-  storeId: string
-  id: string
-  amount: number
-  title: string
-  price: number
-  priceWithDiscount?: number
-  selected?: boolean
-  image?: string
-  files?: File[]
-  discount?: number
-}
-
 export interface Product {
   id: string
   title: string
@@ -133,4 +120,9 @@ export interface Product {
   storeId: string
   files: File[]
   image?: string
+}
+
+export interface CartProduct extends Product {
+  amount: number
+  selected?: boolean
 }
