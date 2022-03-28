@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
-import Input from '@/components/atoms/Input'
-
 export const CardsContainer = styled.section`
   width: 100%;
   height: 100%;
@@ -23,10 +21,10 @@ export const CardsContainer = styled.section`
 export const AddressCard = styled.section`
   grid-column: span 2 / span 3;
   width: 100%;
-  max-height: 580px;
+  height: 100%;
   background: white;
   border-radius: 30px;
-  padding: 1.5rem 2rem 3.5rem 2rem;
+  padding: var(--spacing-xs);
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
   .paymentContainer {
@@ -99,9 +97,7 @@ export const AddressInfo = styled.div`
     display: block;
   }
 `
-export const Complement = styled(Input)`
-  width: 400px;
-`
+
 export const UpdateAddressButton = styled.button`
   display: flex;
   align-items: center;
@@ -278,6 +274,9 @@ export const ProductItem = styled.div<{ active: boolean }>`
     padding: 0.25rem 1rem;
 
     h4 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 1rem;
       font-weight: 500;
     }

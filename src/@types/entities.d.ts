@@ -5,8 +5,9 @@ export interface UserAddress {
   zipcode: string
   neighborhood: string
   complement: string
-  addressNumber: number
+  addressNumber: string
   logradouro: string
+  formattedAddress: string
 }
 
 export interface User extends UserAddress {
@@ -125,4 +126,11 @@ export interface Product {
 export interface CartProduct extends Product {
   amount: number
   selected?: boolean
+}
+
+export interface CartStore {
+  id: string
+  name: string
+  products: CartProduct[]
+  paymentMethods: PaymentMethod[]
 }

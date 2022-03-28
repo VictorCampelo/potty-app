@@ -10,21 +10,14 @@ import StoreRepository from '@/repositories/StoreRepository'
 
 import _ from 'lodash'
 
-import type { CartProduct, PaymentMethod } from '@/@types/entities'
-
-interface Store {
-  id: string
-  name: string
-  products: CartProduct[]
-  paymentMethods: PaymentMethod[]
-}
+import type { CartProduct, CartStore } from '@/@types/entities'
 
 interface CartContextData {
   loading: boolean
   totalPrice: number
   totalItems: number
   products: CartProduct[]
-  stores: Store[]
+  stores: CartStore[]
   selectAllProducts: () => void
   toggleSelectProduct: (id: string) => void
   addProduct: (product: CartProduct) => void
@@ -53,26 +46,25 @@ export const CartContext = createContext<CartContextData>({
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [products, setProducts] = useState<CartProduct[]>([])
-  const [stores, setStores] = useState<Store[]>([])
+  const [stores, setStores] = useState<CartStore[]>([])
   const [loading, setLoading] = useState(false)
 
-  const totalPrice = useMemo(
-    () =>
-      products.reduce(
-        (prev, curr) => prev + Number(curr.price) * Number(curr.amount),
-        0
-      ),
-    [products]
-  )
+  const { totalPrice, totalItems } = useMemo(() => {
+    const totalPrice = products.reduce(
+      (prev, curr) => prev + Number(curr.price) * Number(curr.amount),
+      0
+    )
+    const totalItems = products.reduce(
+      (acc, product) => acc + product.amount,
+      0
+    )
 
-  const totalItems = useMemo(
-    () => products.reduce((acc, product) => acc + product.amount, 0),
-    [products]
-  )
+    return { totalPrice, totalItems }
+  }, [products])
 
   const updateProducts = (newProducts: CartProduct[]) => {
     setProducts(newProducts)
-    localStorage.setItem('bdv.cart.products', JSON.stringify(products))
+    localStorage.setItem('bdv.cart.products', JSON.stringify(newProducts))
   }
 
   const selectAllProducts = () => {
@@ -103,12 +95,43 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   }
 
+  const addProductInStore = async (
+    newProduct: CartProduct,
+    { exist = false } = {}
+  ) => {
+    if (exist) {
+      setStores(
+        stores.map((store) => {
+          if (store.id === newProduct.id) {
+            store.products = store.products.map((product) => {
+              if (product.id === newProduct.id) product.amount += 1
+              return product
+            })
+          }
+
+          return store
+        })
+      )
+    } else {
+      const store = await storeRepository.findById(newProduct.storeId)
+
+      return {
+        id: store.id,
+        name: store.name,
+        products: [newProduct],
+        paymentMethods: store.paymentMethods
+      }
+    }
+  }
+
   const addProduct = (newProduct: CartProduct) => {
     if (products.findIndex(({ id }) => id === newProduct.id) === -1) {
       newProduct.amount = 1
       newProduct.selected = false
 
       updateProducts([...products, newProduct])
+
+      addProductInStore(newProduct, { exist: false })
     } else {
       updateProducts(
         products.map((product) => {
@@ -119,11 +142,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           return product
         })
       )
+
+      addProductInStore(newProduct, { exist: true })
     }
   }
 
   const clearCart = () => {
-    updateProducts([])
+    setProducts([])
+    setStores([])
+    localStorage.removeItem('bdv.cart.products')
   }
 
   const loadData = async () => {
@@ -134,26 +161,39 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         localStorage.getItem('bdv.cart.products') || '[]'
       )
 
-      if (products.length === newProducts.length) return
-
-      updateProducts(newProducts)
-
-      const newStores = await Promise.all(
-        Object.entries(_.groupBy(newProducts, 'storeId')).map(
-          async ([id, products]) => {
-            const { name, paymentMethods } = await storeRepository.findById(id)
-
-            return {
-              id,
-              name,
-              products,
-              paymentMethods
-            }
-          }
-        )
+      const newStores: CartStore[] = JSON.parse(
+        localStorage.getItem('bdv.cart.stores') || '[]'
       )
 
-      setStores(newStores)
+      if (products.length !== newProducts.length) {
+        updateProducts(newProducts)
+      }
+
+      if (
+        stores.length !== newStores.length ||
+        (!stores.length && newProducts.length)
+      ) {
+        const newStoresFormatted = await Promise.all(
+          Object.entries(_.groupBy(newProducts, 'storeId')).map(
+            async ([id, products]) => {
+              const { name, paymentMethods } = await storeRepository.findById(
+                id
+              )
+
+              return {
+                id,
+                name,
+                products,
+                paymentMethods
+              }
+            }
+          )
+        )
+
+        // console.log('new stores formatted')
+
+        setStores(newStoresFormatted)
+      }
     } finally {
       setLoading(false)
     }

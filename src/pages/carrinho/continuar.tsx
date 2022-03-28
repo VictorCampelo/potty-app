@@ -48,7 +48,6 @@ import {
   AddressInfo,
   CardsContainer,
   CartContainerFooter,
-  Complement,
   DeliveryMethod,
   ModalContainer,
   ProductItem,
@@ -81,8 +80,9 @@ const CartContinue = () => {
 
   const widthScreen = useMedia({ minWidth: '640px' })
 
-  const { user, fetchUser } = useAuth()
+  const { user, fetchUser, isLoading } = useAuth()
   const { stores, products, loading, clearCart, totalPrice } = useCart()
+  console.log(stores)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
     null
   )
@@ -496,7 +496,7 @@ const CartContinue = () => {
             </div>
 
             <div className='row'>
-              <Complement
+              <Input
                 label='Complemento'
                 placeholder='Complemento'
                 {...register('complement')}
@@ -553,7 +553,7 @@ const CartContinue = () => {
                 </DeliveryMethod>
 
                 <AddressInfo>
-                  {user ? (
+                  {user && !isLoading ? (
                     <>
                       <span>
                         <strong>Nome do usuário:</strong> {user.firstName}{' '}
@@ -562,8 +562,7 @@ const CartContinue = () => {
 
                       <span>
                         <strong>Endereço: </strong>
-                        {user.street} {user.addressNumber}, {user.neighborhood},{' '}
-                        {user.city}, {user.uf}, {user.zipcode}, Brasil
+                        {user.formattedAddress}
                       </span>
 
                       <span>

@@ -21,13 +21,13 @@ import {
 } from 'react-icons/ai'
 import { VscSearch } from 'react-icons/vsc'
 import { BsShareFill } from 'react-icons/bs'
-import { toast } from 'react-toastify'
 import { IoIosClose } from 'react-icons/io'
 import { PulseLoader } from 'react-spinners'
 import ReactStars from 'react-stars'
 
 import getNumberArray from '@/utils/getNumberArray'
 import formatToBrl from '@/utils/formatToBrl'
+import toast from '@/utils/toast'
 import useMedia from 'use-media'
 
 import { useCart } from '@/contexts/CartContext'
@@ -135,7 +135,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
 
       setProduct({ ...fetchProduct, amount: 1 })
 
-      if (fetchProduct?.storeId) {
+      if (fetchProduct.storeId) {
         setStore(await storeRepository.findById(fetchProduct.storeId))
       } else {
         Router.push('/')
@@ -295,12 +295,11 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 )}
 
                 <div className='installments'>
-                  {product?.parcelAmount ||
-                    (0 > 1 && (
-                      <a onClick={() => setShowInstallment(!showInstallment)}>
-                        Ver parcelas
-                      </a>
-                    ))}
+                  {product?.parcelAmount || 0 > 1 ? (
+                    <a onClick={() => setShowInstallment(!showInstallment)}>
+                      Ver parcelas
+                    </a>
+                  ) : null}
 
                   {showInstallment && (
                     <Installments>
@@ -349,28 +348,27 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                           })}
                         </p>
 
-                        {product?.parcelAmount ||
-                          (0 > 6 && (
-                            <p className='list2'>
-                              {getNumberArray({
-                                size: product?.parcelAmount || 0 - 6,
-                                startAt: 7
-                              }).map((month) => {
-                                return (
-                                  <>
-                                    {month}x de{' '}
-                                    {formatToBrl(
-                                      (product?.priceWithDiscount ||
-                                        product?.price ||
-                                        1) / month
-                                    )}{' '}
-                                    sem juros.
-                                    <br />
-                                  </>
-                                )
-                              })}
-                            </p>
-                          ))}
+                        {product?.parcelAmount || 0 > 6 ? (
+                          <p className='list2'>
+                            {getNumberArray({
+                              size: product?.parcelAmount || 0 - 6,
+                              startAt: 7
+                            }).map((month) => {
+                              return (
+                                <>
+                                  {month}x de{' '}
+                                  {formatToBrl(
+                                    (product?.priceWithDiscount ||
+                                      product?.price ||
+                                      1) / month
+                                  )}{' '}
+                                  sem juros.
+                                  <br />
+                                </>
+                              )
+                            })}
+                          </p>
+                        ) : null}
                       </div>
                     </Installments>
                   )}

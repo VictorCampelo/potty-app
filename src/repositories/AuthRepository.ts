@@ -23,7 +23,7 @@ export default class AuthRepository extends Http {
     destroyCookie(null, 'bdv.auth.token')
     destroyCookie(null, 'bdv.auth.refreshToken')
 
-    await Router.push('/')
+    await Router.push('/entrar')
   }
 
   verifyAccount(token: string) {

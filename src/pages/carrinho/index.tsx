@@ -150,7 +150,7 @@ const CartPage = () => {
                         </>
                       ) : (
                         <>
-                          <div className='checkbox'>
+                          <div className='checkbox' key={it.id}>
                             <div className='check'>
                               <button
                                 type='button'

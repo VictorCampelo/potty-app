@@ -3,8 +3,6 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import AuthRepository from '@/repositories/AuthRepository'
 import UserRepository from '@/repositories/UserRepository'
 
-import { parseCookies } from 'nookies'
-
 import type { ReactNode } from 'react'
 import type { User, UserSignUpMeta } from '@/@types/entities'
 
@@ -87,10 +85,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [signUpMeta])
 
   useEffect(() => {
-    const token = parseCookies()['bdv.auth.token']
     const sessionSingUpMeta = sessionStorage.getItem('bdv.auth.register.meta')
 
-    if (!user && token) {
+    if (!user) {
       fetchUser()
     }
 
