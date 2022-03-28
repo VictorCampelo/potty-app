@@ -11,7 +11,7 @@ import type { ReactNode } from 'react'
 import type { User, UserSignUpMeta } from '@/@types/entities'
 
 interface AuthContextData {
-  signOut: () => Promise<void>
+  signOut: () => void
   isAuthenticated: boolean
   user: User | null
   fetchUser: () => Promise<void>
@@ -29,7 +29,7 @@ const authRepository = new AuthRepository()
 const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
-  signOut: async () => undefined,
+  signOut: () => undefined,
   isAuthenticated: false,
   user: null,
   signUpMeta: null,
