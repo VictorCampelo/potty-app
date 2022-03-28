@@ -19,11 +19,11 @@ export default class AuthRepository extends Http {
     return this.post<SignUpDTO, SignUpResponse>('/auth/signup', dto)
   }
 
-  async singOut() {
+  singOut() {
     destroyCookie(null, 'bdv.auth.token')
     destroyCookie(null, 'bdv.auth.refreshToken')
 
-    await Router.push('/entrar')
+    Router.push('/')
   }
 
   verifyAccount(token: string) {
