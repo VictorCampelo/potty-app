@@ -108,6 +108,7 @@ export interface CartProduct {
   priceWithDiscount?: number
   selected?: boolean
   image?: string
+  files?: File[]
   discount?: number
 }
 
@@ -131,4 +132,5 @@ export interface Product {
   deletedAt?: string
   storeId: string
   files: File[]
+  image?: string
 }

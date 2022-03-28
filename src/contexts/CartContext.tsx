@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo
+} from 'react'
 
 import StoreRepository from '@/repositories/StoreRepository'
 
@@ -16,13 +22,13 @@ interface Store {
 interface CartContextData {
   loading: boolean
   totalPrice: number
+  totalItems: number
   products: CartProduct[]
   stores: Store[]
-  setProducts: (products: CartProduct[]) => void
   selectAllProducts: () => void
   toggleSelectProduct: (id: string) => void
-  addProduct: (product: Product) => void
-  removeProduct: (id: string) => void
+  addProduct: (product: Product | CartProduct) => void
+  removeProduct: (id: string, all?: boolean) => void
   clearCart: () => void
 }
 
@@ -35,9 +41,9 @@ const storeRepository = new StoreRepository()
 export const CartContext = createContext<CartContextData>({
   loading: false,
   totalPrice: 0,
+  totalItems: 0,
   products: [],
   stores: [],
-  setProducts: () => undefined,
   addProduct: () => undefined,
   removeProduct: () => undefined,
   selectAllProducts: () => undefined,
@@ -47,9 +53,87 @@ export const CartContext = createContext<CartContextData>({
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [products, setProducts] = useState<CartProduct[]>([])
-  const [totalPrice, setTotalPrice] = useState(0)
   const [stores, setStores] = useState<Store[]>([])
   const [loading, setLoading] = useState(false)
+
+  const totalPrice = useMemo(
+    () =>
+      products.reduce(
+        (prev, curr) => prev + Number(curr.price) * Number(curr.amount),
+        0
+      ),
+    [products]
+  )
+
+  const totalItems = useMemo(
+    () => products.reduce((acc, product) => acc + product.amount, 0),
+    [products]
+  )
+
+  const updateProducts = (newProducts: CartProduct[]) => {
+    setProducts(newProducts)
+    localStorage.setItem('bdv.cart.products', JSON.stringify(products))
+  }
+
+  const selectAllProducts = () => {
+    updateProducts(products.map((product) => ({ ...product, selected: true })))
+  }
+
+  const toggleSelectProduct = (id: string) => {
+    updateProducts(
+      products.map((product) =>
+        product.id === id
+          ? { ...product, selected: !product.selected }
+          : product
+      )
+    )
+  }
+
+  const removeProduct = (id: string, all = true) => {
+    if (all) {
+      updateProducts(products.filter((product) => product.id !== id))
+    } else {
+      updateProducts(
+        products.map((product) =>
+          product.id === id
+            ? { ...product, amount: product.amount - 1 }
+            : product
+        )
+      )
+    }
+  }
+
+  const addProduct = (newProduct: Product | CartProduct) => {
+    if (products.findIndex(({ id }) => id === newProduct.id) === -1) {
+      const formatted = {
+        storeId: newProduct.storeId,
+        id: newProduct.id,
+        amount: 1,
+        title: newProduct.title,
+        price: newProduct.price,
+        priceWithDiscount: newProduct.priceWithDiscount,
+        selected: false,
+        image: newProduct.image || newProduct.files?.shift()?.url,
+        discount: newProduct.discount
+      }
+
+      updateProducts([...products, formatted])
+    } else {
+      updateProducts(
+        products.map((product) => {
+          if (product.id === newProduct.id) {
+            product.amount += 1
+          }
+
+          return product
+        })
+      )
+    }
+  }
+
+  const clearCart = () => {
+    updateProducts([])
+  }
 
   const loadData = async () => {
     try {
@@ -61,13 +145,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
       if (products.length === newProducts.length) return
 
-      setProducts(newProducts)
-
-      const newPrice = newProducts.reduce((prev, curr) => {
-        return prev + Number(curr.price) * Number(curr.amount)
-      }, 0)
-
-      setTotalPrice(newPrice)
+      updateProducts(newProducts)
 
       const newStores = await Promise.all(
         Object.entries(_.groupBy(newProducts, 'storeId')).map(
@@ -90,50 +168,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     }
   }
 
-  const selectAllProducts = () => {
-    setProducts(products.map((product) => ({ ...product, selected: true })))
-  }
-
-  const toggleSelectProduct = (id: string) => {
-    setProducts(
-      products.map((product) =>
-        product.id === id
-          ? { ...product, selected: !product.selected }
-          : product
-      )
-    )
-  }
-
-  const removeProduct = (id: string) => {
-    setProducts(products.filter((product) => product.id !== id))
-  }
-
-  const addProduct = (product: Product) => {
-    const newProduct = {
-      storeId: product.storeId,
-      id: product.id,
-      amount: products.filter((p) => p.id === product.id).length + 1,
-      title: product.title,
-      price: product.price,
-      priceWithDiscount: product.priceWithDiscount,
-      selected: false,
-      image: product.files[0]?.url,
-      discount: product.discount
-    }
-
-    setProducts([...products, newProduct])
-
-    setTotalPrice(totalPrice + Number(product.price))
-  }
-
-  const clearCart = () => {
-    setProducts([])
-  }
-
-  useEffect(() => {
-    localStorage.setItem('bdv.cart.products', JSON.stringify(products))
-  }, [products])
-
   useEffect(() => {
     loadData()
   }, [])
@@ -143,9 +177,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       value={{
         loading,
         totalPrice,
+        totalItems,
         products,
         stores,
-        setProducts,
         selectAllProducts,
         toggleSelectProduct,
         addProduct,

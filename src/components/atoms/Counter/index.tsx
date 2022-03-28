@@ -4,49 +4,29 @@ import { useCart } from '@/contexts/CartContext'
 
 import { Container, Button } from './styles'
 
+import type { CartProduct } from '@/@types/entities'
+
 interface Props {
-  id: string
+  product: CartProduct
 }
 
-const Counter = ({ id }: Props) => {
-  const { products, setProducts } = useCart()
+const Counter = ({ product }: Props) => {
+  const { removeProduct, addProduct } = useCart()
 
   return (
     <Container>
       <Button
-        className={
-          products.find((it) => it.id === id)?.amount === 1 ? 'inactive' : ''
-        }
+        className={product?.amount === 1 ? 'inactive' : ''}
         onClick={() => {
-          if (products.find((it) => it.id === id)?.amount || 0 > 1) {
-            setProducts(
-              products.map((it) => {
-                if (it.id === id) {
-                  return {
-                    ...it,
-                    amount: it.amount - 1
-                  }
-                } else return it
-              })
-            )
-          }
+          removeProduct(product.id, false)
         }}
       >
         -
       </Button>
-      <p>{products.find((it) => it.id === id)?.amount || 0}</p>
+      <p>{product?.amount || 0}</p>
       <Button
         onClick={() => {
-          setProducts(
-            products.map((it) => {
-              if (it.id === id) {
-                return {
-                  ...it,
-                  amount: it.amount + 1
-                }
-              } else return it
-            })
-          )
+          addProduct(product)
         }}
       >
         +

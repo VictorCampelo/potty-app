@@ -10,7 +10,6 @@ export const SeeProductsButton = styled(Button)`
 
 export const EmptyCartContainer = styled.section`
   width: 100%;
-  height: 85vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,7 +39,6 @@ export const Container = styled.main`
 
 export const Content = styled.section`
   max-width: 1420px;
-  min-height: 100vmin;
   height: 100%;
   width: 100%;
   padding-top: 1.5rem;

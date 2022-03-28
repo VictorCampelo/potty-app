@@ -36,7 +36,8 @@ const CartPage = () => {
     removeProduct,
     toggleSelectProduct,
     clearCart,
-    totalPrice
+    totalPrice,
+    totalItems
   } = useCart()
 
   const widthScreen = useMedia({ minWidth: '640px' })
@@ -123,7 +124,7 @@ const CartPage = () => {
                             <span>{it.title}</span>
                           </section>
 
-                          <Counter id={it.id} />
+                          <Counter product={it} />
 
                           <section>
                             <strong>
@@ -177,7 +178,7 @@ const CartPage = () => {
                             <strong>
                               {formatToBrl(it.priceWithDiscount || it.price)}
                             </strong>
-                            <Counter id={it.id} />
+                            <Counter product={it} />
                           </section>
                         </>
                       )}
@@ -206,9 +207,7 @@ const CartPage = () => {
                     <strong>{formatToBrl(totalPrice)}</strong>
                   </div>
                   <span className='spanBottom'>
-                    {products.filter((it) => it.selected).length <= 1
-                      ? products.length + ' item'
-                      : products.length + ' itens'}
+                    {totalItems} {totalItems > 1 ? 'Itens' : 'Item'}
                     {!widthScreen && (
                       <a onClick={() => clearCart()}>Esvaziar Carrinho</a>
                     )}

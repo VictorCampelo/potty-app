@@ -10,7 +10,7 @@ import formatToBrl from '@/utils/formatToBrl'
 import { Wrapper, Container, Quantity, Price } from './styles'
 
 const CartButton = () => {
-  const { loading, products, totalPrice } = useCart()
+  const { loading, totalItems, totalPrice } = useCart()
 
   return (
     <Wrapper onClick={() => Router.push('/carrinho')}>
@@ -25,7 +25,7 @@ const CartButton = () => {
               width='28'
               height='28'
             />
-            <Quantity>{products.length}</Quantity>
+            <Quantity>{totalItems}</Quantity>
           </Container>
 
           {totalPrice ? <Price>| {formatToBrl(totalPrice)}</Price> : null}

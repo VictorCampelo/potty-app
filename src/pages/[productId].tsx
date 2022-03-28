@@ -256,7 +256,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 {product?.priceWithDiscount ? (
                   <>
                     <div className='discount'>
-                      <h4>De: {formatToBrl(product?.price)}</h4>
+                      <h4>De: {formatToBrl(product?.priceWithDiscount)}</h4>
                       <div>-{product?.discount}%</div>
                     </div>
                     <div className='price'>
