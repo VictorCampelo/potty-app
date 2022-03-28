@@ -32,7 +32,7 @@ import useMedia from 'use-media'
 
 import { useCart } from '@/contexts/CartContext'
 
-import useActiveModal from '@/hooks/useModalActive'
+import useToggleState from '@/hooks/useToggleState'
 
 import ProductRepository from '@/repositories/ProductRepository'
 import StoreRepository from '@/repositories/StoreRepository'
@@ -46,7 +46,8 @@ import {
   FilterCard,
   Installments,
   Divisor,
-  MenuBottom
+  MenuBottom,
+  FilterOrder
 } from '@/styles/pages/product'
 
 import type { NextPage } from 'next'
@@ -70,8 +71,16 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
 
   const [showInstallment, setShowInstallment] = useState(false)
 
-  const [descModalVisible, toggleDescModalVisible] = useActiveModal(false)
-  const [avalModalVisible, toggleAvalModalVisible] = useActiveModal(false)
+  const [descModalVisible, toggleDescModalVisible] = useToggleState(false)
+  const [avalModalVisible, toggleAvalModalVisible] = useToggleState(false)
+
+  const [filterOrder, setFilterOrder] = useState('')
+  const updateFilterOrder = (newOrder: string) => {
+    if (newOrder === filterOrder) setFilterOrder('')
+    else setFilterOrder(newOrder)
+  }
+  const [filterOnlyImage, toggleFilterOnlyImage] = useToggleState(false)
+  const [filterStars, setFilterStars] = useState('')
 
   const handleAddToCart = () => {
     if (product) {
@@ -391,7 +400,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
             <CardDesc>
               <CatalogTabs
                 tab1='Descrição'
-                tab2='Avaliação'
+                tab2='Avaliações'
                 setToggleState={setToggleState}
                 toggleState={toggleState}
                 content1={
@@ -445,7 +454,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 content2={
                   <>
                     <div className='rated-container'>
-                      <header>
+                      <div className='header'>
                         <h1 className='rate'>Avaliações de Clientes</h1>
                         <div>
                           <h1>{product?.avgStars}</h1>
@@ -457,10 +466,10 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                           />
                         </div>
                         <p>({product?.sumFeedbacks} avaliações)</p>
-                      </header>
+                      </div>
                       <div className='container'>
                         <div className='left-container'>
-                          {[1, 2, 3].map((number) => {
+                          {getNumberArray({ size: 20 }).map((number) => {
                             return (
                               <CardFeedback
                                 key={number}
@@ -477,25 +486,42 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                           <FilterCard>
                             <div className='filter'>
                               <h1>Ordenar</h1>
-                              <h4>Recente</h4>
-                              <h4>Melhor avaliação</h4>
-                              <h4>Pior avaliação</h4>
+                              <FilterOrder
+                                selected={filterOrder === 'latest'}
+                                onClick={() => updateFilterOrder('latest')}
+                              >
+                                Recente
+                              </FilterOrder>
+                              <FilterOrder
+                                selected={filterOrder === 'bestFeedback'}
+                                onClick={() =>
+                                  updateFilterOrder('bestFeedback')
+                                }
+                              >
+                                Melhor avaliação
+                              </FilterOrder>
+                              <FilterOrder
+                                selected={filterOrder === 'wrongFeedback'}
+                                onClick={() =>
+                                  updateFilterOrder('wrongFeedback')
+                                }
+                              >
+                                Pior avaliação
+                              </FilterOrder>
                               <h1>Filtros</h1>
                               <div className='stars-container'>
                                 <div style={{ marginBottom: 10 }}>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterOnlyImage}
+                                    toggleConfirm={toggleFilterOnlyImage}
                                   >
-                                    <p style={{ margin: 0 }}>
-                                      Somente com foto
-                                    </p>
+                                    <p>Somente com foto</p>
                                   </Checkbox>
                                 </div>
                                 <div>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterStars === 'five'}
+                                    toggleConfirm={() => setFilterStars('five')}
                                   >
                                     <ReactStars
                                       color1='#e9e9e9'
@@ -511,8 +537,8 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                                 </div>
                                 <div>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterStars === 'four'}
+                                    toggleConfirm={() => setFilterStars('four')}
                                   >
                                     <ReactStars
                                       color1='#e9e9e9'
@@ -528,8 +554,10 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                                 </div>
                                 <div>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterStars === 'three'}
+                                    toggleConfirm={() =>
+                                      setFilterStars('three')
+                                    }
                                   >
                                     <ReactStars
                                       color1='#e9e9e9'
@@ -545,8 +573,8 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                                 </div>
                                 <div>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterStars === 'two'}
+                                    toggleConfirm={() => setFilterStars('two')}
                                   >
                                     <ReactStars
                                       color1='#e9e9e9'
@@ -562,8 +590,8 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                                 </div>
                                 <div>
                                   <Checkbox
-                                    confirm={false}
-                                    toggleConfirm={() => undefined}
+                                    confirm={filterStars === 'one'}
+                                    toggleConfirm={() => setFilterStars('one')}
                                   >
                                     <ReactStars
                                       color1='#e9e9e9'

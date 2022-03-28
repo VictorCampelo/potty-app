@@ -6,7 +6,7 @@ export default function getNumberArray({
   startAt = 0
 }: {
   size: number
-  startAt: number
+  startAt?: number
 }) {
   return Array.from({ length: size }, (_, i) => i + startAt)
 }

@@ -10,7 +10,7 @@ export const Container = styled.div`
 
   background: white;
   border-radius: 0 0 30px 30px;
-  overflow-y: auto;
+  overflow: none;
 
   .bloc-tabs {
     display: flex;

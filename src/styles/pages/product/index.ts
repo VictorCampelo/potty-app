@@ -604,9 +604,9 @@ export const CardDesc = styled.div`
   }
 
   .rated-container {
-    height: 650px;
+    max-height: 800px;
 
-    header {
+    .header {
       display: flex;
       align-items: center;
 
@@ -649,7 +649,7 @@ export const CardDesc = styled.div`
       p {
         font-family: var(--font-family-primary);
         font-style: var(--font-style-normal);
-        font-weight: var(--font-weight-bold);
+        font-weight: var(--font-weight-light);
         font-size: var(--font-size-md);
         line-height: 36px;
         color: var(--white);
@@ -665,7 +665,6 @@ export const CardDesc = styled.div`
       flex-direction: row;
 
       width: 100%;
-      height: 550px;
 
       .left-container {
         display: flex;
@@ -674,7 +673,10 @@ export const CardDesc = styled.div`
         justify-content: flex-start;
 
         width: 80%;
-        height: auto;
+        height: 100%;
+        max-height: 700px;
+
+        margin: var(--spacing-xs) 0;
 
         padding: var(--spacing-xs) var(--spacing-sm);
 
@@ -767,6 +769,7 @@ export const FilterCard = styled.div`
 
     width: 100%;
     height: 100%;
+    max-height: 700px;
 
     background: var(---white);
     border: var(--border-width-hairline) solid #d8d9dd;
@@ -804,16 +807,34 @@ export const FilterCard = styled.div`
       margin-bottom: var(--spacing-xxxs);
       margin-top: var(--spacing-xxxs);
     }
+  }
+`
 
-    h4 {
-      font-family: var(--font-family-primary);
-      font-style: var(--font-style-normal);
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-xs);
-      line-height: 27px;
+interface FilterOrderProps {
+  selected: boolean
+}
 
-      color: #6c7079;
-    }
+export const FilterOrder = styled.p<FilterOrderProps>`
+  font-family: var(--font-family-primary);
+  font-style: var(--font-style-normal);
+  font-weight: ${(props) => (props.selected ? '800' : '600')};
+  font-size: ${(props) =>
+    props.selected ? 'var(--font-size-xs)' : 'var(--font-size-xxs)'};
+  line-height: 27px;
+
+  margin: var(--spacing-quarck) 0;
+
+  cursor: pointer;
+
+  color: var(--gray-600);
+
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+
+  &:hover {
+    color: var(--gray-700);
   }
 `
 
