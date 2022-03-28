@@ -222,7 +222,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 </Button>
               </div>
               <img
-                src={actualFile?.url || product?.files[0].url}
+                src={actualFile?.url || product?.files[0]?.url}
                 alt='Foto do produto'
                 className='product-image'
               />
@@ -438,7 +438,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                             </Button>
                           </div>
                           <img
-                            src={actualFileDesc?.url || product?.files[0].url}
+                            src={actualFileDesc?.url || product?.files[0]?.url}
                             alt='Foto do produto'
                           />
                         </div>
