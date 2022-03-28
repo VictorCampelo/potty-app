@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
+import Router from 'next/router'
+
 import AuthRepository from '@/repositories/AuthRepository'
 import UserRepository from '@/repositories/UserRepository'
 
@@ -47,19 +49,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const user = await userRepository.getMe()
       setUser(user)
     } catch {
-      signOut()
     } finally {
       setIsLoading(false)
     }
   }
 
-  const signOut = async () => {
+  const signOut = () => {
     try {
       setIsLoading(true)
 
       setUser(null)
 
-      await authRepository.singOut()
+      authRepository.singOut()
+
+      Router.push('/')
     } catch (error) {
       setUser(null)
       throw error

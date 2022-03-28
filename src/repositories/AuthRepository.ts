@@ -1,5 +1,4 @@
 import Http from '@/services/Http'
-import Router from 'next/router'
 
 import { destroyCookie } from 'nookies'
 
@@ -22,8 +21,6 @@ export default class AuthRepository extends Http {
   singOut() {
     destroyCookie(null, 'bdv.auth.token')
     destroyCookie(null, 'bdv.auth.refreshToken')
-
-    Router.push('/')
   }
 
   verifyAccount(token: string) {
