@@ -51,7 +51,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   const { totalPrice, totalItems } = useMemo(() => {
     const totalPrice = products.reduce(
-      (prev, curr) => prev + Number(curr.price) * Number(curr.amount),
+      (prev, curr) =>
+        prev +
+        Number(curr.priceWithDiscount || curr.price) * Number(curr.amount),
       0
     )
     const totalItems = products.reduce(

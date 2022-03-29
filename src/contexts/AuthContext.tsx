@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
 import Router from 'next/router'
 
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const [signUpMeta, setSignUpMeta] = useState<UserSignUpMeta | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const isAuthenticated = false
+  const isAuthenticated = useMemo(() => !!user?.email, [user])
 
   const fetchUser = async () => {
     try {

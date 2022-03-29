@@ -81,8 +81,12 @@ const CartContinue = () => {
   const widthScreen = useMedia({ minWidth: '640px' })
 
   const { user, fetchUser, isLoading } = useAuth()
+
+  useEffect(() => {
+    if (!isLoading && !user) Router.push('/entrar')
+  }, [isLoading])
+
   const { stores, products, loading, clearCart, totalPrice } = useCart()
-  console.log(stores)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
     null
   )
@@ -101,15 +105,7 @@ const CartContinue = () => {
   )
   const [parcelCheckbox, setParcelCheckbox] = useState(false)
 
-  const parcelsOptions = getNumberArray({
-    size: 11,
-    startAt: 2
-  }).map((parcel) => {
-    return {
-      value: `${parcel}`,
-      label: `${parcel}x`
-    }
-  })
+  const [parcelsOptions, setParcelsOptions] = useState<Option[]>([])
 
   const [paymentMethodOption, setPaymentMethodOption] = useState<Option | null>(
     null
@@ -142,7 +138,7 @@ const CartContinue = () => {
     }
 
     const paymentMethod = paymentMethods?.find(
-      (methods) => methods.methodName === methodName
+      (methods) => methods.id === methodName
     )
 
     if (!paymentMethod?.allowParcels) {
@@ -152,9 +148,9 @@ const CartContinue = () => {
         value: '1',
         label: '1x'
       })
-
-      setAllowParcels(false)
     }
+
+    setAllowParcels(!!paymentMethod?.allowParcels)
 
     setProductsPaymentMethod({
       ...productsPaymentMethod,
@@ -163,20 +159,13 @@ const CartContinue = () => {
   }
 
   const onSelectPaymentMethod = (option: Option) => {
-    const paymentMethod = paymentMethods?.find(
-      (methods) => methods.methodName === option.value
-    )
-
-    if (parcelOption && selectedProduct && paymentMethod) {
-      setPaymentMethodOption(option)
-      setAllowParcels(paymentMethod.allowParcels)
-      setParcelOption(null)
-      updateProductPaymentMethod({
-        productId: selectedProduct?.id,
-        methodName: option.value,
-        parcels: parcelOption.value
-      })
-    }
+    setPaymentMethodOption(option)
+    setParcelOption(null)
+    updateProductPaymentMethod({
+      productId: selectedProduct?.id || '',
+      methodName: option.value || '',
+      parcels: parcelOption?.value || ''
+    })
   }
 
   const toggleParcelCheckbox = () => {
@@ -187,12 +176,24 @@ const CartContinue = () => {
     setClearModalActive(!clearModalActive)
   }
 
-  const handleSelectProduct = (product: any) => {
+  const handleSelectProduct = (product: CartProduct) => {
     setSelectedProduct(product)
 
     updatePaymentMethods(product.id)
 
     const method = productsPaymentMethod[product.id]
+
+    setParcelsOptions(
+      getNumberArray({
+        size: Number(product.parcelAmount - 1) || 0,
+        startAt: 2
+      }).map((parcel) => {
+        return {
+          value: `${parcel}`,
+          label: `${parcel}x`
+        }
+      })
+    )
 
     if (method) {
       setPaymentMethodOption({
@@ -311,7 +312,7 @@ const CartContinue = () => {
         return toast.error(
           'Clique aqui para fazer o login e finalizar sua compra!',
           {
-            onClick: () => Router.push('/login')
+            onClick: () => Router.push('/entrar')
           }
         )
       }
@@ -355,7 +356,7 @@ const CartContinue = () => {
     if (!loading && products.length && stores.length) {
       const firstItem = products[0]
 
-      setSelectedProduct(firstItem)
+      handleSelectProduct(firstItem)
 
       updatePaymentMethods(firstItem.storeId)
     }
@@ -427,7 +428,7 @@ const CartContinue = () => {
             <IoIosClose
               onClick={() => setAddressModalActive(false)}
               size={36}
-              color={'black'}
+              color='black'
               style={widthScreen ? undefined : { display: 'none' }}
             />
           </div>
@@ -595,19 +596,23 @@ const CartContinue = () => {
 
                 <div className='paymentContainer'>
                   <MultiSelect
+                    isMulti={false}
                     name='Forma de pagamento'
-                    options={paymentMethods?.map(({ methodName }) => ({
-                      value: methodName,
+                    options={paymentMethods?.map(({ id, methodName }) => ({
+                      value: id,
                       label: capitalizeFirstLetter(methodName)
                     }))}
                     selectedValue={paymentMethodOption}
-                    setSelectedValue={onSelectPaymentMethod}
+                    setSelectedValue={(option) => {
+                      onSelectPaymentMethod(option)
+                    }}
                     loading={false}
                     placeholder='Selecione sua forma de pagamento'
                   />
 
                   {parcelCheckbox && (
                     <MultiSelect
+                      isMulti={false}
                       name='Parcelamento'
                       options={parcelsOptions}
                       selectedValue={parcelOption}
@@ -639,7 +644,7 @@ const CartContinue = () => {
                           : '0'
                     })
                   }}
-                  label='Parcelar Compra'
+                  label='Parcelar compra'
                 />
               </AddressCard>
 
@@ -697,7 +702,7 @@ const CartContinue = () => {
                   <button
                     className='finish goback'
                     onClick={() => {
-                      Router.push('/cart')
+                      Router.push('/carrinho')
                     }}
                   >
                     <FiChevronLeft size={24} color='var(--color-primary)' />

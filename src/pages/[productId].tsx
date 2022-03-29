@@ -206,7 +206,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                   {' '}
                   <AiOutlineUp size={20} color='var(--gray-600)' />
                 </Button>
-                {product?.files.map((file) => {
+                {product?.files?.map((file) => {
                   return (
                     <img
                       key={file.url}

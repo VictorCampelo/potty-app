@@ -14,10 +14,10 @@ interface SelectInterface extends React.InputHTMLAttributes<HTMLSelectElement> {
   name: string
   selectedValue?: Option | null
   loading: boolean
-  setSelectedValue: (option: Option) => void
+  setSelectedValue: (option: any) => void
   options?: Option[]
-  colorTheme?: string
   creatable?: boolean
+  isMulti?: boolean
   formatCreateLabel?: (inputValue: string) => string
   onCreateOption?: (inputValue: string) => void
 }
@@ -29,8 +29,8 @@ const MultiSelect = ({
   setSelectedValue,
   loading,
   name,
-  colorTheme,
-  creatable,
+  creatable = false,
+  isMulti = true,
   formatCreateLabel,
   onCreateOption
 }: SelectInterface) => {
@@ -42,42 +42,8 @@ const MultiSelect = ({
     placeholder: placeholder,
     noOptionsMessage: () => 'Nenhum resultado encontrado',
     styles: SelectStylesMulti,
-    theme: (theme: any) => {
-      switch (colorTheme) {
-        case 'red':
-          return {
-            ...theme,
-            borderRadius: 0,
-            colors: {
-              ...theme.colors,
-              primary: '#E66072',
-              primary75: '#80363F',
-              primary50: '#BF505F',
-              primary25: '#FF6A7D',
-              primary10: '#FF6A7D'
-            }
-          }
-        case 'green':
-          return {
-            ...theme,
-            borderRadius: 0,
-            colors: {
-              ...theme.colors,
-              primary: '#41AB8F',
-              primary75: '#59EBC5',
-              primary50: '#4FD1AF',
-              primary25: '#9EE0DC'
-            }
-          }
-        default:
-          return {
-            ...theme
-          }
-      }
-    },
     isLoading: loading,
-    closeMenuOnSelect: false,
-    isMulti: true
+    isMulti: isMulti
   } as any
 
   return (
