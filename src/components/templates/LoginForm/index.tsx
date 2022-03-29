@@ -8,8 +8,6 @@ import Checkbox from '@/components/atoms/Checkbox'
 
 import AuthRepository from '@/repositories/AuthRepository'
 
-import { setCookie } from 'nookies'
-
 import toast from '@/utils/toast'
 
 import { useForm } from 'react-hook-form'
@@ -47,10 +45,11 @@ const LoginForm = () => {
     try {
       const { user, jwtToken } = await authRepository.singIn(dto as SignInDTO)
 
-      setCookie(null, 'bdv.auth.token', jwtToken, {
-        maxAge: rememberUser ? 60 * 60 * 24 * 30 : 60 * 60,
-        path: '/'
-      })
+      if (rememberUser) {
+        localStorage.setItem('bdv.auth.token', jwtToken)
+      } else {
+        sessionStorage.setItem('bdv.auth.token', jwtToken)
+      }
 
       if (user?.role === 'USER') {
         await Router.push('/')

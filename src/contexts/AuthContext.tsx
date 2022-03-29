@@ -2,8 +2,6 @@ import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 
 import Router from 'next/router'
 
-import { parseCookies } from 'nookies'
-
 import AuthRepository from '@/repositories/AuthRepository'
 import UserRepository from '@/repositories/UserRepository'
 
@@ -90,7 +88,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [signUpMeta])
 
   useEffect(() => {
-    const token = parseCookies()['bdv.auth.token']
+    const token =
+      localStorage.getItem('bdv.auth.token') ||
+      sessionStorage.getItem('bdv.auth.token')
     const sessionSingUpMeta = sessionStorage.getItem('bdv.auth.register.meta')
 
     if (!user && token) {

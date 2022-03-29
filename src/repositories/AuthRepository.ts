@@ -1,7 +1,5 @@
 import Http from '@/services/Http'
 
-import { destroyCookie } from 'nookies'
-
 import type {
   SignInDTO,
   SignInResponse,
@@ -19,8 +17,8 @@ export default class AuthRepository extends Http {
   }
 
   singOut() {
-    destroyCookie(null, 'bdv.auth.token')
-    destroyCookie(null, 'bdv.auth.refreshToken')
+    localStorage.removeItem('bdv.auth.token')
+    sessionStorage.removeItem('bdv.auth.token')
   }
 
   verifyAccount(token: string) {
