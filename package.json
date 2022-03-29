@@ -17,7 +17,6 @@
     "axios-cache-adapter": "^2.7.3",
     "cep-promise": "^4.1.2",
     "eslint-config-airbnb": "^19.0.4",
-    "js-cookie": "^3.0.1",
     "leaflet": "^1.7.1",
     "moment": "^2.29.1",
     "next": "12.1.0",
