@@ -7,9 +7,14 @@ import UserRepository from '@/repositories/UserRepository'
 
 import type { ReactNode } from 'react'
 import type { User, UserSignUpMeta } from '@/@types/entities'
+import type { SignInDTO } from '@/@types/requests'
 
 interface AuthContextData {
   signOut: () => void
+  signIn: (
+    dto: SignInDTO,
+    { remember }: { remember: boolean }
+  ) => Promise<User> | undefined
   isAuthenticated: boolean
   user: User | null
   fetchUser: () => Promise<void>
@@ -28,6 +33,7 @@ const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
   signOut: () => undefined,
+  signIn: () => undefined,
   isAuthenticated: false,
   user: null,
   signUpMeta: null,
@@ -66,6 +72,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       setUser(null)
       throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signIn = async (dto: SignInDTO, { remember } = { remember: true }) => {
+    try {
+      setIsLoading(true)
+
+      const data = await authRepository.singIn(dto)
+
+      if (remember) {
+        localStorage.setItem('bdv.auth.token', data.jwtToken)
+      } else {
+        sessionStorage.setItem('bdv.auth.token', data.jwtToken)
+      }
+
+      setUser(data.user)
+
+      return data.user
+    } catch {
+      return
     } finally {
       setIsLoading(false)
     }
@@ -114,6 +142,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setSignUpMeta,
         clearSignUpMeta,
         signOut,
+        signIn,
         isAuthenticated,
         user,
         isLoading

@@ -6,7 +6,7 @@ import Input from '@/components/atoms/Input'
 import Button from '@/components/atoms/Button'
 import Checkbox from '@/components/atoms/Checkbox'
 
-import AuthRepository from '@/repositories/AuthRepository'
+import { useAuth } from '@/contexts/AuthContext'
 
 import toast from '@/utils/toast'
 
@@ -20,17 +20,15 @@ import { Container } from './styles'
 
 import type { SignInDTO } from '@/@types/requests'
 
-const authRepository = new AuthRepository()
+const signInFormSchema = yup.object().shape({
+  email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
+  password: yup
+    .string()
+    .required('Senha obrigatória')
+    .min(8, 'Mínimo 8 caracteres')
+})
 
 const LoginForm = () => {
-  const signInFormSchema = yup.object().shape({
-    email: yup.string().required('E-mail obrigatório').email('E-mail inválido'),
-    password: yup
-      .string()
-      .required('Senha obrigatória')
-      .min(8, 'Mínimo 8 caracteres')
-  })
-
   const {
     register,
     handleSubmit,
@@ -39,22 +37,18 @@ const LoginForm = () => {
     resolver: yupResolver(signInFormSchema)
   })
 
-  const [rememberUser, setRememberUser] = useState(false)
+  const { signIn } = useAuth()
+
+  const [remember, setRemember] = useState(false)
 
   const handleSignIn = async (dto: any) => {
     try {
-      const { user, jwtToken } = await authRepository.singIn(dto as SignInDTO)
-
-      if (rememberUser) {
-        localStorage.setItem('bdv.auth.token', jwtToken)
-      } else {
-        sessionStorage.setItem('bdv.auth.token', jwtToken)
-      }
+      const user = await signIn(dto as SignInDTO, { remember })
 
       if (user?.role === 'USER') {
-        await Router.push('/')
+        Router.push('/')
       } else if (user?.role === 'OWNER') {
-        await Router.push('/dashboard')
+        Router.push('/dashboard')
       }
     } catch ({ response }) {
       const { status }: any = response
@@ -63,7 +57,7 @@ const LoginForm = () => {
         toast({ message: 'Email ou senha incorretos', type: 'error' })
       } else {
         if (status === 412) {
-          await Router.push('/auth/register/confirmation-token')
+          Router.push('/auth/register/confirmation-token')
         } else {
           toast({
             message: 'Erro interno, tente novamente mais tarde',
@@ -97,8 +91,8 @@ const LoginForm = () => {
 
       <Checkbox
         label='Lembrar usuário'
-        confirm={rememberUser}
-        toggleConfirm={() => setRememberUser(!rememberUser)}
+        confirm={remember}
+        toggleConfirm={() => setRemember(!remember)}
         recovery
       />
 
