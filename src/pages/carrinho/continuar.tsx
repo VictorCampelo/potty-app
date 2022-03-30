@@ -80,13 +80,14 @@ const CartContinue = () => {
 
   const widthScreen = useMedia({ minWidth: '640px' })
 
-  const { user, fetchUser, isLoading } = useAuth()
+  const { user, fetchUser, isLoading, isAuthenticated } = useAuth()
 
   useEffect(() => {
-    if (!isLoading && !user) Router.push('/entrar')
+    if (!isLoading && !isAuthenticated) Router.push('/entrar')
   }, [isLoading])
 
   const { stores, products, loading, clearCart, totalPrice } = useCart()
+  console.log(stores)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
     null
   )
@@ -301,7 +302,7 @@ const CartContinue = () => {
 
         clearCart()
 
-        await Router.push('/carrinho/finalizar')
+        await Router.push('/carrinho/sucesso')
       } else {
         goToNextProduct()
       }

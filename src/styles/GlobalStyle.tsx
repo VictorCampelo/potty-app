@@ -134,6 +134,7 @@ export default createGlobalStyle`
 
   body {
     position: relative;
+    min-height: 100vh;
     background: var(--background);
   }
 
