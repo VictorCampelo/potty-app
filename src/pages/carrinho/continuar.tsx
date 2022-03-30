@@ -87,7 +87,6 @@ const CartContinue = () => {
   }, [isLoading])
 
   const { stores, products, loading, clearCart, totalPrice } = useCart()
-  console.log(stores)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
     null
   )
@@ -102,8 +101,9 @@ const CartContinue = () => {
   const [clearModalActive, setClearModalActive] = useState(false)
 
   const [deliveryMethod, setDeliveryMethod] = useState<'house' | 'store'>(
-    'house'
+    'store'
   )
+  const [storeDispatch, setStoreDispatch] = useState('withdrawal')
   const [parcelCheckbox, setParcelCheckbox] = useState(false)
 
   const [parcelsOptions, setParcelsOptions] = useState<Option[]>([])
@@ -183,6 +183,9 @@ const CartContinue = () => {
     updatePaymentMethods(product.id)
 
     const method = productsPaymentMethod[product.id]
+
+    const store = stores.find(({ id }) => id === product.storeId)
+    if (store) setStoreDispatch(store.dispatch)
 
     setParcelsOptions(
       getNumberArray({
@@ -541,12 +544,14 @@ const CartContinue = () => {
                   <span>Escolha a forma que deseja receber seus pedidos</span>
 
                   <Checkbox
+                    disabled={!['all', 'delivery'].includes(storeDispatch)}
                     confirm={deliveryMethod === 'house'}
                     toggleConfirm={() => setDeliveryMethod('house')}
                     size='small'
                     label='Receber em domicílio'
                   />
                   <Checkbox
+                    disabled={!['all', 'withdrawal'].includes(storeDispatch)}
                     confirm={deliveryMethod === 'store'}
                     toggleConfirm={() => setDeliveryMethod('store')}
                     size='small'

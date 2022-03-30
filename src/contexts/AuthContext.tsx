@@ -14,7 +14,7 @@ interface AuthContextData {
   signIn: (
     dto: SignInDTO,
     { remember }: { remember: boolean }
-  ) => Promise<User> | undefined
+  ) => Promise<User | undefined>
   isAuthenticated: boolean
   user: User | null
   fetchUser: () => Promise<void>
@@ -33,7 +33,7 @@ const userRepository = new UserRepository()
 
 export const AuthContext = createContext<AuthContextData>({
   signOut: () => undefined,
-  signIn: () => undefined,
+  signIn: async () => undefined,
   isAuthenticated: false,
   user: null,
   signUpMeta: null,

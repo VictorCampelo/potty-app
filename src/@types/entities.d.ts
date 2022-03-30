@@ -89,7 +89,7 @@ export interface Store {
   updatedAt: string
   likes: number
   deliveryFee: number
-  dispatch: string
+  dispatch: 'all' | 'withdraw' | 'delivery'
   avatar: File
   background: File
   paymentMethods: PaymentMethod[]
@@ -131,6 +131,7 @@ export interface CartProduct extends Product {
 export interface CartStore {
   id: string
   name: string
+  dispatch: 'all' | 'withdraw' | 'delivery'
   products: CartProduct[]
   paymentMethods: PaymentMethod[]
 }

@@ -179,13 +179,13 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         const newStores = await Promise.all(
           Object.entries(_.groupBy(productsCache, 'storeId')).map(
             async ([id, products]) => {
-              const { name, paymentMethods } = await storeRepository.findById(
-                id
-              )
+              const { name, paymentMethods, dispatch } =
+                await storeRepository.findById(id)
 
               return {
                 id,
                 name,
+                dispatch,
                 products,
                 paymentMethods
               }

@@ -2,6 +2,7 @@ import React from 'react'
 
 import Head from 'next/head'
 import Link from 'next/link'
+import Router from 'next/router'
 
 import Header from '@/components/molecules/Header'
 import Button from '@/components/atoms/Button'
@@ -26,9 +27,7 @@ const CartSuccess = () => {
 
             <p>Você foi encaminhado para o WhatsApp do vendedor.</p>
 
-            <Button>
-              <Link href='/carrinho'>Voltar para a loja</Link>
-            </Button>
+            <Button onClick={() => Router.push('/')}>Voltar para a loja</Button>
 
             <span>
               Erro ao redirecionar? <Link href='/carrinho'>Clique aqui</Link>

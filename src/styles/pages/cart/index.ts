@@ -39,9 +39,9 @@ export const Container = styled.main`
 
 export const Content = styled.section`
   max-width: 1420px;
-  min-height: 100vh;
   width: 100%;
-  padding-top: 1.5rem;
+  padding-top: var(--spacing-xxs);
+  padding-bottom: var(--spacing-xs);
 
   h1 {
     font-size: var(--font-size-lg);
