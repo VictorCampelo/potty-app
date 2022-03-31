@@ -13,8 +13,4 @@ export default class StoreRepository extends Http {
     store.formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${store.city} - ${store.state}`
     return store
   }
-
-  orders(dto: any) {
-    return this.post<any, any>('orders', { products: dto })
-  }
 }

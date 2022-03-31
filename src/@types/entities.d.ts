@@ -135,3 +135,16 @@ export interface CartStore {
   products: CartProduct[]
   paymentMethods: PaymentMethod[]
 }
+
+export interface OrderProduct {
+  productId: string
+  amount: number
+  paymentMethod: string
+  parcels?: number
+}
+
+export interface Order {
+  storeId: string
+  orderProducts: OrderProduct[]
+  delivery: boolean
+}

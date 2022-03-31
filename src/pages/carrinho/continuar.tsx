@@ -23,7 +23,7 @@ import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 
 import UserRepository from '@/repositories/UserRepository'
-import StoreRepository from '@/repositories/StoreRepository'
+import OrderRepository from '@/repositories/OrderRepository'
 
 import useMedia from 'use-media'
 import { toast } from 'react-toastify'
@@ -56,10 +56,14 @@ import {
 } from '@/styles/pages/cart/continue'
 
 import type { Option } from '@/components/atoms/MultiSelect'
-import type { CartProduct, PaymentMethod } from '@/@types/entities'
+import type {
+  CartProduct,
+  OrderProduct,
+  PaymentMethod
+} from '@/@types/entities'
 
 const userRepository = new UserRepository()
-const storeRepository = new StoreRepository()
+const orderRepository = new OrderRepository()
 
 const addressRegisterFormSchema = yup.object().shape({
   uf: yup.string().required('Estado obrigatório'),
@@ -282,7 +286,7 @@ const CartContinue = () => {
         const productsDTO = Object.entries(_.groupBy(products, 'storeId')).map(
           ([storeId, products]) => {
             const orderProducts = products.map((item) => {
-              const order: any = {
+              const order: OrderProduct = {
                 productId: item.id,
                 amount: Number(item.amount),
                 paymentMethod: productsPaymentMethod[item.id].methodName
@@ -299,7 +303,7 @@ const CartContinue = () => {
           }
         )
 
-        const data = await storeRepository.orders(productsDTO)
+        const data = await orderRepository.send(productsDTO)
 
         data.whatsapp.forEach((it: any) => window.open(it))
 

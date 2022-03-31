@@ -842,7 +842,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
         </AddProductModalContainer>
       </Modal>
 
-      {/* Edit product */}
       <Modal
         buttons={false}
         setModalOpen={toggleEditProduct}

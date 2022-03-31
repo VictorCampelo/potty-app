@@ -1,4 +1,4 @@
-import type { User, Store } from '@/@types/entities'
+import type { User, Store, Order } from '@/@types/entities'
 
 export interface SignInDTO {
   email: string
@@ -39,3 +39,16 @@ export interface FindPlanResponse {
 }
 
 export type StoreResponse = Store
+
+export type SendOrdersDTO = Order[]
+export interface FindOrderDTO {
+  id?: string
+  confirmed?: boolean
+  offset?: number
+  limit?: number
+}
+
+export interface UpdateOrderDTO {
+  orderId: string
+  situation: 'Recebido' | 'Processando' | 'Concluído' | 'Cancelado'
+}
