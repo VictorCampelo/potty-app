@@ -74,17 +74,18 @@ const categoryRepository = new CategoryRepository()
 
 const CatalogPage = () => {
   const { isLoading, user } = useAuth()
-  const [excludeModal, setExcludeModal] = useState(false)
-  const [confirmExclude, setConfirmExclude] = useState(false)
+  const [excludeModal, toggleExcludeModal] = useToggleState(false)
+  const [confirmExclude, handleContinueExcludeModal] = useToggleState(false)
 
-  const [editCategoryModal, setEditCategoryModal] = useState(false)
-  const [excludeCategoryModal, setExcludeCategoryModal] = useState(false)
+  const [editCategoryModal, toggleEditCategoryModal] = useToggleState(false)
+  const [excludeCategoryModal, toggleExcludeCategoryModal] =
+    useToggleState(false)
 
   const [addModal, setAddModal] = useState(false)
-  const [addCategoryModal, setCategoryAddModal] = useState(false)
+  const [addCategoryModal, toggleAddCategoryModal] = useToggleState(false)
   const [enableDiscount, setEnableDiscount] = useState(false)
 
-  const [addCupomModal, setAddCupomModal] = useState(false)
+  const [addCupomModal, toggleAddCupomModal] = useToggleState(false)
 
   const [editProduct, setEditProduct] = useState(false)
   const [editProductId, setEditProductId] = useState('')
@@ -129,6 +130,9 @@ const CatalogPage = () => {
     label: idx + 1 + 'x'
   }))
 
+  const [activeCupom, setActiveCupom] = useState<any>(null)
+  const [deleteCupomModal, toggleDeleteCupomModal] = useToggleState(false)
+
   const [productEditValue, setProductEditValue] = useState('')
 
   function editProductSelected(product: any) {
@@ -160,14 +164,6 @@ const CatalogPage = () => {
 
   const futureDate = moment().add(30, 'days').format('DD/MM/YY')
 
-  function toggleAddCategoryModal() {
-    setCategoryAddModal(!addCategoryModal)
-  }
-
-  function handleOpenAddModal() {
-    setAddModal(true)
-  }
-
   function toggleAddModal() {
     setAddModal(!addModal)
     setPreviewImage('')
@@ -182,39 +178,6 @@ const CatalogPage = () => {
     setImageSrc('')
     setImageSrc1('')
     setImageSrc2('')
-  }
-
-  function handleOpenExcludeModal() {
-    setExcludeModal(true)
-  }
-
-  function toggleExcludeModal() {
-    setExcludeModal(!excludeModal)
-  }
-
-  function handleContinueExcludeModal() {
-    setConfirmExclude(!confirmExclude)
-  }
-
-  function handleOpenEditCategoryModal() {
-    setEditCategoryModal(true)
-  }
-
-  function handleToggleExcludeCategoryModal() {
-    setExcludeCategoryModal(!excludeCategoryModal)
-  }
-
-  function toggleEditCategoryModal() {
-    setCategory('')
-    setEditCategoryModal(!editCategoryModal)
-  }
-
-  function toggleAddCupomModal() {
-    setAddCupomModal(!addCupomModal)
-  }
-
-  function toggleImageModal() {
-    setPreviewImage('')
   }
 
   function onZoomChange(newValue: number) {
@@ -247,7 +210,6 @@ const CatalogPage = () => {
       }
       toast({ message: 'Foto recortada com sucesso!', type: 'success' })
       setPreviewImage('')
-      toggleImageModal()
     } catch {
       toast({
         message: 'Erro interno favor tentar novamente mais tarde!',
@@ -285,10 +247,11 @@ const CatalogPage = () => {
         categoriesIds: selectedCategories.map((it: any) => it.value)
       })
 
-      toast({ message: 'Cupom criado com sucesso!', type: 'success' })
-
       loadData()
+
       toggleAddCategoryModal()
+
+      toast({ message: 'Cupom criado com sucesso!', type: 'success' })
     } catch {
       toast({ message: 'Erro ao criar cupom', type: 'error' })
     }
@@ -301,6 +264,8 @@ const CatalogPage = () => {
         user?.store?.id || ''
       )
 
+      loadData()
+
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
     } catch {
       toast({
@@ -309,7 +274,7 @@ const CatalogPage = () => {
       })
     }
 
-    setExcludeCategoryModal(false)
+    toggleExcludeCategoryModal()
     loadData()
   }
 
@@ -335,7 +300,7 @@ const CatalogPage = () => {
     } finally {
       setCategory('')
       loadData()
-      setEditCategoryModal(false)
+      toggleEditCategoryModal()
     }
   }
 
@@ -371,17 +336,17 @@ const CatalogPage = () => {
 
       await productRepository.createProduct(formData)
 
+      loadData()
+
       toast({ message: 'Produto criado com sucesso', type: 'success' })
 
-      setAddModal(false)
+      toggleAddModal()
       setSelectedCategories([])
     } catch {
       toast({
         message: 'Erro ao criar produto, tente novamente!',
         type: 'error'
       })
-    } finally {
-      loadData()
     }
   }
 
@@ -390,7 +355,7 @@ const CatalogPage = () => {
       await productRepository.deleteProduct(deleteProductId)
 
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
-      setExcludeModal(false)
+      toggleExcludeModal()
       loadData()
     } catch {
       toast({
@@ -411,6 +376,9 @@ const CatalogPage = () => {
         message: 'Erro ao excluir cupom, tente novamente!',
         type: 'error'
       })
+    } finally {
+      setActiveCupom(null)
+      toggleDeleteCupomModal()
     }
   }
 
@@ -504,7 +472,7 @@ const CatalogPage = () => {
 
       <Modal
         setModalOpen={() => {
-          handleToggleExcludeCategoryModal()
+          toggleExcludeCategoryModal()
         }}
         modalVisible={excludeCategoryModal}
       >
@@ -523,10 +491,35 @@ const CatalogPage = () => {
             >
               Confirmar
             </button>
+            <button onClick={toggleExcludeCategoryModal} className='cancel-btn'>
+              Cancelar
+            </button>
+          </div>
+        </ExcludeModalContainer>
+      </Modal>
+
+      <Modal
+        setModalOpen={toggleDeleteCupomModal}
+        modalVisible={deleteCupomModal}
+      >
+        <ExcludeModalContainer>
+          <h1>
+            Realmente deseja excluir definitivamente o cupom{' '}
+            <strong>{activeCupom?.code}</strong>?
+          </h1>
+
+          <div className='btn-container'>
             <button
-              onClick={handleToggleExcludeCategoryModal}
-              className='cancel-btn'
+              onClick={() => {
+                if (activeCupom.id) {
+                  handleDeleteCupom(activeCupom.id)
+                }
+              }}
+              className='exclude-btn'
             >
+              Confirmar
+            </button>
+            <button onClick={toggleDeleteCupomModal} className='cancel-btn'>
               Cancelar
             </button>
           </div>
@@ -939,7 +932,6 @@ const CatalogPage = () => {
               </div>
 
               <MultiSelect
-                loading={false}
                 label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
@@ -1124,7 +1116,7 @@ const CatalogPage = () => {
               <div className='row'>
                 <Input
                   label='Nome do cupom'
-                  placeholder='Nome do cupom  '
+                  placeholder='Nome do cupom'
                   value={cupomCode}
                   onChange={(e) => setCupomCode(e.target.value)}
                 />
@@ -1175,7 +1167,7 @@ const CatalogPage = () => {
               </div>
 
               <MultiSelect
-                disabled={discountType !== 'category'}
+                isDisabled={discountType !== 'category'}
                 label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
@@ -1218,7 +1210,7 @@ const CatalogPage = () => {
       </Modal>
 
       <Modal
-        setModalOpen={toggleImageModal}
+        setModalOpen={() => setPreviewImage('')}
         modalVisible={!!previewImage.length}
       >
         <CropModalContainer>
@@ -1260,7 +1252,7 @@ const CatalogPage = () => {
             </div>
           </section>
           <section className='btns'>
-            <Button onClick={toggleImageModal}>Cancelar</Button>
+            <Button onClick={() => setPreviewImage('')}>Cancelar</Button>
             <Button onClick={() => startCrop(currentImage)}>Recortar</Button>
           </section>
         </CropModalContainer>
@@ -1300,7 +1292,7 @@ const CatalogPage = () => {
                       setInstallments(null)
                       setDiscount(0)
                       setPriceWithDiscount(formatToBrl(0))
-                      if (toggleState === 1) handleOpenAddModal()
+                      if (toggleState === 1) toggleAddModal()
                       else {
                         if (toggleState === 2) toggleAddCategoryModal()
                         else toggleAddCupomModal()
@@ -1340,7 +1332,7 @@ const CatalogPage = () => {
                               amount={product?.inventory}
                               price={product?.price}
                               excludeBtn={() => {
-                                handleOpenExcludeModal()
+                                toggleExcludeModal()
                                 setDeleteProductId(product.id)
                               }}
                               editBtn={() => {
@@ -1377,7 +1369,7 @@ const CatalogPage = () => {
                                   alt='Produto vazio'
                                 />
                                 <p>Nenhum produto cadastrado</p>
-                                <Button onClick={handleOpenAddModal}>
+                                <Button onClick={toggleAddModal}>
                                   Cadastrar
                                 </Button>
                               </div>
@@ -1406,11 +1398,11 @@ const CatalogPage = () => {
                                 category={cat.name}
                                 excludeBtn={() => {
                                   setDeleteCategoryId(cat.id)
-                                  handleToggleExcludeCategoryModal()
+                                  toggleExcludeCategoryModal()
                                 }}
                                 editBtn={() => {
                                   setEditCategoryId(cat.id)
-                                  handleOpenEditCategoryModal()
+                                  toggleEditCategoryModal()
                                 }}
                                 isGreen={true}
                                 isRed={true}
@@ -1435,14 +1427,16 @@ const CatalogPage = () => {
                     }
                     content3={
                       <div className='cupons-container'>
-                        {cupons.length !== 0 ? (
-                          cupons.map((it) => (
+                        {cupons.length > 0 ? (
+                          cupons.map((it, i) => (
                             <CupomItem
+                              key={i}
                               code={it.code}
                               info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
-                              key={it.code}
                               excludeBtn={() => {
-                                handleDeleteCupom(it.code)
+                                setActiveCupom(it)
+
+                                toggleDeleteCupomModal()
                               }}
                             />
                           ))

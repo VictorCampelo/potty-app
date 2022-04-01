@@ -24,12 +24,13 @@ export const Container = styled.div`
 `
 
 export const SelectStyles: StylesConfig<MyOptionType, false> = {
-  control: (styles) => ({
+  control: (styles, { isDisabled }) => ({
     ...styles,
     backgroundColor: 'var(--gray-100)',
     border: 'none',
     height: '2rem',
-    borderRadius: 11
+    borderRadius: 11,
+    cursor: isDisabled ? 'not-allowed' : 'default'
   }),
   indicatorSeparator: (styles) => ({
     ...styles,

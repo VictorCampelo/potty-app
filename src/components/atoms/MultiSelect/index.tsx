@@ -9,12 +9,12 @@ export interface Option {
   label: string
 }
 
-interface SelectInterface {
+interface Props {
   placeholder: string
   label: string
   selectedValue?: Option | null
   setSelectedValue: (option: any) => void
-  disabled?: boolean
+  isDisabled?: boolean
   options?: Option[]
   creatable?: boolean
   isMulti?: boolean
@@ -27,18 +27,18 @@ const MultiSelect = ({
   options,
   selectedValue,
   setSelectedValue,
-  disabled = false,
+  isDisabled = false,
   label,
   creatable = false,
   isMulti = true,
   formatCreateLabel,
   onCreateOption
-}: SelectInterface) => {
+}: Props) => {
   const props = {
     placeholderButtonLabel: placeholder,
     value: selectedValue,
     onChange: (values: any) => setSelectedValue(values),
-    disabled,
+    isDisabled,
     options,
     placeholder,
     noOptionsMessage: () => 'Nenhum resultado encontrado',
