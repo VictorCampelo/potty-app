@@ -9,12 +9,12 @@ export interface Option {
   label: string
 }
 
-interface SelectInterface extends React.InputHTMLAttributes<HTMLSelectElement> {
+interface SelectInterface {
   placeholder: string
-  name: string
+  label: string
   selectedValue?: Option | null
-  loading: boolean
   setSelectedValue: (option: any) => void
+  disabled?: boolean
   options?: Option[]
   creatable?: boolean
   isMulti?: boolean
@@ -27,8 +27,8 @@ const MultiSelect = ({
   options,
   selectedValue,
   setSelectedValue,
-  loading,
-  name,
+  disabled = false,
+  label,
   creatable = false,
   isMulti = true,
   formatCreateLabel,
@@ -38,17 +38,17 @@ const MultiSelect = ({
     placeholderButtonLabel: placeholder,
     value: selectedValue,
     onChange: (values: any) => setSelectedValue(values),
-    options: options,
-    placeholder: placeholder,
+    disabled,
+    options,
+    placeholder,
     noOptionsMessage: () => 'Nenhum resultado encontrado',
     styles: SelectStylesMulti,
-    isLoading: loading,
-    isMulti: isMulti
+    isMulti
   } as any
 
   return (
     <Container>
-      <label> {name} </label>
+      <label> {label} </label>
       {creatable ? (
         <Creatable
           {...props}

@@ -388,7 +388,7 @@ const CartContinue = () => {
       <Header />
 
       <Modal
-        buttons={false}
+        showCloseButton={true}
         modalVisible={clearModalActive}
         setModalOpen={toggleClearModal}
       >
@@ -417,7 +417,6 @@ const CartContinue = () => {
       </Modal>
 
       <Modal
-        buttons={false}
         showCloseButton={false}
         setModalOpen={() => setAddressModalActive(!addressModalActive)}
         modalVisible={addressModalActive}
@@ -607,7 +606,7 @@ const CartContinue = () => {
                 <div className='paymentContainer'>
                   <MultiSelect
                     isMulti={false}
-                    name='Forma de pagamento'
+                    label='Forma de pagamento'
                     options={paymentMethods?.map(({ id, methodName }) => ({
                       value: id,
                       label: capitalizeFirstLetter(methodName)
@@ -616,14 +615,13 @@ const CartContinue = () => {
                     setSelectedValue={(option) => {
                       onSelectPaymentMethod(option)
                     }}
-                    loading={false}
                     placeholder='Selecione sua forma de pagamento'
                   />
 
                   {parcelCheckbox && (
                     <MultiSelect
                       isMulti={false}
-                      name='Parcelamento'
+                      label='Parcelamento'
                       options={parcelsOptions}
                       selectedValue={parcelOption}
                       setSelectedValue={(option) => {
@@ -634,7 +632,6 @@ const CartContinue = () => {
                           parcels: option.value
                         })
                       }}
-                      loading={false}
                       placeholder='Selecione o número de parcelas'
                     />
                   )}

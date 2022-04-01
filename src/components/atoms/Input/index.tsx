@@ -26,6 +26,7 @@ const Input = ({
   label,
   type,
   password,
+  onChange,
   icon,
   mask,
   disabled,
@@ -33,15 +34,20 @@ const Input = ({
 }: Props) => {
   const [isInputVisible, setIsInputVisible] = useState(true)
 
-  const handleOnChange = (event: React.FormEvent<HTMLInputElement>) => {
-    if (mask) {
-      const newValue = masks[mask](event.currentTarget.value)
-      event.currentTarget.value = newValue
+  const maskFunction = mask ? masks[mask] : null
+
+  const handleOnChange = (event: any) => {
+    if (maskFunction) {
+      const newValue = maskFunction(event.target.value)
+      console.log(newValue, event.target.value)
+      event.target.value = newValue
     }
+    if (registerProps?.onChange) registerProps.onChange(event)
+    if (onChange) onChange(event)
   }
 
-  if (mask && props.defaultValue) {
-    props.defaultValue = masks[mask](props.defaultValue)
+  if (maskFunction && props.defaultValue) {
+    props.defaultValue = maskFunction(props.defaultValue)
   }
 
   const errorMessage = errors && name ? errors[name]?.message : ''
@@ -63,9 +69,9 @@ const Input = ({
           name={name}
           disabled={disabled}
           type={password && isInputVisible ? 'password' : type}
-          onKeyUp={(event) => handleOnChange(event)}
           {...registerProps}
           {...props}
+          onChange={handleOnChange}
         />
 
         {password &&

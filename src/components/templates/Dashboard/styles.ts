@@ -16,8 +16,7 @@ export const Wrapper = styled.div`
     padding: 0;
     gap: 0;
 
-    div {
-      width: 95% !important;
+    > div {
       margin: 0 auto;
     }
   }
@@ -25,12 +24,11 @@ export const Wrapper = styled.div`
 
 export const Container = styled.div`
   width: 100%;
+  height: 90vh;
   display: flex;
   flex-direction: row;
   gap: var(--spacing-md);
   flex-wrap: wrap;
-
-  padding-bottom: var(--spacing-md);
 
   ${[sizes.down('lg')]} {
     flex-direction: column;

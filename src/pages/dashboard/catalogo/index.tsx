@@ -25,7 +25,10 @@ import Modal from '@/components/molecules/Modal'
 import ProductListCard from '@/components/organisms/ProductListCard'
 import Textarea from '@/components/atoms/Textarea'
 
-import UserRepository from '@/repositories/UserRepository'
+import useToggleState from '@/hooks/useToggleState'
+
+import { useAuth } from '@/contexts/AuthContext'
+
 import ProductRepository from '@/repositories/ProductRepository'
 import CouponRepository from '@/repositories/CouponRepository'
 import CategoryRepository from '@/repositories/CategoryRepository'
@@ -54,13 +57,7 @@ import {
 } from '@/styles/pages/dashboard/catalogo'
 
 import type { Point } from 'react-easy-crop/types'
-import type { NextPage } from 'next/types'
-import type { Store } from '@/@types/entities'
 import type { Option } from '@/components/atoms/MultiSelect'
-
-interface ServerProps {
-  store: Store
-}
 
 const createProductFormSchema = yup.object().shape({
   title: yup.string(),
@@ -71,12 +68,12 @@ const createProductFormSchema = yup.object().shape({
   parcelAmount: yup.string()
 })
 
-const userRepository = new UserRepository()
 const productRepository = new ProductRepository()
 const couponRepository = new CouponRepository()
 const categoryRepository = new CategoryRepository()
 
-const CatalogPage: NextPage<ServerProps> = ({ store }) => {
+const CatalogPage = () => {
+  const { isLoading, user } = useAuth()
   const [excludeModal, setExcludeModal] = useState(false)
   const [confirmExclude, setConfirmExclude] = useState(false)
 
@@ -110,6 +107,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   const [cupomCode, setCupomCode] = useState('')
   const [discountPorcent, setDiscountPorcent] = useState('')
+  const [discountType, setDiscountType] = useState('category')
   const [maxUsage, setMaxUsage] = useState('')
   const [validate, setValidate] = useState('')
 
@@ -260,7 +258,10 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   async function handleCreateCategory(newCategory?: string) {
     try {
-      await categoryRepository.createCategory(newCategory || category, store.id)
+      await categoryRepository.createCategory(
+        newCategory || category,
+        user?.store?.id || ''
+      )
 
       toast({ message: 'Categoria criada com sucesso!', type: 'success' })
 
@@ -276,7 +277,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
     try {
       await couponRepository.createCoupon({
         code: cupomCode,
-        discountPorcent: Number(discountPorcent),
+        discountPorcent: formatToNumber(discountPorcent),
         maxUsage: Number(maxUsage),
         validate: new Date(validate + '-3:00'),
         type: 'percentage',
@@ -295,7 +296,10 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   const handleDeleteCategory = async () => {
     try {
-      await categoryRepository.deleteCategory(deleteCategoryId, store.id)
+      await categoryRepository.deleteCategory(
+        deleteCategoryId,
+        user?.store?.id || ''
+      )
 
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
     } catch {
@@ -313,10 +317,14 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
     try {
       const body = {
         name: category,
-        storeId: store.id
+        storeId: user?.store?.id || ''
       }
 
-      await categoryRepository.updateCategory(editCategoryId, store.id, body)
+      await categoryRepository.updateCategory(
+        editCategoryId,
+        user?.store?.id || '',
+        body
+      )
 
       toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
     } catch {
@@ -436,9 +444,9 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
   const loadData = async () => {
     try {
-      if (!store) Router.push('/')
-
-      const data = await productRepository.findAllByStoreId(store.id)
+      const data = await productRepository.findAllByStoreId(
+        user?.store?.id || ''
+      )
 
       const formattedData = data.map((it: any) => ({
         ...it,
@@ -453,7 +461,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
     }
 
     try {
-      const data = await categoryRepository.getCategories(store.id)
+      const data = await categoryRepository.getCategories(user?.store?.id || '')
 
       setCategories(data)
     } catch {
@@ -470,7 +478,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   }
 
   const [radioSelected, setRadioSelected] = useState(1)
-  const [ilimitedCupom, setIlimitedCupom] = useState(false)
+  const [ilimitedCupom, toggleIlimitedCupom] = useToggleState(false)
 
   const [priceWithDiscount, setPriceWithDiscount] = useState(formatToBrl(0))
   const [discount, setDiscount] = useState(0)
@@ -482,8 +490,11 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
   }, [discount])
 
   useEffect(() => {
-    loadData()
-  }, [])
+    if (!isLoading) {
+      if (user?.store) loadData()
+      else Router.push('/')
+    }
+  }, [isLoading])
 
   return (
     <>
@@ -492,7 +503,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Head>
 
       <Modal
-        buttons={false}
         setModalOpen={() => {
           handleToggleExcludeCategoryModal()
         }}
@@ -524,7 +534,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
+        showCloseButton={true}
         setModalOpen={toggleExcludeModal}
         modalVisible={excludeModal}
       >
@@ -571,7 +581,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
         showCloseButton={false}
         setModalOpen={toggleAddCategoryModal}
         modalVisible={addCategoryModal}
@@ -606,7 +615,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
         setModalOpen={toggleEditCategoryModal}
         modalVisible={editCategoryModal}
       >
@@ -636,7 +644,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
+        showCloseButton={true}
         setModalOpen={toggleAddModal}
         modalVisible={addModal}
       >
@@ -669,13 +677,11 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                 />
 
                 <MultiSelect
-                  name='Parcelamento'
+                  label='Parcelamento'
                   options={productParcels}
                   selectedValue={installments?.value}
                   setSelectedValue={setInstallments}
-                  loading={false}
                   placeholder='Selecione o número de parcelas'
-                  style={{ width: '50%' }}
                 />
               </div>
 
@@ -727,8 +733,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
               </div>
 
               <MultiSelect
-                loading={false}
-                name='Categorias'
+                label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
@@ -843,7 +848,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
+        showCloseButton={true}
         setModalOpen={toggleEditProduct}
         modalVisible={editProduct}
       >
@@ -878,11 +883,10 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                 />
 
                 <MultiSelect
-                  name='Parcelamento'
+                  label='Parcelamento'
                   options={productParcels}
                   selectedValue={installments}
                   setSelectedValue={setInstallments}
-                  loading={false}
                   placeholder='Selecione o número de parcelas'
                 />
               </div>
@@ -936,7 +940,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
 
               <MultiSelect
                 loading={false}
-                name='Categorias'
+                label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
@@ -1042,7 +1046,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
+        showCloseButton={true}
         setModalOpen={toggleAddCupomModal}
         modalVisible={addCupomModal}
       >
@@ -1081,7 +1085,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                 label='Valor do desconto'
                 icon={<FaMoneyBill />}
                 placeholder={radioSelected === 1 ? 'R$ 0' : '0 %'}
-                mask={radioSelected === 1 ? 'monetaryBRL' : 'number'}
+                mask={radioSelected === 1 ? 'monetaryBRL' : 'percent'}
                 value={discountPorcent}
                 onChange={(e) => setDiscountPorcent(e.target.value)}
               />
@@ -1112,7 +1116,7 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                   name='type'
                   value='1'
                   id='ilim'
-                  onClick={() => setIlimitedCupom(true)}
+                  onClick={toggleIlimitedCupom}
                 />
                 <label htmlFor='ilim'>Cupons ilimitados</label>
               </div>
@@ -1137,29 +1141,42 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
                 <span>Tipo de desconto</span>
 
                 <div className='radio-container'>
-                  <input type='radio' name='type_discount' value='1' id='cat' />
-                  <label htmlFor='cat'>Categoria</label>
-                </div>
-
-                <div className='radio-container'>
-                  <input type='radio' name='type_discount' value='2' id='all' />
-                  <label htmlFor='all'>Toda a loja</label>
+                  <input
+                    type='radio'
+                    id='discount-category'
+                    value='category'
+                    checked={discountType === 'category'}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                  />
+                  <label htmlFor='discount-category'>Categoria</label>
                 </div>
 
                 <div className='radio-container'>
                   <input
                     type='radio'
-                    name='type_discount'
-                    value='3'
-                    id='first'
+                    id='discount-all'
+                    value='all'
+                    checked={discountType === 'all'}
+                    onChange={(e) => setDiscountType(e.target.value)}
                   />
-                  <label htmlFor='first'>Primeira compra</label>
+                  <label htmlFor='discount-all'>Toda a loja</label>
+                </div>
+
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='discount-first'
+                    value='first'
+                    checked={discountType === 'first'}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                  />
+                  <label htmlFor='discount-first'>Primeira compra</label>
                 </div>
               </div>
 
               <MultiSelect
-                loading={false}
-                name='Categorias'
+                disabled={discountType !== 'category'}
+                label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
@@ -1201,7 +1218,6 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Modal
-        buttons={false}
         setModalOpen={toggleImageModal}
         modalVisible={!!previewImage.length}
       >
@@ -1251,208 +1267,210 @@ const CatalogPage: NextPage<ServerProps> = ({ store }) => {
       </Modal>
 
       <Dashboard>
-        <Container>
-          <div className='area'>
-            <div className='list-container'>
-              <header className='header'>
-                <Link href='/' passHref>
-                  <h1>
-                    <FiArrowLeft size={32} color='var(--gray-700)' /> Produtos
-                  </h1>
-                </Link>
+        {isLoading && !user?.store ? (
+          <div
+            style={{
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              top: '50%',
+              left: '50%'
+            }}
+          >
+            <PulseLoader size={10} />
+          </div>
+        ) : (
+          <Container>
+            <div className='area'>
+              <div className='list-container'>
+                <header className='header'>
+                  <Link href='/' passHref>
+                    <h1>
+                      <FiArrowLeft size={32} color='var(--gray-700)' /> Produtos
+                    </h1>
+                  </Link>
 
-                <button
-                  className='addBtn'
-                  onClick={() => {
-                    reset()
-                    setSelectedCategories([])
-                    setInstallments(null)
-                    setDiscount(0)
-                    setPriceWithDiscount(formatToBrl(0))
-                    if (toggleState === 1) handleOpenAddModal()
-                    else {
-                      if (toggleState === 2) toggleAddCategoryModal()
-                      else toggleAddCupomModal()
-                    }
-                  }}
-                >
-                  <FiPlus size={20} color='var(--white)' />
-                  Adicionar
-                </button>
-                <div className='input-container'>
-                  <Input
-                    className='searchInput'
-                    label=''
-                    placeholder='Pesquisar'
-                    icon={<FiSearch size={22} color='var(--black-800)' />}
-                  />
-                </div>
-              </header>
+                  <button
+                    className='addBtn'
+                    onClick={() => {
+                      reset()
+                      setSelectedCategories([])
+                      setInstallments(null)
+                      setDiscount(0)
+                      setPriceWithDiscount(formatToBrl(0))
+                      if (toggleState === 1) handleOpenAddModal()
+                      else {
+                        if (toggleState === 2) toggleAddCategoryModal()
+                        else toggleAddCupomModal()
+                      }
+                    }}
+                  >
+                    <FiPlus size={20} color='var(--white)' />
+                    Adicionar
+                  </button>
+                  <div className='input-container'>
+                    <Input
+                      className='searchInput'
+                      label=''
+                      placeholder='Pesquisar'
+                      icon={<FiSearch size={22} color='var(--black-800)' />}
+                    />
+                  </div>
+                </header>
 
-              <main>
-                <CatalogTabs
-                  tab1='Produtos'
-                  tab2='Categorias'
-                  tab3='Cupons'
-                  setToggleState={setToggleState}
-                  toggleState={toggleState}
-                  content1={
-                    <div className='products-container'>
-                      {products.length ? (
-                        products.map((product: any) => (
-                          <ProductListCard
-                            key={product?.id}
-                            icon={product?.files[0]?.url}
-                            name={product?.title}
-                            code={product?.id}
-                            category={product?.categories?.join('')}
-                            amount={product?.inventory}
-                            price={product?.price}
-                            excludeBtn={() => {
-                              handleOpenExcludeModal()
-                              setDeleteProductId(product.id)
-                            }}
-                            editBtn={() => {
-                              editProductSelected(product)
-                              setDiscount(product.discount)
-                              setEditProductId(product.id)
-                              setEditProduct(true)
-                            }}
-                            isRed={true}
-                            isGreen={true}
-                          />
-                        ))
-                      ) : (
-                        <EmptyContainer>
-                          {loadingProducts ? (
-                            <div
-                              style={{
-                                width: '100%',
-                                height: '200px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                <main>
+                  <CatalogTabs
+                    tab1='Produtos'
+                    tab2='Categorias'
+                    tab3='Cupons'
+                    setToggleState={setToggleState}
+                    toggleState={toggleState}
+                    content1={
+                      <div className='products-container'>
+                        {products.length ? (
+                          products.map((product: any) => (
+                            <ProductListCard
+                              key={product?.id}
+                              icon={product?.files[0]?.url}
+                              name={product?.title}
+                              code={product?.id}
+                              category={product?.categories?.join('')}
+                              amount={product?.inventory}
+                              price={product?.price}
+                              excludeBtn={() => {
+                                handleOpenExcludeModal()
+                                setDeleteProductId(product.id)
                               }}
-                            >
-                              <PulseLoader
-                                size={14}
-                                color='var(--color-primary)'
+                              editBtn={() => {
+                                editProductSelected(product)
+                                setDiscount(product.discount)
+                                setEditProductId(product.id)
+                                setEditProduct(true)
+                              }}
+                              isRed={true}
+                              isGreen={true}
+                            />
+                          ))
+                        ) : (
+                          <EmptyContainer>
+                            {loadingProducts ? (
+                              <div
+                                style={{
+                                  width: '100%',
+                                  height: '200px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center'
+                                }}
+                              >
+                                <PulseLoader
+                                  size={14}
+                                  color='var(--color-primary)'
+                                />
+                              </div>
+                            ) : (
+                              <div>
+                                <img
+                                  src='/images/emptyProducts.svg'
+                                  alt='Produto vazio'
+                                />
+                                <p>Nenhum produto cadastrado</p>
+                                <Button onClick={handleOpenAddModal}>
+                                  Cadastrar
+                                </Button>
+                              </div>
+                            )}
+                          </EmptyContainer>
+                        )}
+                      </div>
+                    }
+                    content2={
+                      <div className='categories-container'>
+                        {categories.length ? (
+                          categories.map((cat: any, index) => {
+                            return (
+                              <CategoryListCard
+                                key={cat.id + '-' + index}
+                                date={products
+                                  .filter((prd: any) =>
+                                    prd.categories.includes(cat.name)
+                                  )
+                                  .map((data: any) => {
+                                    return {
+                                      name: data.title,
+                                      amount: String(data.inventory)
+                                    }
+                                  })}
+                                category={cat.name}
+                                excludeBtn={() => {
+                                  setDeleteCategoryId(cat.id)
+                                  handleToggleExcludeCategoryModal()
+                                }}
+                                editBtn={() => {
+                                  setEditCategoryId(cat.id)
+                                  handleOpenEditCategoryModal()
+                                }}
+                                isGreen={true}
+                                isRed={true}
                               />
-                            </div>
-                          ) : (
+                            )
+                          })
+                        ) : (
+                          <EmptyContainer>
                             <div>
                               <img
-                                src='/images/emptyProducts.svg'
-                                alt='Produto vazio'
+                                src='/images/emptyCategories.svg'
+                                alt='Categoria vazia'
                               />
-                              <p>Nenhum produto cadastrado</p>
-                              <Button onClick={handleOpenAddModal}>
+                              <p>Nenhuma categoria cadastrada</p>
+                              <Button onClick={toggleAddCategoryModal}>
                                 Cadastrar
                               </Button>
                             </div>
-                          )}
-                        </EmptyContainer>
-                      )}
-                    </div>
-                  }
-                  content2={
-                    <div className='categories-container'>
-                      {categories.length ? (
-                        categories.map((cat: any, index) => {
-                          return (
-                            <CategoryListCard
-                              key={cat.id + '-' + index}
-                              date={products
-                                .filter((prd: any) =>
-                                  prd.categories.includes(cat.name)
-                                )
-                                .map((data: any) => {
-                                  return {
-                                    name: data.title,
-                                    amount: String(data.inventory)
-                                  }
-                                })}
-                              category={cat.name}
+                          </EmptyContainer>
+                        )}
+                      </div>
+                    }
+                    content3={
+                      <div className='cupons-container'>
+                        {cupons.length !== 0 ? (
+                          cupons.map((it) => (
+                            <CupomItem
+                              code={it.code}
+                              info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
+                              key={it.code}
                               excludeBtn={() => {
-                                setDeleteCategoryId(cat.id)
-                                handleToggleExcludeCategoryModal()
+                                handleDeleteCupom(it.code)
                               }}
-                              editBtn={() => {
-                                setEditCategoryId(cat.id)
-                                handleOpenEditCategoryModal()
-                              }}
-                              isGreen={true}
-                              isRed={true}
                             />
-                          )
-                        })
-                      ) : (
-                        <EmptyContainer>
-                          <div>
-                            <img
-                              src='/images/emptyCategories.svg'
-                              alt='Categoria vazia'
-                            />
-                            <p>Nenhuma categoria cadastrada</p>
-                            <Button onClick={toggleAddCategoryModal}>
-                              Cadastrar
-                            </Button>
-                          </div>
-                        </EmptyContainer>
-                      )}
-                    </div>
-                  }
-                  content3={
-                    <div className='cupons-container'>
-                      {cupons.length !== 0 ? (
-                        cupons.map((it) => (
-                          <CupomItem
-                            code={it.code}
-                            info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
-                            key={it.code}
-                            excludeBtn={() => {
-                              handleDeleteCupom(it.code)
-                            }}
-                          />
-                        ))
-                      ) : (
-                        <EmptyContainer>
-                          <div>
-                            <img
-                              src='/images/emptyCategories.svg'
-                              alt='Categoria vazia'
-                            />
-                            <p>Nenhum cupom cadastrado</p>
-                            <Button onClick={toggleAddCupomModal}>
-                              Cadastrar
-                            </Button>
-                          </div>
-                        </EmptyContainer>
-                      )}
-                    </div>
-                  }
-                />
-              </main>
+                          ))
+                        ) : (
+                          <EmptyContainer>
+                            <div>
+                              <img
+                                src='/images/emptyCategories.svg'
+                                alt='Categoria vazia'
+                              />
+                              <p>Nenhum cupom cadastrado</p>
+                              <Button onClick={toggleAddCupomModal}>
+                                Cadastrar
+                              </Button>
+                            </div>
+                          </EmptyContainer>
+                        )}
+                      </div>
+                    }
+                  />
+                </main>
+              </div>
             </div>
-          </div>
-        </Container>
+          </Container>
+        )}
       </Dashboard>
     </>
   )
-}
-
-CatalogPage.getInitialProps = async () => {
-  try {
-    const { store } = await userRepository.getMe()
-
-    return {
-      store: store as Store
-    }
-  } catch {
-    return {
-      store: {} as Store
-    }
-  }
 }
 
 export default CatalogPage

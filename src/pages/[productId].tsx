@@ -725,7 +725,6 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
         </Container>
       )}
       <Modal
-        buttons={false}
         setModalOpen={toggleDescModalVisible}
         modalVisible={descModalVisible}
         under
@@ -746,7 +745,6 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
       </Modal>
 
       <Modal
-        buttons={false}
         setModalOpen={toggleAvalModalVisible}
         modalVisible={avalModalVisible}
         under

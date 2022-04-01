@@ -1,22 +1,3 @@
-export interface UserAddress {
-  uf: string
-  street: string
-  city: string
-  zipcode: string
-  neighborhood: string
-  complement: string
-  addressNumber: string
-  logradouro: string
-  formattedAddress: string
-}
-
-export interface User extends UserAddress {
-  email: string
-  firstName?: string
-  lastName?: string
-  role: 'USER' | 'OWNER'
-}
-
 export interface UserSignUpMeta {
   email: string
   password: string
@@ -147,4 +128,24 @@ export interface Order {
   storeId: string
   orderProducts: OrderProduct[]
   delivery: boolean
+}
+
+export interface UserAddress {
+  uf: string
+  street: string
+  city: string
+  zipcode: string
+  neighborhood: string
+  complement: string
+  addressNumber: string
+  logradouro: string
+  formattedAddress: string
+}
+
+export interface User extends UserAddress {
+  email: string
+  firstName?: string
+  lastName?: string
+  role: 'USER' | 'OWNER'
+  store?: Store
 }

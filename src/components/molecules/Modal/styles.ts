@@ -6,6 +6,21 @@ interface ContainerProps {
 
 export const Container = styled.header<ContainerProps>`
   overflow: hidden;
+  position: relative;
+
+  .close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+
+    border-radius: 100%;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transition: ease all 0.2s;
+    }
+  }
 
   .modal {
     max-height: 85vh;
@@ -15,7 +30,7 @@ export const Container = styled.header<ContainerProps>`
     overflow: auto;
 
     ${(props) =>
-    props.under && 'padding: var(--spacing-nano) var(--spacing-xxxs);'}
+      props.under && 'padding: var(--spacing-nano) var(--spacing-xxxs);'}
     .modalDescription, .modalAvaliations {
       width: 100%;
       .title {

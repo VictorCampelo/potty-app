@@ -7,14 +7,10 @@ Examples:
   format('000321700')
   format('000846600')
 */
-const formatMonetaryBRL = (value: any): string => {
-  const formatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2
-  })
+import currency from 'currency.js'
 
-  return formatter.format(Number(value))
+const formatMonetaryBRL = (value: any): string => {
+  return currency(value, { symbol: 'R$', precision: 2 }).format()
 }
 
 export default formatMonetaryBRL

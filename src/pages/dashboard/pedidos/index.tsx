@@ -268,7 +268,6 @@ const RequestsPage = () => {
           <Modal
             modalVisible={modalVisible && !isLoading}
             setModalOpen={toggleModalVisible}
-            buttons={false}
           >
             {order?.orderHistorics ? (
               <ModalContainer>
@@ -326,12 +325,11 @@ const RequestsPage = () => {
                   <div className='rightContainer'>
                     <div className='status'>
                       <MultiSelect
-                        name='Status:'
+                        label='Status:'
                         options={productStatusOptions}
                         selectedValue={productStatusOption}
                         setSelectedValue={setProductStatusOption}
                         placeholder='Selecione um status'
-                        loading={false}
                       />
                     </div>
                     <div className='gradient' />

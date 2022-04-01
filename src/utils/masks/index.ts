@@ -6,7 +6,6 @@ import date from './formatDate'
 import time from './formatHours'
 import card from './formatCard'
 import monetaryBRL from './formatMonetaryBRL'
-import monetaryUSD from './formatMonetaryUSD'
 import number from './formatNumber'
 import double from './formatDouble'
 import percent from './formatPercent'
@@ -20,7 +19,6 @@ export type MasksTypes =
   | 'time'
   | 'card'
   | 'monetaryBRL'
-  | 'monetaryUSD'
   | 'number'
   | 'double'
   | 'percent'
@@ -35,7 +33,6 @@ const masks = {
   card,
   monetaryBRL,
   number,
-  monetaryUSD,
   double,
   percent
 }

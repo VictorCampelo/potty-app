@@ -40,13 +40,13 @@ export const AuthContext = createContext<AuthContextData>({
   fetchUser: async () => undefined,
   setSignUpMeta: () => undefined,
   clearSignUpMeta: () => undefined,
-  isLoading: false
+  isLoading: true
 })
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
   const [signUpMeta, setSignUpMeta] = useState<UserSignUpMeta | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const isAuthenticated = useMemo(() => !!user?.email, [user])
 
   const fetchUser = async () => {
@@ -123,6 +123,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     if (!user && token) {
       fetchUser()
+    } else {
+      setIsLoading(false)
     }
 
     if (sessionSingUpMeta) {

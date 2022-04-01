@@ -3,7 +3,6 @@ import sizes from '@/utils/sizes'
 
 export const Container = styled.div`
   width: 100%;
-  height: 100vh;
   background: #fffdf9;
 
   display: flex;
@@ -108,6 +107,7 @@ export const Container = styled.div`
     }
 
     .products-container {
+      width: 100%;
       padding: var(--spacing-xxs) var(--spacing-md);
 
       ${[sizes.down('sm')]} {

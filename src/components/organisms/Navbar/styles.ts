@@ -9,6 +9,7 @@ export const Nav = styled.nav<NavProps>`
   height: 90vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-around;
   padding: var(--spacing-xs) 0;
 
@@ -20,8 +21,8 @@ export const Nav = styled.nav<NavProps>`
 
   ${[sizes.up('md')]} {
     ${({ open }) =>
-    open &&
-    'position: fixed; top: var(--spacing-md); left: var(--spacing-xs); bottom: var(--spacing-md); z-index: 1;'}
+      open &&
+      'position: fixed; top: var(--spacing-md); left: var(--spacing-xs); bottom: var(--spacing-md); z-index: 10;'}
   }
 
   ${[sizes.down('md')]} {
@@ -34,7 +35,6 @@ export const Nav = styled.nav<NavProps>`
     padding: var(--spacing-xxxs) var(--spacing-nano);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    z-index: 1;
   }
 `
 
@@ -88,6 +88,8 @@ export const Icon = styled.div<IconProps>`
       height: 28px;
     }
   }
+
+  width: max-content;
 
   display: flex;
   flex-direction: row;

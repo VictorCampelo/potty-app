@@ -30,9 +30,7 @@ export interface SignUpResponse {
   user: User
 }
 
-export interface GetMeResponse extends User {
-  store?: Store
-}
+export type GetMeResponse = User
 
 export interface FindPlanResponse {
   url: string
