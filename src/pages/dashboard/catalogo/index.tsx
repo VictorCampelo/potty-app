@@ -108,7 +108,7 @@ const CatalogPage = () => {
 
   const [cupomCode, setCupomCode] = useState('')
   const [discountPorcent, setDiscountPorcent] = useState('')
-  const [discountType, setDiscountType] = useState('category')
+  const [discountCategory, setDiscountCategory] = useState('category')
   const [maxUsage, setMaxUsage] = useState('')
   const [validate, setValidate] = useState('')
 
@@ -132,6 +132,7 @@ const CatalogPage = () => {
 
   const [activeCupom, setActiveCupom] = useState<any>(null)
   const [deleteCupomModal, toggleDeleteCupomModal] = useToggleState(false)
+  const [editCupomModal, toggleEditCupomModal] = useToggleState(false)
 
   const [productEditValue, setProductEditValue] = useState('')
 
@@ -238,22 +239,46 @@ const CatalogPage = () => {
   async function handleCreateCupom() {
     try {
       await couponRepository.createCoupon({
-        code: cupomCode,
-        discountPorcent: formatToNumber(discountPorcent),
-        maxUsage: Number(maxUsage),
+        code: activeCupom.code,
+        discountPorcent: formatToNumber(activeCupom.discountPorcent),
+        maxUsage: Number(activeCupom.maxUsage),
         validate: new Date(validate + '-3:00'),
-        type: 'percentage',
-        range: 'store',
-        categoriesIds: selectedCategories.map((it: any) => it.value)
+        type: discountType,
+        range: discountCategory,
+        categoriesIds: selectedCategories.map((it: any) => it.value),
+        isPrivate: privateCupom
       })
 
       loadData()
 
-      toggleAddCategoryModal()
+      toggleAddCupomModal()
 
       toast({ message: 'Cupom criado com sucesso!', type: 'success' })
     } catch {
       toast({ message: 'Erro ao criar cupom', type: 'error' })
+    }
+  }
+
+  async function handleUpdateCupom() {
+    try {
+      await couponRepository.editCoupon({
+        code: activeCupom.code,
+        discountPorcent: formatToNumber(activeCupom.discountPorcent),
+        maxUsage: Number(activeCupom.maxUsage),
+        validate: new Date(validate + '-3:00'),
+        type: discountType,
+        range: discountCategory,
+        categoriesIds: selectedCategories.map((it: any) => it.value),
+        isPrivate: privateCupom
+      })
+
+      loadData()
+
+      toggleEditCupomModal()
+
+      toast({ message: 'Cupom editado com sucesso!', type: 'success' })
+    } catch {
+      toast({ message: 'Erro ao editar cupom', type: 'error' })
     }
   }
 
@@ -445,11 +470,23 @@ const CatalogPage = () => {
     }
   }
 
-  const [radioSelected, setRadioSelected] = useState(1)
+  const [privateCupom, togglePrivateCupom] = useToggleState(false)
+  const [discountType, setDiscountType] = useState('real')
   const [ilimitedCupom, toggleIlimitedCupom] = useToggleState(false)
 
   const [priceWithDiscount, setPriceWithDiscount] = useState(formatToBrl(0))
   const [discount, setDiscount] = useState(0)
+
+  useEffect(() => {
+    if (!activeCupom) return
+    setDiscountType(activeCupom.type)
+    setDiscountPorcent(activeCupom.discountPorcent)
+    setValidate(activeCupom.validate)
+    setMaxUsage(activeCupom.maxUsage)
+    if (!activeCupom.maxUsage && !ilimitedCupom) toggleIlimitedCupom()
+    setCupomCode(activeCupom.code)
+    setDiscountCategory(activeCupom.range)
+  }, [activeCupom])
 
   useEffect(() => {
     const price = formatToNumber(String(getValues(['price'])[0] || 0))
@@ -1051,33 +1088,31 @@ const CatalogPage = () => {
                 <div className='radio-container'>
                   <input
                     type='radio'
-                    name='type'
-                    value='1'
-                    id='real'
-                    checked={radioSelected === 1}
-                    onClick={() => setRadioSelected(1)}
+                    id='money'
+                    value='money'
+                    checked={discountType === 'money'}
+                    onChange={(e) => setDiscountType(e.target.value)}
                   />
-                  <label htmlFor='all'>Real</label>
+                  <label htmlFor='money'>Real</label>
                 </div>
 
                 <div className='radio-container'>
                   <input
                     type='radio'
-                    name='type'
-                    value='2'
-                    id='perc'
-                    checked={radioSelected === 2}
-                    onClick={() => setRadioSelected(2)}
+                    id='percentage'
+                    value='percentage'
+                    checked={discountType === 'percentage'}
+                    onChange={(e) => setDiscountType(e.target.value)}
                   />
-                  <label htmlFor='cat'>Porcentagem</label>
+                  <label htmlFor='percentage'>Porcentagem</label>
                 </div>
               </div>
 
               <Input
                 label='Valor do desconto'
                 icon={<FaMoneyBill />}
-                placeholder={radioSelected === 1 ? 'R$ 0' : '0 %'}
-                mask={radioSelected === 1 ? 'monetaryBRL' : 'percent'}
+                placeholder={discountType === 'money' ? 'R$ 0' : '0 %'}
+                mask={discountType === 'money' ? 'monetaryBRL' : 'percent'}
                 value={discountPorcent}
                 onChange={(e) => setDiscountPorcent(e.target.value)}
               />
@@ -1096,7 +1131,6 @@ const CatalogPage = () => {
                   placeholder='0'
                   mask='number'
                   disabled={ilimitedCupom}
-                  style={ilimitedCupom ? { cursor: 'default' } : undefined}
                   value={maxUsage}
                   onChange={(e) => setMaxUsage(e.target.value)}
                 />
@@ -1105,8 +1139,6 @@ const CatalogPage = () => {
               <div className='radio-area'>
                 <input
                   type='checkbox'
-                  name='type'
-                  value='1'
                   id='ilim'
                   onClick={toggleIlimitedCupom}
                 />
@@ -1137,8 +1169,8 @@ const CatalogPage = () => {
                     type='radio'
                     id='discount-category'
                     value='category'
-                    checked={discountType === 'category'}
-                    onChange={(e) => setDiscountType(e.target.value)}
+                    checked={discountCategory === 'category'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
                   />
                   <label htmlFor='discount-category'>Categoria</label>
                 </div>
@@ -1148,8 +1180,8 @@ const CatalogPage = () => {
                     type='radio'
                     id='discount-all'
                     value='all'
-                    checked={discountType === 'all'}
-                    onChange={(e) => setDiscountType(e.target.value)}
+                    checked={discountCategory === 'all'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
                   />
                   <label htmlFor='discount-all'>Toda a loja</label>
                 </div>
@@ -1159,15 +1191,15 @@ const CatalogPage = () => {
                     type='radio'
                     id='discount-first'
                     value='first'
-                    checked={discountType === 'first'}
-                    onChange={(e) => setDiscountType(e.target.value)}
+                    checked={discountCategory === 'first'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
                   />
                   <label htmlFor='discount-first'>Primeira compra</label>
                 </div>
               </div>
 
               <MultiSelect
-                isDisabled={discountType !== 'category'}
+                isDisabled={discountCategory !== 'category'}
                 label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
@@ -1182,7 +1214,12 @@ const CatalogPage = () => {
               </span>
 
               <div className='radio-area'>
-                <input type='checkbox' name='type' value='1' id='priv' />
+                <input
+                  type='checkbox'
+                  id='priv'
+                  checked={privateCupom}
+                  onChange={() => togglePrivateCupom()}
+                />
                 <label htmlFor='priv'>Cupom privado</label>
                 <br />
                 <small>
@@ -1204,6 +1241,180 @@ const CatalogPage = () => {
 
             <Button type='button' onClick={handleCreateCupom}>
               Salvar
+            </Button>
+          </div>
+        </AddProductModalContainer>
+      </Modal>
+
+      <Modal
+        showCloseButton={true}
+        setModalOpen={toggleEditCupomModal}
+        modalVisible={editCupomModal}
+      >
+        <AddProductModalContainer>
+          <h1 className='titulo-cadastro'>
+            Editar Cupom <strong>{activeCupom?.code}</strong>
+          </h1>
+          <div className='input-infos'>
+            <div className='left-area'>
+              <div className='radio-area'>
+                <span>Valor do desconto</span>
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='money'
+                    value='money'
+                    checked={discountType === 'money'}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                  />
+                  <label htmlFor='money'>Real</label>
+                </div>
+
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='percentage'
+                    value='percentage'
+                    checked={discountType === 'percentage'}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                  />
+                  <label htmlFor='percentage'>Porcentagem</label>
+                </div>
+              </div>
+
+              <Input
+                label='Valor do desconto'
+                icon={<FaMoneyBill />}
+                placeholder={discountType === 'money' ? 'R$ 0' : '0 %'}
+                mask={discountType === 'money' ? 'monetaryBRL' : 'percent'}
+                value={discountPorcent}
+                onChange={(e) => setDiscountPorcent(e.target.value)}
+              />
+
+              <div className='row'>
+                <Input
+                  label='Validade'
+                  placeholder={String(futureDate)}
+                  mask='date'
+                  value={validate}
+                  onChange={(e) => setValidate(e.target.value)}
+                />
+
+                <Input
+                  label='N° de cupons'
+                  placeholder='0'
+                  mask='number'
+                  disabled={ilimitedCupom}
+                  value={maxUsage}
+                  onChange={(e) => setMaxUsage(e.target.value)}
+                />
+              </div>
+
+              <div className='radio-area'>
+                <input
+                  type='checkbox'
+                  id='ilim'
+                  onClick={toggleIlimitedCupom}
+                />
+                <label htmlFor='ilim'>Cupons ilimitados</label>
+              </div>
+
+              <div className='row'>
+                <Input
+                  label='Nome do cupom'
+                  placeholder='Nome do cupom'
+                  value={cupomCode}
+                  onChange={(e) => setCupomCode(e.target.value)}
+                />
+              </div>
+
+              <small>
+                Código que será digitado pelo cliente, deverá possuir apenas
+                letras e número.
+              </small>
+            </div>
+
+            <div className='right-area'>
+              <div className='radio-area'>
+                <span>Tipo de desconto</span>
+
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='discount-category'
+                    value='category'
+                    checked={discountCategory === 'category'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
+                  />
+                  <label htmlFor='discount-category'>Categoria</label>
+                </div>
+
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='store'
+                    value='store'
+                    checked={discountCategory === 'store'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
+                  />
+                  <label htmlFor='store'>Toda a loja</label>
+                </div>
+
+                <div className='radio-container'>
+                  <input
+                    type='radio'
+                    id='discount-first'
+                    value='first'
+                    checked={discountCategory === 'first'}
+                    onChange={(e) => setDiscountCategory(e.target.value)}
+                  />
+                  <label htmlFor='discount-first'>Primeira compra</label>
+                </div>
+              </div>
+
+              <MultiSelect
+                isDisabled={discountCategory !== 'category'}
+                label='Categorias'
+                options={categories.map((cat: any) => ({
+                  value: String(cat.id),
+                  label: cat.name
+                }))}
+                placeholder='Suas categorias'
+                selectedValue={selectedCategories}
+                setSelectedValue={setSelectedCategories}
+              />
+              <span className='text-categories-added'>
+                Categorias adicionadas: {selectedCategories.length}
+              </span>
+
+              <div className='radio-area'>
+                <input
+                  type='checkbox'
+                  id='priv'
+                  checked={privateCupom}
+                  onChange={() => togglePrivateCupom()}
+                />
+                <label htmlFor='priv'>Cupom privado</label>
+                <br />
+                <small>
+                  Cupons privados só serão acessíveis para quem tiver o nome do
+                  cupom.
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <div className='buttonContainer'>
+            <Button
+              skin='secondary'
+              onClick={toggleEditCupomModal}
+              type='submit'
+            >
+              Voltar
+            </Button>
+
+            <Button type='button' onClick={handleUpdateCupom}>
+              Atualizar
             </Button>
           </div>
         </AddProductModalContainer>
@@ -1435,8 +1646,12 @@ const CatalogPage = () => {
                               info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
                               excludeBtn={() => {
                                 setActiveCupom(it)
-
                                 toggleDeleteCupomModal()
+                              }}
+                              editBtn={() => {
+                                console.log(it)
+                                setActiveCupom(it)
+                                toggleEditCupomModal()
                               }}
                             />
                           ))

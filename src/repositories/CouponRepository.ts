@@ -11,8 +11,8 @@ export default class CouponRepository extends Http {
     return this.get<any>('/coupons/')
   }
 
-  editCoupon(data: string) {
-    return this.patch(`/coupons/${data}`, {})
+  editCoupon(dto: any) {
+    return this.patch(`/coupons/${dto.code}`, dto)
   }
 
   deleteCoupon(data: string) {
