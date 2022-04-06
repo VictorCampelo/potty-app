@@ -1,11 +1,9 @@
 import Link from 'next/link'
-import Image from 'next/image'
 
 import { useAuth } from '@/contexts/AuthContext'
 
 import IconButton from '@/components/atoms/IconButton'
 
-import Logo from '@images/logo.svg'
 import { BiUserCircle, BiHome, BiLogOut } from 'react-icons/bi'
 
 import { Container } from './styles'
@@ -16,7 +14,13 @@ const Header = () => {
   return (
     <Container>
       <Link passHref href='/'>
-        <Image src={Logo} alt='Logo' className='logo' width={128} height={64} />
+        <img
+          src='/images/logo.svg'
+          alt='Logo'
+          className='logo'
+          width={128}
+          height={64}
+        />
       </Link>
       <nav>
         {user ? (

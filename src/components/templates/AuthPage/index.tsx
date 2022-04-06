@@ -1,7 +1,6 @@
 import React from 'react'
 
 import Head from 'next/head'
-import Image from 'next/image'
 
 import WavesBg from '@/components/molecules/WavesBg'
 
@@ -36,16 +35,22 @@ const AuthPage = ({
 
       <Container size={size}>
         <div className='logo'>
-          <Image src='/images/logo.svg' alt='logo' width={156} height={96} />
+          <img
+            src='/images/logo.svg'
+            alt='Logo marca boa de venda'
+            className='logo'
+            width={156}
+            height={96}
+          />
         </div>
 
         <div className='card'>
           <div className='title'>
             <h1>{title}</h1>
             <div className='logo'>
-              <Image
+              <img
                 src='/images/logo.svg'
-                alt='logo'
+                alt='Logo marca boa de venda'
                 width={150}
                 height={80}
               />
