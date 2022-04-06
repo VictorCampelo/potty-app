@@ -1,0 +1,47 @@
+  
+name: Build and run tests
+
+on:
+  push:
+    branches: [ main, staging, dev ]
+  pull_request:
+    branches: [ main, staging, dev ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.13.1
+        cache: 'npm'
+    - run: npm install --legacy-peer-deps
+    # - run: npm test
+
+  deploy_main:
+    if: contains( github.ref, 'main')
+    runs-on: ubuntu-latest
+    needs: build
+    environment: main
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - name: Install
+        run: npm install --legacy-peer-deps
+      
+      - name: Build
+        run: npm run build
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-cloudfront-id: ${{ secrets.AWS_CLOUDFRONT_ID }}
+          aws-region: us-west-1
+      - name: upload to s3
+        run: aws s3 sync --delete --acl public-read ./build s3://shopping-da-cidade
+        
+      - name: deploy on cloudwatch
+        run: aws cloudfront create-invalidation --distribution-id ${aws-cloudfront-id} --paths "/*"
