@@ -41,7 +41,7 @@ jobs:
           aws-cloudfront-id: ${{ secrets.AWS_CLOUDFRONT_ID }}
           aws-region: us-west-2
       - name: upload to s3
-        run: aws s3 sync --delete --acl public-read ./build s3://shopping-da-cidade
+        run: aws s3 sync --delete --acl public-read ./out s3://shopping-da-cidade
         
       - name: deploy on cloudwatch
         run: aws cloudfront create-invalidation --distribution-id ${aws-cloudfront-id} --paths "/*"
