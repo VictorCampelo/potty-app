@@ -13,10 +13,6 @@ export const Container = styled.header`
 
   z-index: 5;
 
-  .logo {
-    margin-right: 400px;
-  }
-
   nav {
     width: 100%;
     max-width: 1000px;

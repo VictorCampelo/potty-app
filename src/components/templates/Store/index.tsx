@@ -35,6 +35,7 @@ import Checkbox from '@/components/atoms/Checkbox'
 import ProductCard from '@/components/organisms/ProductCard'
 import ProductCardHorizon from '@/components/organisms/ProductCardHorizon'
 import PuffLoader from 'react-spinners/PuffLoader'
+import { ScheduleDays } from '@/@types/entities'
 
 interface Props {
   store: Store
@@ -57,7 +58,10 @@ const StorePage: NextPage<Props> = ({ store }) => {
   const widthScreen = useMedia({ minWidth: '640px' })
 
   const storeCategories = [
-    { value: 'all_categories', label: 'Todas as categorias' },
+    {
+      value: 'all_categories',
+      label: 'Todas as categorias'
+    },
     {
       value: 'cozinha',
       label: 'Cozinha'
@@ -77,11 +81,25 @@ const StorePage: NextPage<Props> = ({ store }) => {
   ]
 
   const storeOrders = [
-    { value: 'best_result', label: 'Melhor resultado' },
-    { value: 'most_request', label: 'Mais pedidos' },
-    { value: 'most_recent', label: 'Mais recente' },
-    { value: 'price', label: 'Preço' }
+    {
+      value: 'best_result',
+      label: 'Melhor resultado'
+    },
+    {
+      value: 'most_request',
+      label: 'Mais pedidos'
+    },
+    {
+      value: 'most_recent',
+      label: 'Mais recente'
+    },
+    {
+      value: 'price',
+      label: 'Preço'
+    }
   ]
+
+  const starsFilter = ['4.0 +']
 
   const handleFavorite = () => {
     setFavorite(!favorite)
@@ -93,6 +111,42 @@ const StorePage: NextPage<Props> = ({ store }) => {
 
   const updateCategoryFilter = (newValue: string) => {
     setCategoryFilter(categoryFilter === newValue ? '' : newValue)
+  }
+
+  const scheduleDays: ScheduleDays[] = [
+    'dom',
+    'seg',
+    'ter',
+    'qua',
+    'qui',
+    'sex',
+    'sab'
+  ]
+
+  const getWeekDay = (date: Date): ScheduleDays => scheduleDays[date.getDay()]
+
+  const getHourInMinutes = (date: Date) =>
+    date.getHours() * 60 + date.getMinutes()
+
+  const hourToMinutes = (hour: string) => {
+    const [hours, minutes] = hour.split(':')
+    return Number(hours) * 60 + Number(minutes)
+  }
+
+  const isOpened = () => {
+    const date = new Date()
+
+    const weekDay = getWeekDay(date)
+    const currentHourInMinutes = getHourInMinutes(date)
+
+    const scheduleDay = store.schedules[weekDay] // ['10:00', '18:00']
+    const openInMinutes = hourToMinutes(scheduleDay[0])
+    const closeInMinutes = hourToMinutes(scheduleDay[1])
+
+    return (
+      currentHourInMinutes >= openInMinutes &&
+      currentHourInMinutes <= closeInMinutes
+    )
   }
 
   const loadProducts = async () => {
@@ -227,10 +281,20 @@ const StorePage: NextPage<Props> = ({ store }) => {
             </Card>
 
             <Card>
-              <h1>Aberto agora</h1>
-              <Text>Hoje:</Text>
-              <Text>7h às 12h</Text>
-              <Text>13h às 18h</Text>
+              <h1>{isOpened() ? 'Aberto agora' : 'Fechado agora'}</h1>
+
+              <Row style={{ flexWrap: 'wrap' }}>
+                {Object.entries(store.schedules).map(([day, schedule]) => {
+                  return (
+                    <div key={day}>
+                      <Text>{day}</Text>
+                      <Text>
+                        {schedule[0]} às {schedule[1]}
+                      </Text>
+                    </div>
+                  )
+                })}
+              </Row>
             </Card>
           </Row>
         </Card>
@@ -257,7 +321,7 @@ const StorePage: NextPage<Props> = ({ store }) => {
           </Card>
 
           <Card>
-            {['4.0 +'].map((star, i) => (
+            {starsFilter.map((star, i) => (
               <Checkbox
                 key={i}
                 confirm={starFilter === star}
@@ -302,7 +366,10 @@ const StorePage: NextPage<Props> = ({ store }) => {
             {storeCategories.map(({ value, label }, i) => (
               <Text
                 key={i}
-                style={{ fontSize: '18px', margin: '0 auto 18px 20px' }}
+                style={{
+                  fontSize: '18px',
+                  margin: '0 auto 18px 20px'
+                }}
                 pointer
                 active={value === categoryFilter}
                 onClick={() => updateCategoryFilter(value)}

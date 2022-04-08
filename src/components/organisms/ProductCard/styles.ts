@@ -10,7 +10,6 @@ export const Container = styled.div`
   box-shadow: 0 0 8px rgba(54, 63, 78, 0.2);
   padding: 1.5rem;
   display: flex;
-  align-items: center;
   flex-direction: column;
   position: relative;
   ${[sizes.down('lg')]} {

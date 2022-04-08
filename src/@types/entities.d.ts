@@ -13,6 +13,8 @@ export interface Schedules {
   ter: string[]
 }
 
+export type ScheduleDays = 'dom' | 'seg' | 'ter' | 'qua' | 'qui' | 'sex' | 'sab'
+
 export interface File {
   id: string
   name: string

@@ -15,14 +15,14 @@ const BannerStore = ({ images }: Props) => {
       modules={[Pagination]}
       slidesPerView={1}
       pagination={{ clickable: true }}
-      style={{ width: '100%', height: '500px' }}
+      style={{ width: '100vw', height: '100vh' }}
     >
       {images.map((image, i) => (
         <SwiperSlide key={i}>
           <img
             src={image}
             alt={`Imagem-${i}`}
-            style={{ height: '500px', margin: 'auto' }}
+            style={{ width: '100vw', height: '90vh', margin: 'auto' }}
           />
         </SwiperSlide>
       ))}

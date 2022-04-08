@@ -11,6 +11,8 @@ export const Container = styled.div`
   img {
     width: 200px;
     height: 180px;
+    border-radius: 15px;
+    margin-right: 1.5rem;
   }
   .title {
     font-size: 1.125rem;
