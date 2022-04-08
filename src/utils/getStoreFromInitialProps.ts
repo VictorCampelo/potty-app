@@ -8,10 +8,9 @@ const getStoreFromInitialProps = async (ctx: NextPageContext) => {
   try {
     const storeName = ctx.req?.headers.host?.split('.')[0]
 
-    const store = storeName ? await storeRepository.findByName(storeName) : null
-
-    return store
-  } catch {
+    return storeName ? await storeRepository.findByName(storeName) : null
+  } catch (e) {
+    console.error(e)
     return null
   }
 }

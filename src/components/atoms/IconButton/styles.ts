@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const Container = styled.button`
+  width: max-content;
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;

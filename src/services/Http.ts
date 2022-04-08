@@ -16,10 +16,12 @@ class Http {
 
     this.http.interceptors.request.use(
       (config: any) => {
-        const token =
-          localStorage.getItem('bdv.auth.token') ||
-          sessionStorage.getItem('bdv.auth.token')
-        config.headers.common.Authorization = `Bearer ${token}`
+        if (typeof window !== 'undefined') {
+          const token =
+            localStorage.getItem('bdv.auth.token') ||
+            sessionStorage.getItem('bdv.auth.token')
+          config.headers.common.Authorization = `Bearer ${token}`
+        }
 
         return config
       },

@@ -20,8 +20,6 @@ export const Container = styled.main`
   gap: var(--spacing-md);
   width: 100%;
   padding: var(--spacing-nano) var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
 
   ${[sizes.down('sm')]} {
     padding: 0;

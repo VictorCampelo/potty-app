@@ -2,10 +2,10 @@ import { Container } from './styles'
 
 import type { ButtonHTMLAttributes } from 'react'
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {}
+type Props = ButtonHTMLAttributes<HTMLButtonElement>
 
-const IconButton = ({ ...rest }: Props) => {
-  return <Container {...rest} />
+const IconButton = (props: Props) => {
+  return <Container {...props} />
 }
 
 export default IconButton
