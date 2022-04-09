@@ -33,7 +33,7 @@ const ProductCardHorizon = ({ product, onClick }: Props) => {
     <Container
       onClick={(e) => {
         const { elementType } = Object.values(e.target)[0]
-        if (!['path', 'img', 'svg'].includes(elementType)) {
+        if (!['path', 'svg'].includes(elementType)) {
           onClick()
         }
       }}

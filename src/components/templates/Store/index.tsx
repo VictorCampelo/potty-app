@@ -9,10 +9,13 @@ import FooterContact from '@/components/organisms/FooterContact'
 import Pagination from '@/components/molecules/Pagination'
 import Input from '@/components/atoms/Input'
 import IconButton from '@/components/atoms/IconButton'
-import ReactStars from 'react-stars'
+import Checkbox from '@/components/atoms/Checkbox'
+import ProductCard from '@/components/organisms/ProductCard'
+import ProductCardHorizon from '@/components/organisms/ProductCardHorizon'
 
 import useMedia from 'use-media'
 
+import StoreRepository from '@/repositories/StoreRepository'
 import ProductRepository from '@/repositories/ProductRepository'
 
 import { Wrapper, Container } from '@/styles/GlobalStyle'
@@ -28,24 +31,61 @@ import {
 
 import { VscSearch } from 'react-icons/vsc'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
+import PuffLoader from 'react-spinners/PuffLoader'
+import ReactStars from 'react-stars'
 
 import type { NextPage } from 'next'
-import type { Product, Store } from '@/@types/entities'
-import Checkbox from '@/components/atoms/Checkbox'
-import ProductCard from '@/components/organisms/ProductCard'
-import ProductCardHorizon from '@/components/organisms/ProductCardHorizon'
-import PuffLoader from 'react-spinners/PuffLoader'
-import { ScheduleDays } from '@/@types/entities'
+import type {
+  Product,
+  Store,
+  ScheduleDays,
+  File,
+  Schedules
+} from '@/@types/entities'
 
 interface Props {
-  store: Store
+  name: string
 }
 
+const storeRepository = new StoreRepository()
 const productsRepository = new ProductRepository()
 
-const StorePage: NextPage<Props> = ({ store }) => {
+const StorePage: NextPage<Props> = ({ name }) => {
+  const [store, setStore] = useState<Store>({
+    id: '',
+    name: '',
+    formatedName: '',
+    formattedAddress: '',
+    CNPJ: '',
+    phone: '',
+    street: '',
+    zipcode: '',
+    addressNumber: 0,
+    neighborhood: '',
+    city: '',
+    state: '',
+    description: '',
+    enabled: false,
+    sumOrders: 0,
+    sumFeedbacks: 0,
+    sumStars: 0,
+    avgStars: 0,
+    facebookLink: '',
+    instagramLink: '',
+    whatsappLink: '',
+    schedules: {} as Schedules,
+    createdAt: '',
+    updatedAt: '',
+    likes: 0,
+    deliveryFee: 0,
+    dispatch: 'all',
+    avatar: { url: '/images/icon.png' } as File,
+    background: { url: '/images/capa.png' } as File,
+    paymentMethods: []
+  })
+
   const [products, setProducts] = useState<Product[]>([])
-  const [loadingProducts, setLoadingProducts] = useState(false)
+  const [loadingProducts, setLoadingProducts] = useState(true)
 
   const [favorite, setFavorite] = useState(false)
 
@@ -140,6 +180,7 @@ const StorePage: NextPage<Props> = ({ store }) => {
     const currentHourInMinutes = getHourInMinutes(date)
 
     const scheduleDay = store.schedules[weekDay] // ['10:00', '18:00']
+    if (!scheduleDay) return false
     const openInMinutes = hourToMinutes(scheduleDay[0])
     const closeInMinutes = hourToMinutes(scheduleDay[1])
 
@@ -149,12 +190,13 @@ const StorePage: NextPage<Props> = ({ store }) => {
     )
   }
 
-  const loadProducts = async () => {
+  const loadProducts = async (storeId: string) => {
     try {
       setLoadingProducts(true)
-      const products = await productsRepository.findAllByStoreId(store.id)
 
-      setProducts(products)
+      const data = await productsRepository.findAllByStoreId(storeId)
+
+      setProducts(data)
     } catch (e) {
       console.error(e)
     } finally {
@@ -162,8 +204,24 @@ const StorePage: NextPage<Props> = ({ store }) => {
     }
   }
 
+  const loadData = async () => {
+    try {
+      const data = await storeRepository.findByName(name)
+
+      setStore(data)
+
+      return data.id
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   useEffect(() => {
-    loadProducts()
+    loadData().then((storeId) => {
+      if (storeId) {
+        loadProducts(storeId)
+      }
+    })
   }, [])
 
   return (
@@ -417,12 +475,14 @@ const StorePage: NextPage<Props> = ({ store }) => {
         </Row>
 
         {widthScreen && (
-          <Pagination
-            onPageChange={() => undefined}
-            currentPage={1}
-            totalCountOfRegisters={100}
-            registersPerPage={10}
-          />
+          <div style={{ margin: '2rem auto' }}>
+            <Pagination
+              onPageChange={() => undefined}
+              currentPage={1}
+              totalCountOfRegisters={100}
+              registersPerPage={10}
+            />
+          </div>
         )}
 
         <FooterContact

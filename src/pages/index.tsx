@@ -1,24 +1,16 @@
+import dynamic from 'next/dynamic'
+
 import StorePage from '@/components/templates/Store'
 import LandingPage from '@/components/templates/Landing'
 
-import getStoreFromInitialProps from '@/utils/getStoreFromInitialProps'
+const Home = () => {
+  const name = window.location.host?.split('.')[0]
 
-import type { NextPage } from 'next'
-import type { Store } from '@/@types/entities'
-
-interface ServerProps {
-  store: Store | null
-}
-
-const Home: NextPage<ServerProps> = ({ store }) => {
-  if (store) return <StorePage store={store} />
+  if (name) return <StorePage name={name} />
 
   return <LandingPage />
 }
 
-Home.getInitialProps = async (ctx) => {
-  const store = await getStoreFromInitialProps(ctx)
-  return { store }
-}
-
-export default Home
+export default dynamic(() => Promise.resolve(Home), {
+  ssr: false
+})
