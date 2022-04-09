@@ -8,6 +8,7 @@ export const Container = styled.div`
   box-shadow: 0 0 8px rgba(54, 63, 78, 0.2);
   padding: 2rem 1.5rem;
   display: flex;
+  position: relative;
   img {
     width: 200px;
     height: 180px;
