@@ -6,30 +6,23 @@ import Router from 'next/router'
 import MultiSelect from '@/components/atoms/MultiSelect'
 import Header from '@/components/molecules/Header'
 import Modal from '@/components/molecules/Modal'
-import Input from '@/components/atoms/Input'
 import Button from '@/components/atoms/Button'
 import Checkbox from '@/components/atoms/Checkbox'
+import ModalRegister from '@/components/templates/ModalRegister'
+import ModalGuest from '@/components/templates/ModalGuest'
 
 import { BsWhatsapp } from 'react-icons/bs'
 import { FiChevronLeft, FiArrowLeft } from 'react-icons/fi'
-import { IoIosClose } from 'react-icons/io'
-import { BiBuildings, BiMapAlt } from 'react-icons/bi'
-import { HiOutlineLocationMarker } from 'react-icons/hi'
-import { FaHome } from 'react-icons/fa'
 import { IoPencilOutline } from 'react-icons/io5'
 import { PulseLoader } from 'react-spinners'
 
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 
-import UserRepository from '@/repositories/UserRepository'
 import OrderRepository from '@/repositories/OrderRepository'
 
 import useMedia from 'use-media'
 import { toast } from 'react-toastify'
-import * as yup from 'yup'
-import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
 
 import formatToBrl from '@/utils/formatToBrl'
 import formatPhone from '@/utils/masks/formatPhone'
@@ -61,32 +54,14 @@ import type {
   OrderProduct,
   PaymentMethod
 } from '@/@types/entities'
-import ModalRegister from '@/components/templates/ModalRegister'
-import ModalGuest from '@/components/templates/ModalGuest'
+import ModalAddress from '@/components/templates/ModalAddress'
 
-const userRepository = new UserRepository()
 const orderRepository = new OrderRepository()
 
-const addressRegisterFormSchema = yup.object().shape({
-  uf: yup.string().required('Estado obrigatório'),
-  city: yup.string().required('Cidade obrigatória'),
-  street: yup.string().required('Logradouro obrigatório'),
-  addressNumber: yup.string().required('obrigatório'),
-  neighborhood: yup.string().required('Bairro obrigatório'),
-  zipcode: yup
-    .string()
-    .required('CEP obrigatório')
-    .min(9, 'Mínimo 8 caracteres')
-})
-
 const CartContinue = () => {
-  const { register, handleSubmit, setValue } = useForm({
-    resolver: yupResolver(addressRegisterFormSchema)
-  })
+  const { user, fetchUser, isLoading, isAuthenticated } = useAuth()
 
   const widthScreen = useMedia({ minWidth: '640px' })
-
-  const { user, fetchUser, isLoading, isAuthenticated } = useAuth()
 
   const { stores, products, loading, clearCart, totalPrice } = useCart()
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
@@ -227,26 +202,6 @@ const CartContinue = () => {
     }
   }
 
-  const openAddressModal = () => {
-    if (user) {
-      const address = {
-        uf: user.uf,
-        city: user.city,
-        zipcode: user.zipcode,
-        addressNumber: user.addressNumber,
-        complement: user.complement,
-        neighborhood: user.neighborhood,
-        street: user.street
-      }
-
-      Object.entries(address).forEach(([key, value]) => {
-        setValue(key, value)
-      })
-    }
-
-    setAddressModalActive(true)
-  }
-
   const updatePaymentMethods = (storeId: string) => {
     const store = stores.find(({ id }) => id === storeId)
     if (store) {
@@ -340,31 +295,6 @@ const CartContinue = () => {
     }
   }
 
-  const handleUpdateAddress = async (values: any) => {
-    try {
-      const address = {
-        uf: values.uf,
-        city: values.city,
-        zipcode: values.zipcode,
-        addressNumber: values.addressNumber,
-        complement: values.complement,
-        neighborhood: values.neighborhood,
-        street: values.street
-      }
-
-      await userRepository.update(address)
-
-      fetchUser()
-
-      setAddressModalActive(false)
-
-      toast.success('Endereço atualizado com sucesso!')
-    } catch (e) {
-      console.error(e)
-      toast.error('Erro ao atualizar endereço, tente novamente mais tarde!')
-    }
-  }
-
   const [showModalRegister, setShowModalRegister] = useState(false)
   const [showModalGuest, setShowModalGuest] = useState(false)
 
@@ -398,6 +328,13 @@ const CartContinue = () => {
       </Head>
 
       <Header />
+
+      <ModalAddress
+        user={user}
+        isOpen={addressModalActive}
+        onClose={() => setAddressModalActive(false)}
+        onSubmit={fetchUser}
+      />
 
       <ModalRegister
         isOpen={showModalRegister}
@@ -436,116 +373,6 @@ const CartContinue = () => {
             </Button>
             <span onClick={toggleClearModal}>CANCELAR</span>
           </div>
-        </ModalContainer>
-      </Modal>
-
-      <Modal
-        showCloseButton={false}
-        setModalOpen={() => setAddressModalActive(!addressModalActive)}
-        modalVisible={addressModalActive}
-        under={!widthScreen}
-      >
-        <ModalContainer>
-          <div className='exit-container'>
-            <FiArrowLeft
-              size={25}
-              color='black'
-              onClick={() => setAddressModalActive(false)}
-              style={widthScreen ? { display: 'none' } : undefined}
-            />
-            <h1>Adicionar novo endereço</h1>
-
-            <IoIosClose
-              onClick={() => setAddressModalActive(false)}
-              size={36}
-              color='black'
-              style={widthScreen ? undefined : { display: 'none' }}
-            />
-          </div>
-
-          <form
-            className='input-container'
-            onSubmit={handleSubmit(handleUpdateAddress)}
-          >
-            <div className='row'>
-              <Input
-                label='CEP'
-                placeholder='00000-000'
-                mask='cep'
-                icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                {...register('zipcode')}
-                maxLength={9}
-              />
-
-              <Input
-                label='Bairro'
-                placeholder='Bairro'
-                icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                {...register('neighborhood')}
-              />
-            </div>
-
-            <div className='row mid'>
-              <Input
-                label='Logradouro'
-                placeholder='Logradouro'
-                icon={<FaHome size={20} color='var(--black-800)' />}
-                {...register('street')}
-              />
-
-              <Input
-                label='Número'
-                placeholder='0000'
-                mask='number'
-                type='numeric'
-                maxLength={6}
-                icon={<BiBuildings size={20} color='var(--black-800)' />}
-                {...register('addressNumber')}
-              />
-            </div>
-
-            <div className='row'>
-              <Input
-                label='Cidade'
-                placeholder='Cidade'
-                icon={
-                  <HiOutlineLocationMarker size={20} color='var(--black-800)' />
-                }
-                {...register('city')}
-                maxLength={45}
-              />
-
-              <Input
-                label='Estado'
-                placeholder='Estado'
-                icon={
-                  <HiOutlineLocationMarker size={20} color='var(--black-800)' />
-                }
-                {...register('uf')}
-                maxLength={45}
-              />
-            </div>
-
-            <div className='row'>
-              <Input
-                label='Complemento'
-                placeholder='Complemento'
-                {...register('complement')}
-                maxLength={30}
-              />
-            </div>
-
-            <div className='buttons-container'>
-              <Button
-                type='button'
-                style={widthScreen ? undefined : { display: 'none' }}
-                onClick={() => setAddressModalActive(false)}
-              >
-                Voltar
-              </Button>
-              <Button type='submit'>Atualizar</Button>
-            </div>
-          </form>
         </ModalContainer>
       </Modal>
 
@@ -633,7 +460,9 @@ const CartContinue = () => {
                   )}
                 </AddressInfo>
 
-                <UpdateAddressButton onClick={openAddressModal}>
+                <UpdateAddressButton
+                  onClick={() => setAddressModalActive(true)}
+                >
                   <IoPencilOutline size={24} />
                   Atualizar endereço
                 </UpdateAddressButton>
