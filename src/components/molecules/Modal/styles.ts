@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 interface ContainerProps {
   under?: boolean
@@ -29,8 +30,13 @@ export const Container = styled.header<ContainerProps>`
 
     overflow: auto;
 
+    ${sizes.down('md')} {
+      padding: 10px 15px;
+    }
+
     ${(props) =>
       props.under && 'padding: var(--spacing-nano) var(--spacing-xxxs);'}
+
     .modalDescription, .modalAvaliations {
       width: 100%;
       .title {

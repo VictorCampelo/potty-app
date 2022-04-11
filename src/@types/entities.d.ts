@@ -126,6 +126,19 @@ export interface OrderProduct {
   parcels?: number
 }
 
+export interface GuestAddress {
+  firstName: string
+  lastName: string
+  uf: string
+  city: string
+  street: string
+  neighborhood: string
+  addressNumber: string
+  logradouro: string
+  zipcode: string
+  complement: string
+}
+
 export interface Order {
   storeId: string
   orderProducts: OrderProduct[]

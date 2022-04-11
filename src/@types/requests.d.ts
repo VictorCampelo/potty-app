@@ -1,4 +1,5 @@
-import type { User, Store, Order } from '@/@types/entities'
+import type { User, Store, Order, OrderGuest } from '@/@types/entities'
+import { GuestAddress } from '@/@types/entities'
 
 export interface SignInDTO {
   email: string
@@ -38,7 +39,16 @@ export interface FindPlanResponse {
 
 export type StoreResponse = Store
 
-export type SendOrdersDTO = Order[]
+export interface SendOrdersDTO {
+  products: Order[]
+  couponCode?: string
+}
+export interface SendOrdersGuestDTO {
+  products: OrderGuest[]
+  guestAddress: GuestAddress
+  couponCode?: string
+}
+
 export interface FindOrderDTO {
   id?: string
   confirmed?: boolean

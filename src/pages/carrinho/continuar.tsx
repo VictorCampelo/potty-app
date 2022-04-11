@@ -61,6 +61,8 @@ import type {
   OrderProduct,
   PaymentMethod
 } from '@/@types/entities'
+import ModalRegister from '@/components/templates/ModalRegister'
+import ModalGuest from '@/components/templates/ModalGuest'
 
 const userRepository = new UserRepository()
 const orderRepository = new OrderRepository()
@@ -85,10 +87,6 @@ const CartContinue = () => {
   const widthScreen = useMedia({ minWidth: '640px' })
 
   const { user, fetchUser, isLoading, isAuthenticated } = useAuth()
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) Router.push('/entrar')
-  }, [isLoading])
 
   const { stores, products, loading, clearCart, totalPrice } = useCart()
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[] | null>(
@@ -244,9 +242,9 @@ const CartContinue = () => {
       Object.entries(address).forEach(([key, value]) => {
         setValue(key, value)
       })
-
-      setAddressModalActive(true)
     }
+
+    setAddressModalActive(true)
   }
 
   const updatePaymentMethods = (storeId: string) => {
@@ -280,39 +278,46 @@ const CartContinue = () => {
     }
   }
 
-  const handleFinishPurchase = async () => {
+  const handleFinishPurchase = async (user: any, isGuest = false) => {
     try {
-      if (finallyPurchase) {
-        const productsDTO = Object.entries(_.groupBy(products, 'storeId')).map(
-          ([storeId, products]) => {
-            const orderProducts = products.map((item) => {
-              const order: OrderProduct = {
-                productId: item.id,
-                amount: Number(item.amount),
-                paymentMethod: productsPaymentMethod[item.id].methodName
-              }
-              const parcels = Number(productsPaymentMethod[item.id].parcels)
-              if (parcels) order.parcels = parcels
-              return order
-            })
-            return {
-              storeId,
-              orderProducts,
-              delivery: !storesWithoutDelivery[storeId]
+      if (!finallyPurchase) return goToNextProduct()
+      if (!user) return setShowModalGuest(true)
+
+      const productsDTO = Object.entries(_.groupBy(products, 'storeId')).map(
+        ([storeId, products]) => {
+          const orderProducts = products.map((item) => {
+            const order: OrderProduct = {
+              productId: item.id,
+              amount: Number(item.amount),
+              paymentMethod: productsPaymentMethod[item.id].methodName
             }
+            const parcels = Number(productsPaymentMethod[item.id].parcels)
+            if (parcels) order.parcels = parcels
+            return order
+          })
+          return {
+            storeId,
+            orderProducts,
+            delivery: !storesWithoutDelivery[storeId]
           }
-        )
+        }
+      )
 
-        const data = await orderRepository.send(productsDTO)
-
-        data.whatsapp.forEach((it: any) => window.open(it))
-
-        clearCart()
-
-        await Router.push('/carrinho/sucesso')
+      let data: any
+      if (isGuest) {
+        data = await orderRepository.sendAsGuest({
+          products: productsDTO,
+          guestAddress: user
+        })
       } else {
-        goToNextProduct()
+        data = await orderRepository.send({ products: productsDTO })
       }
+
+      data.whatsapp.forEach((it: any) => window.open(it))
+
+      clearCart()
+
+      await Router.push('/carrinho/sucesso')
     } catch (e: any) {
       console.error(e)
 
@@ -360,6 +365,13 @@ const CartContinue = () => {
     }
   }
 
+  const [showModalRegister, setShowModalRegister] = useState(false)
+  const [showModalGuest, setShowModalGuest] = useState(false)
+
+  useEffect(() => {
+    setShowModalRegister(!isLoading && !isAuthenticated)
+  }, [isLoading, isAuthenticated])
+
   useEffect(() => {
     if (!loading && products.length && stores.length) {
       const firstItem = products[0]
@@ -386,6 +398,17 @@ const CartContinue = () => {
       </Head>
 
       <Header />
+
+      <ModalRegister
+        isOpen={showModalRegister}
+        onClose={() => setShowModalRegister(false)}
+      />
+
+      <ModalGuest
+        isOpen={showModalGuest}
+        onClose={() => setShowModalGuest(!showModalGuest)}
+        onSubmit={(data) => handleFinishPurchase(data, true)}
+      />
 
       <Modal
         showCloseButton={true}
@@ -563,7 +586,21 @@ const CartContinue = () => {
                 </DeliveryMethod>
 
                 <AddressInfo>
-                  {user && !isLoading ? (
+                  {isLoading ? (
+                    <>
+                      <span>
+                        <strong>Nome do usuário:</strong> Carregando...
+                      </span>
+
+                      <span>
+                        <strong>Endereço: </strong> Carregando...
+                      </span>
+
+                      <span>
+                        <strong>Telefone: </strong> Carregando...
+                      </span>
+                    </>
+                  ) : user ? (
                     <>
                       <span>
                         <strong>Nome do usuário:</strong> {user.firstName}{' '}
@@ -582,15 +619,15 @@ const CartContinue = () => {
                   ) : (
                     <>
                       <span>
-                        <strong>Nome do usuário:</strong> Carregando...
+                        <strong>Nome do usuário:</strong> Não cadastrado
                       </span>
 
                       <span>
-                        <strong>Endereço: </strong> Carregando...
+                        <strong>Endereço: </strong> Não cadastrado
                       </span>
 
                       <span>
-                        <strong>Telefone: </strong> Carregando...
+                        <strong>Telefone: </strong> Não cadastrado
                       </span>
                     </>
                   )}
@@ -728,7 +765,7 @@ const CartContinue = () => {
                 <div className='buttonContainer'>
                   <button
                     className='finish'
-                    onClick={handleFinishPurchase}
+                    onClick={() => handleFinishPurchase(user)}
                     disabled={!paymentMethodOption?.value}
                   >
                     {finallyPurchase ? (
@@ -761,7 +798,10 @@ const CartContinue = () => {
                   </span>
                 </div>
                 <div className='buttonContainerMob'>
-                  <button className='finish' onClick={handleFinishPurchase}>
+                  <button
+                    className='finish'
+                    onClick={() => handleFinishPurchase(user)}
+                  >
                     {' '}
                     <BsWhatsapp size={24} color='white' />
                     <p>FINALIZAR</p>

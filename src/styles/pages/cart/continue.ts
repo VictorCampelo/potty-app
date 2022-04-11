@@ -288,7 +288,6 @@ export const ProductItem = styled.div<{ active: boolean }>`
 `
 
 export const ModalContainer = styled.div`
-  width: auto;
   width: 800px;
   display: flex;
   flex-direction: column;
@@ -346,5 +345,10 @@ export const ModalContainer = styled.div`
     gap: 1.5rem;
     margin-top: 1rem;
     padding: 0 12.5%;
+    justify-content: center;
+
+    button {
+      margin: 0;
+    }
   }
 `

@@ -7,7 +7,6 @@ import Header from '@/components/molecules/Header'
 import Counter from '@/components/atoms/Counter'
 
 import { useCart } from '@/contexts/CartContext'
-import { useAuth } from '@/contexts/AuthContext'
 
 import formatToBrl from '@/utils/formatToBrl'
 import { useMedia } from 'use-media'
@@ -18,8 +17,6 @@ import { FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 import { FaCheck } from 'react-icons/fa'
 import { IoTrashOutline } from 'react-icons/io5'
 import { AiFillCamera } from 'react-icons/ai'
-
-import toast from '@/utils/toast'
 
 import {
   EmptyCartContainer,
@@ -33,7 +30,6 @@ import {
 } from '@/styles/pages/cart'
 
 const CartPage = () => {
-  const { isAuthenticated } = useAuth()
   const {
     products,
     selectAllProducts,
@@ -47,15 +43,7 @@ const CartPage = () => {
   const widthScreen = useMedia({ minWidth: '640px' })
 
   const handleMakeCheckout = () => {
-    if (isAuthenticated) {
-      Router.push('carrinho/continuar')
-    } else {
-      toast({
-        message: 'Entre com sua conta para finalizar a compra!',
-        type: 'error'
-      })
-      Router.push('/entrar')
-    }
+    Router.push('carrinho/continuar')
   }
 
   return (
