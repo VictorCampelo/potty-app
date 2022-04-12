@@ -15,6 +15,11 @@ export const CardsContainer = styled.section`
     height: 80%;
     gap: 2rem;
     min-height: 350px;
+
+    ${[sizes.down('sm')]} {
+      display: flex;
+      flex-direction: column-reverse;
+    }
   }
 `
 
@@ -25,7 +30,7 @@ export const AddressCard = styled.section`
   background: white;
   border-radius: 30px;
   padding: var(--spacing-xs);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
 
   .paymentContainer {
     display: flex;
@@ -89,12 +94,6 @@ export const AddressInfo = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-xxxs);
-    strong {
-      display: none;
-    }
-  }
-  span {
-    display: block;
   }
 `
 
@@ -108,9 +107,6 @@ export const UpdateAddressButton = styled.button`
   margin-bottom: 1rem;
   transition: color 0.2s;
 
-  ${[sizes.down('sm')]} {
-    margin-bottom: var(--spacing-md);
-  }
   svg {
     color: var(--color-primary);
     margin-right: 0.5rem;
@@ -132,18 +128,17 @@ export const ProductsContainer = styled.section`
   background: white;
   border-radius: 30px;
 
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
   display: flex;
   flex-direction: column;
 
   ${[sizes.down('sm')]} {
-    display: none;
+    box-shadow: none;
   }
   h1 {
     font-size: 1.4rem;
     font-weight: 500;
-    padding: 0.6rem;
-    padding-left: 1.2rem;
+    padding: 0.6rem 1.2rem 0.6rem 0.6rem;
   }
 
   .products-container {
@@ -159,7 +154,7 @@ export const CartContainer = styled.section`
   width: 100%;
   border-radius: 30px;
   height: 20%;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
   display: flex;
   flex-direction: column;
 
@@ -349,6 +344,31 @@ export const ModalContainer = styled.div`
 
     button {
       margin: 0;
+    }
+  }
+`
+
+export const ProductsMobileButtons = styled.div`
+  width: 100%;
+
+  ${[sizes.up('sm')]} {
+    display: none;
+  }
+
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  justify-content: space-around;
+  align-items: center;
+
+  margin-top: 1rem;
+
+  button {
+    margin: 0;
+    gap: 0.5rem;
+
+    span {
+      color: var(--color-primary);
     }
   }
 `

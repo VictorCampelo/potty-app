@@ -31,7 +31,7 @@ export const Container = styled.main`
   ${[sizes.down('sm')]} {
     background: white;
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
   }
@@ -54,7 +54,7 @@ export const Content = styled.section`
   }
 
   ${[sizes.down('sm')]} {
-    padding-top: 1rem;
+    padding: 0.8rem 0 2rem 0;
 
     h1 {
       font-size: var(--font-size-md);
@@ -201,6 +201,7 @@ export const CartContainerFooter = styled(
         a {
           color: var(--red);
           text-decoration: underline;
+          margin-left: 0.5rem;
         }
       }
     }

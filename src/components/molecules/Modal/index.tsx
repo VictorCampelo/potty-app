@@ -15,14 +15,9 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const customStyles = {
   content: {
-    maxWidth: '100%',
-    maxHeight: '90vh',
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-40%',
-    transform: 'translate(-50%, -50%)',
+    maxWidth: 'max-content',
+    height: 'min-content',
+    margin: 'auto',
     background: '#fff',
     color: '#000000',
     borderRadius: '30px',
@@ -39,11 +34,7 @@ const customStyles = {
 
 const customStylesUnder = {
   content: {
-    ...customStyles.content,
-    bottom: '-50%',
-    left: '50%',
-    right: 0,
-    top: '75%'
+    ...customStyles.content
   },
   overlay: {
     ...customStyles.overlay

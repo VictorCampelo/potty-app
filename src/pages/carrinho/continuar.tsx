@@ -10,8 +10,10 @@ import Button from '@/components/atoms/Button'
 import Checkbox from '@/components/atoms/Checkbox'
 import ModalRegister from '@/components/templates/ModalRegister'
 import ModalGuest from '@/components/templates/ModalGuest'
+import ModalAddress from '@/components/templates/ModalAddress'
+import IconButton from '@/components/atoms/IconButton'
 
-import { BsWhatsapp } from 'react-icons/bs'
+import { BsArrowLeft, BsArrowRight, BsWhatsapp } from 'react-icons/bs'
 import { FiChevronLeft, FiArrowLeft } from 'react-icons/fi'
 import { IoPencilOutline } from 'react-icons/io5'
 import { PulseLoader } from 'react-spinners'
@@ -45,7 +47,8 @@ import {
   ModalContainer,
   ProductItem,
   ProductsContainer,
-  UpdateAddressButton
+  UpdateAddressButton,
+  ProductsMobileButtons
 } from '@/styles/pages/cart/continue'
 
 import type { Option } from '@/components/atoms/MultiSelect'
@@ -54,7 +57,6 @@ import type {
   OrderProduct,
   PaymentMethod
 } from '@/@types/entities'
-import ModalAddress from '@/components/templates/ModalAddress'
 
 const orderRepository = new OrderRepository()
 
@@ -217,17 +219,56 @@ const CartContinue = () => {
     )
     const nextItem = products.find(({ id }) => id === nextProductId)
 
-    if (nextItem && paymentMethodOption?.value && parcelOption?.value) {
+    if (nextItem && paymentMethodOption?.value) {
       setSelectedProduct(nextItem)
 
       updateProductPaymentMethod({
         productId: nextItem.id,
         methodName: paymentMethodOption.value,
-        parcels: parcelOption.value
+        parcels: parcelOption?.value || '0'
       })
     } else {
       toast({
         message: 'Não encontrei o próximo produto',
+        type: 'error'
+      })
+    }
+  }
+
+  const goToProduct = (to: 'previous' | 'next') => {
+    const productIndex = products.findIndex(
+      ({ id }) => id === selectedProduct?.id
+    )
+    let newIndex = productIndex
+
+    if (to === 'previous') {
+      if (productIndex === products.length - 1) {
+        newIndex = 0
+      } else {
+        newIndex = productIndex + 1
+      }
+    } else {
+      newIndex = productIndex - 1
+      if (newIndex < 0) {
+        newIndex = products.length - 1
+      }
+    }
+
+    const newProduct = products[newIndex]
+
+    if (newProduct) {
+      setSelectedProduct(newProduct)
+
+      if (paymentMethodOption?.value && parcelOption?.value) {
+        updateProductPaymentMethod({
+          productId: newProduct.id,
+          methodName: paymentMethodOption.value,
+          parcels: parcelOption.value
+        })
+      }
+    } else {
+      toast({
+        message: 'Não encontrei nenhum produto!',
         type: 'error'
       })
     }
@@ -349,29 +390,28 @@ const CartContinue = () => {
 
       <Modal
         showCloseButton={true}
+        title='Esvaziar carrinho'
         modalVisible={clearModalActive}
         setModalOpen={toggleClearModal}
       >
         <ModalContainer>
-          <div className='title' style={{ textAlign: 'center' }}>
-            <span>
-              Realmente deseja <strong>esvaziar</strong> o carrinho?
-            </span>
-          </div>
-          <div
-            className='buttonsContainer'
-            style={{ textAlign: 'center', marginTop: 'var(--spacing-xs)' }}
-          >
+          <p style={{ margin: '2rem 0' }}>
+            {products.length > 1
+              ? `Deseja realmente esvaziar o carrinho com ${products.length} produtos?`
+              : 'Deseja realmente esvaziar o carrinho com 1 produto?'}
+          </p>
+          <div className='buttons-container'>
             <Button
               onClick={() => {
                 clearCart()
                 toggleClearModal()
               }}
-              style={{ marginBottom: 'var(--spacing-xxs)' }}
             >
               ESVAZIAR
             </Button>
-            <span onClick={toggleClearModal}>CANCELAR</span>
+            <Button skin='secondary' onClick={toggleClearModal}>
+              CANCELAR
+            </Button>
           </div>
         </ModalContainer>
       </Modal>
@@ -535,36 +575,78 @@ const CartContinue = () => {
                     <PulseLoader size={8} color='var(--color-primary)' />
                   </div>
                 ) : (
-                  stores.map((store, i) => {
-                    return (
-                      <div key={i}>
-                        <h1>{store.name}</h1>
+                  <>
+                    {widthScreen ? (
+                      stores.map((store, i) => {
+                        return (
+                          <div key={i}>
+                            <h1>{store.name}</h1>
+
+                            <div className='products-container'>
+                              {store.products.map((product) => (
+                                <ProductItem
+                                  key={product.id}
+                                  active={selectedProduct?.id === product.id}
+                                  onClick={() => handleSelectProduct(product)}
+                                >
+                                  <div className='img-container'>
+                                    <img
+                                      src={product?.files[0]?.url}
+                                      alt='Foto do produto'
+                                    />
+                                  </div>
+
+                                  <div className='info-container'>
+                                    <h4>{product.title}</h4>
+
+                                    <span>{product.amount}x</span>
+                                  </div>
+                                </ProductItem>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <div>
+                        <h1>
+                          {
+                            stores.find(
+                              ({ id }) => id === selectedProduct?.storeId
+                            )?.name
+                          }
+                        </h1>
 
                         <div className='products-container'>
-                          {store.products.map((product) => (
-                            <ProductItem
-                              key={product.id}
-                              active={selectedProduct?.id === product.id}
-                              onClick={() => handleSelectProduct(product)}
-                            >
-                              <div className='img-container'>
-                                <img
-                                  src={product?.files[0]?.url}
-                                  alt='Foto do produto'
-                                />
-                              </div>
+                          <ProductItem active={true}>
+                            <div className='img-container'>
+                              <img
+                                src={selectedProduct?.files[0]?.url}
+                                alt='Foto do produto'
+                              />
+                            </div>
 
-                              <div className='info-container'>
-                                <h4>{product.title}</h4>
+                            <div className='info-container'>
+                              <h4>{selectedProduct?.title}</h4>
 
-                                <span>{product.amount}x</span>
-                              </div>
-                            </ProductItem>
-                          ))}
+                              <span>{selectedProduct?.amount}x</span>
+                            </div>
+                          </ProductItem>
                         </div>
                       </div>
-                    )
-                  })
+                    )}
+                    <ProductsMobileButtons>
+                      <IconButton onClick={() => goToProduct('previous')}>
+                        <BsArrowLeft size={18} color='var(--color-primary)' />
+                        <span>Item anterior</span>
+                      </IconButton>
+
+                      <IconButton onClick={() => goToProduct('next')}>
+                        <span>Próximo item</span>
+                        <BsArrowRight size={18} color='var(--color-primary)' />
+                      </IconButton>
+                    </ProductsMobileButtons>
+                  </>
                 )}
               </ProductsContainer>
             </div>
@@ -630,10 +712,16 @@ const CartContinue = () => {
                   <button
                     className='finish'
                     onClick={() => handleFinishPurchase(user)}
+                    disabled={!paymentMethodOption?.value}
                   >
-                    {' '}
-                    <BsWhatsapp size={24} color='white' />
-                    <p>FINALIZAR</p>
+                    {finallyPurchase ? (
+                      <>
+                        <BsWhatsapp size={24} color='white' />
+                        <p>FINALIZAR COMPRAR</p>
+                      </>
+                    ) : (
+                      <p>PRÓXIMO PRODUTO</p>
+                    )}
                   </button>
                 </div>
               </ContainerFooterMobile>
