@@ -213,6 +213,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
       return data.id
     } catch (e) {
       console.error(e)
+      Router.push('/')
     }
   }
 
@@ -363,9 +364,10 @@ const StorePage: NextPage<Props> = ({ name }) => {
               <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
               {storeOrders.map(({ value, label }, i) => (
                 <>
-                  {i !== 0 && <span>|</span>}
+                  {i !== 0 && <span key={i}>|</span>}
 
                   <Text
+                    key={i + 1}
                     style={{ fontSize: '18px' }}
                     pointer
                     active={value === filter}

@@ -4,9 +4,11 @@ import StorePage from '@/components/templates/Store'
 import LandingPage from '@/components/templates/Landing'
 
 const Home = () => {
-  const name = window.location.host?.split('.')[0]
+  const splinted = window.location.host?.split('.')
 
-  if (name) return <StorePage name={name} />
+  if (splinted.length > 1) {
+    return <StorePage name={splinted[0]} />
+  }
 
   return <LandingPage />
 }
