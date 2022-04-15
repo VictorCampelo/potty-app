@@ -213,13 +213,12 @@ export const CardProduct = styled.div`
       align-items: center;
       justify-content: space-between;
       gap: .5rem;
-      width: 180px;
       ${[sizes.down('xl')]} {
         display: none;
       }
       img {
-        width: 126px;
-        height: 126px;
+        width: 115px;
+        height: 115px;
 
         border-radius: var(--border-radius-xxs);
 
