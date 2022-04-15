@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Router from 'next/router'
 
 import Button from '@/components/atoms/Button'
+import IconButton from '@/components/atoms/IconButton'
 import Input from '@/components/atoms/Input'
 import Header from '@/components/molecules/Header'
 import CatalogTabs from '@/components/molecules/CatalogTabs'
@@ -19,6 +20,7 @@ import {
   AiOutlineLeft,
   AiOutlineArrowLeft
 } from 'react-icons/ai'
+import { CgShoppingCart } from 'react-icons/cg'
 import { VscSearch } from 'react-icons/vsc'
 import { BsShareFill } from 'react-icons/bs'
 import { IoIosClose } from 'react-icons/io'
@@ -101,11 +103,9 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
     null
   )
 
-  const getPosition = (id?: string) => {
-    const item = product?.files.findIndex((file) => file.id === id) || -1
+  const getPosition = (id?: string) =>
+    product?.files.findIndex((file) => file.id === id) || 0
 
-    return item
-  }
   const handleUpFile = () => {
     const index = getPosition(actualFile?.id)
     if (index > 0) {
@@ -195,9 +195,12 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                     className='btn'
                     style={{ marginTop: 'var(--spacing-xxxs)' }}
                   >
-                    <Button style={{ width: 40, height: 40, margin: 'auto' }}>
+                    <IconButton
+                      style={{ width: 40, height: 40, margin: 'auto' }}
+                      onClick={handleDownFile}
+                    >
                       <AiOutlineLeft size={20} />
-                    </Button>
+                    </IconButton>
                   </div>
                 </div>
               )}
@@ -230,21 +233,26 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 <div className='actions'>
                   <div className='top'>
                     <div className='share'>
-                      <Button style={{ width: 40, height: 40 }}>
+                      <IconButton style={{ width: 40, height: 40 }}>
                         <BsShareFill size={25} />
-                      </Button>
+                      </IconButton>
                     </div>
                   </div>
                   <div className='mid'>
                     <div className='btn'>
-                      <Button style={{ width: 40, height: 40 }}>
+                      <IconButton
+                        style={{ width: 40, height: 40 }}
+                        onClick={handleUpFile}
+                      >
                         <AiOutlineRight size={20} />
-                      </Button>
+                      </IconButton>
                     </div>
                   </div>
                   <div className='bot'>
                     <div className='progress'>
-                      <p>1 de 4</p>
+                      {product?.files?.length ? (
+                        <p>1 de {product?.files?.length}</p>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -253,36 +261,27 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
             <div className='description-container'>
               <h1 className='title'>{product?.title}</h1>
               <div className='desc'>
-                <ReactStars count={1} size={23} value={1} edit={false} />
-                <p>{product?.avgStars}</p>
+                <ReactStars
+                  edit={false}
+                  count={1}
+                  value={1}
+                  size={18}
+                  color2='#ffd700'
+                />
+                <p>{product?.avgStars.toFixed(1)}</p>
+
                 <p className='avaliations'>
                   {product?.sumFeedbacks} avaliações
                 </p>
                 <p className='separate'>|</p>
                 <p>{product?.sumOrders} pedidos</p>
               </div>
-
               <div className='price-container'>
                 {product?.priceWithDiscount ? (
                   <>
                     <div className='discount'>
                       <h4>De: {formatToBrl(product?.priceWithDiscount)}</h4>
                       <div>-{product?.discount}%</div>
-                    </div>
-                    <div className='price'>
-                      <div className='parcel'>{product?.parcelAmount}x</div>
-                      <div className='values'>
-                        <h1>{formatToBrl(product?.priceWithDiscount)}</h1>
-                        <p
-                          style={widthScreen ? { display: 'none' } : undefined}
-                        >
-                          {product?.parcelAmount}x de{' '}
-                          <strong>
-                            {formatToBrl(product?.priceWithDiscount)}
-                          </strong>
-                        </p>
-                      </div>
-                      {!widthScreen && <Button>Comprar agora</Button>}
                     </div>
                     <p style={!widthScreen ? { display: 'none' } : undefined}>
                       Em até {product?.parcelAmount}x sem juros ou{' '}
@@ -313,8 +312,6 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                   {showInstallment && (
                     <Installments>
                       <div className='head'>
-                        <div className=''></div>
-
                         <h1 className='title'>Formas de parcelamento</h1>
 
                         <IoIosClose
@@ -384,14 +381,10 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 </div>
               </div>
               <div className='button-container'>
-                {!loading && (
-                  <>
-                    <Button onClick={handleDirectBuy}>Comprar agora</Button>
-                    <Button onClick={handleAddToCart}>
-                      Adicionar ao carrinho
-                    </Button>
-                  </>
-                )}
+                <Button skin='secondary' onClick={handleDirectBuy}>
+                  Comprar agora
+                </Button>
+                <Button onClick={handleAddToCart}>Adicionar ao carrinho</Button>
               </div>
             </div>
           </CardProduct>
@@ -459,10 +452,11 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                         <div>
                           <h1>{product?.avgStars}</h1>
                           <ReactStars
-                            count={5}
-                            size={50}
-                            value={5}
                             edit={false}
+                            count={5}
+                            value={product?.avgStars}
+                            size={23}
+                            color2='#ffd700'
                           />
                         </div>
                         <p>({product?.sumFeedbacks} avaliações)</p>
@@ -764,7 +758,15 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
             <div className='top-container'>
               <h1>{product?.avgStars.toFixed(1)}</h1>
               <div className='star'>
-                <ReactStars count={5} size={32} value={5} edit={false} />
+                {product?.avgStars ? (
+                  <ReactStars
+                    edit={false}
+                    count={5}
+                    value={product?.avgStars}
+                    size={32}
+                    color2='#ffd700'
+                  />
+                ) : null}
                 <p>{product?.sumFeedbacks} avaliações</p>
               </div>
             </div>
@@ -830,14 +832,33 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
         <MenuBottom>
           <div className='price'>
             <div className='values'>
-              <h1>{product?.priceWithDiscount || product?.price}</h1>
+              <h1>{formatToBrl(product?.priceWithDiscount)}</h1>
               <p style={widthScreen ? { display: 'none' } : undefined}>
-                {product?.parcelAmount}x de <strong>{product?.price}</strong>{' '}
-                sem juros.
+                {product?.parcelAmount}x de{' '}
+                <strong>{formatToBrl(product?.priceWithDiscount)}</strong>
               </p>
             </div>
-            <Button>Comprar agora</Button>
-            <Button>Adicionar ao carrinho</Button>
+            <div
+              style={{
+                margin: 'auto',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '10px'
+              }}
+            >
+              <Button onClick={handleDirectBuy}>Comprar</Button>
+              <IconButton
+                onClick={handleAddToCart}
+                style={{
+                  zIndex: 1,
+                  borderRadius: '100%',
+                  backgroundColor: '#363F4E',
+                  padding: '8px'
+                }}
+              >
+                <CgShoppingCart size={32} color='white' />
+              </IconButton>
+            </div>
           </div>
         </MenuBottom>
       )}

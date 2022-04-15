@@ -1,8 +1,6 @@
 import Head from 'next/head'
 import Script from 'next/script'
 
-import CartButton from '@/components/molecules/CartButton'
-
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { ToastContainer } from 'react-toastify'
@@ -51,7 +49,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             draggable
             pauseOnHover
           />
-          <CartButton />
         </CartProvider>
       </AuthProvider>
     </>

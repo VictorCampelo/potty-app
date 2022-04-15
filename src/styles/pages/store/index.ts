@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import sizes from '@/utils/sizes'
 
 interface CardProps {
   noPadding?: boolean
@@ -24,6 +25,15 @@ export const Card = styled.div<CardProps>`
     padding: 1rem 1.5rem;
     background-color: var(--color-primary);
     border-radius: 32px 32px 0 0;
+  }
+`
+
+export const StoreInfo = styled(Card)`
+  width: 90%;
+  max-width: max-content;
+
+  ${sizes.down('md')} {
+    width: 100%;
   }
 `
 

@@ -33,7 +33,7 @@ export const Container = styled.main`
     width: 100vw;
     min-height: 100vh;
     margin: 0;
-    padding: 0;
+    padding: 1rem 0 4.4rem 0;
   }
 `
 

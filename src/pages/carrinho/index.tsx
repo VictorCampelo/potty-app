@@ -109,96 +109,110 @@ const CartPage = () => {
                   <section style={{ flex: 1 }} />
                 </CartHead>
 
-                {products.map((it) => (
-                  <>
-                    <CartProduct key={it.id}>
-                      {widthScreen ? (
-                        <>
-                          <section
-                            style={{ flex: 5, justifyContent: 'flex-start' }}
-                          >
-                            <div className='imgContainer'>
-                              <img
-                                src={it?.files[0]?.url}
-                                alt='Imagem do produto'
-                              />
-                            </div>
-
-                            <span>{it.title}</span>
-                          </section>
-
-                          <Counter product={it} />
-
-                          <section>
-                            <strong>
-                              {formatToBrl(it.priceWithDiscount || it.price)}
-                            </strong>
-                          </section>
-
-                          <section style={{ flex: 1 }}>
-                            <button
-                              className='exclude'
-                              onClick={() => {
-                                removeProduct(it.id)
-                              }}
+                {products.map((it) => {
+                  const firstImage = it?.files[0]?.url
+                  return (
+                    <>
+                      <CartProduct key={it.id}>
+                        {widthScreen ? (
+                          <>
+                            <section
+                              style={{ flex: 5, justifyContent: 'flex-start' }}
                             >
-                              <IoTrashOutline size={24} color='var(--red)' />
-
-                              <strong>Excluir</strong>
-                            </button>
-                          </section>
-                        </>
-                      ) : (
-                        <>
-                          <div className='checkbox' key={it.id}>
-                            <div className='check'>
-                              <button
-                                type='button'
-                                id='btn'
-                                className='btn'
-                                onClick={() => toggleSelectProduct(it.id)}
-                              >
-                                {it.selected && (
-                                  <FaCheck color='var(--gray-800)' />
+                              <div className='imgContainer'>
+                                {firstImage ? (
+                                  <img
+                                    src={firstImage}
+                                    alt='Imagem do produto'
+                                  />
+                                ) : (
+                                  <AiFillCamera size={28} color='white' />
                                 )}
-                              </button>
-                            </div>
-                          </div>
+                              </div>
 
-                          <section
-                            className='sectionImg'
-                            style={{ flexGrow: 1, height: '100%' }}
-                          >
-                            <div className='imgContainer'>
-                              <AiFillCamera size={28} color='white' />
-                            </div>
-                          </section>
-                          <section
-                            className='spanProductInformation'
-                            style={{ flexGrow: 2 }}
-                          >
-                            <span>{it.title}</span>
-                            <strong>
-                              {formatToBrl(it.priceWithDiscount || it.price)}
-                            </strong>
+                              <span>{it.title}</span>
+                            </section>
+
                             <Counter product={it} />
-                          </section>
-                        </>
-                      )}
-                    </CartProduct>
 
-                    {!widthScreen && (
-                      <p className='subTotal'>
-                        Subtotal:{' '}
-                        <strong style={{ color: 'var(--color-primary)' }}>
-                          {formatToBrl(
-                            (it.priceWithDiscount || it.price) * it.amount
-                          )}
-                        </strong>
-                      </p>
-                    )}
-                  </>
-                ))}
+                            <section>
+                              <strong>
+                                {formatToBrl(it.priceWithDiscount || it.price)}
+                              </strong>
+                            </section>
+
+                            <section style={{ flex: 1 }}>
+                              <button
+                                className='exclude'
+                                onClick={() => {
+                                  removeProduct(it.id)
+                                }}
+                              >
+                                <IoTrashOutline size={24} color='var(--red)' />
+
+                                <strong>Excluir</strong>
+                              </button>
+                            </section>
+                          </>
+                        ) : (
+                          <>
+                            <div className='checkbox' key={it.id}>
+                              <div className='check'>
+                                <button
+                                  type='button'
+                                  id='btn'
+                                  className='btn'
+                                  onClick={() => toggleSelectProduct(it.id)}
+                                >
+                                  {it.selected && (
+                                    <FaCheck color='var(--gray-800)' />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+
+                            <section
+                              className='sectionImg'
+                              style={{ flexGrow: 1, height: '100%' }}
+                            >
+                              <div className='imgContainer'>
+                                {firstImage ? (
+                                  <img
+                                    src={firstImage}
+                                    alt='Imagem do produto'
+                                  />
+                                ) : (
+                                  <AiFillCamera size={28} color='white' />
+                                )}
+                              </div>
+                            </section>
+                            <section
+                              className='spanProductInformation'
+                              style={{ flexGrow: 2 }}
+                            >
+                              <span>{it.title}</span>
+                              <strong>
+                                {formatToBrl(it.priceWithDiscount || it.price)}
+                              </strong>
+                              <Counter product={it} />
+                            </section>
+                          </>
+                        )}
+                      </CartProduct>
+
+                      {!widthScreen && (
+                        <p className='subTotal'>
+                          Subtotal:{' '}
+                          <strong style={{ color: 'var(--color-primary)' }}>
+                            {formatToBrl(
+                              (it.priceWithDiscount || it.price) * it.amount
+                            )}
+                          </strong>
+                        </p>
+                      )}
+                    </>
+                  )
+                })}
               </CartContainer>
 
               <CartContainerFooter

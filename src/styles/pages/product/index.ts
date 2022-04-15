@@ -17,9 +17,12 @@ export const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-md);
   width: 100%;
+  max-width: 1400px;
   padding: var(--spacing-nano) var(--spacing-lg);
+  margin: auto;
 
   ${[sizes.down('sm')]} {
     padding: 0;
@@ -51,7 +54,7 @@ export const Installments = styled.div`
 
   background: var(--white);
   border-radius: var(--border-radius-gg);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0px;
   align-items: center;
 
   svg {
@@ -90,12 +93,11 @@ export const MenuBottom = styled.div`
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-top: var(--spacing-nano);
     background: var(--white);
     padding: var(--spacing-nano) var(--spacing-xxs);
-    box-shadow: inset 0px 3px 14px -7px var(--gray-200);
+    box-shadow: inset 0 3px 14px -7px var(--gray-200);
 
-    ${[sizes.down('xs')]} {
+    ${[sizes.down('xl')]} {
       padding: var(--spacing-nano);
     }
     .values {
@@ -106,15 +108,9 @@ export const MenuBottom = styled.div`
       font-family: var(--font-family-primary);
       font-style: var(--font-style-normal);
       font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-xlg) !important;
+      font-size: var(--font-size-xlg);
       line-height: 60px;
-      font-family: 'Poppins';
-      font-style: normal;
-      font-weight: 600;
-      font-size: 40px;
-      line-height: 60px;
-
-      color: var(--gray-600);
+      color: var(--color-primary);
 
       small {
         font-family: var(--font-family-primary);
@@ -130,39 +126,39 @@ export const MenuBottom = styled.div`
 
 export const CardProduct = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
 
   width: 100%;
   height: auto;
 
   background: var(--white);
-
-  ${[sizes.down('sm')]} {
-    background: var(--gray-100);
-  }
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0px;
   border-radius: var(--border-radius-gg);
 
   ${[sizes.down('sm')]} {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-radius: 0%;
+    box-shadow: none;
+    border-radius: 0;
+    background: var(--gray-100);
   }
   .image-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    
+    padding: var(--spacing-nano) var(--spacing-xs) var(--spacing-nano) var(--spacing-nano);
 
-    width: 650px;
-    height: 460px;
-
-    padding-left: var(--spacing-nano);
-    padding-right: var(--spacing-xs);
-
+    ${[sizes.down('xl')]} {
+      padding: var(--spacing-xs);
+    }
+    
     ${[sizes.down('sm')]} {
       width: 100%;
       background: var(--white);
@@ -218,7 +214,7 @@ export const CardProduct = styled.div`
       justify-content: space-between;
       gap: .5rem;
       width: 180px;
-      ${[sizes.down('sm')]} {
+      ${[sizes.down('xl')]} {
         display: none;
       }
       img {
@@ -244,6 +240,11 @@ export const CardProduct = styled.div`
 
       border-radius: var(--border-radius-xxs);
 
+      ${[sizes.down('xl')]} {
+        width: 350px;
+        height: 300px;
+      }
+
       ${[sizes.down('sm')]} {
         width: 250px;
         height: 250px;
@@ -256,14 +257,9 @@ export const CardProduct = styled.div`
   }
 
   .description-container {
-    width: 100%;
-    height: 100%;
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
 
     ${[sizes.down('sm')]} {
-      padding: var(--spacing-lg) 0;
-      margin-bottom: 2rem;
-
       .title, .desc, .discount, a {
         margin-left: var(--spacing-xxs);
       }
@@ -299,20 +295,17 @@ export const CardProduct = styled.div`
       display: flex;
       flex-direction: column;
       justify-content: center;
-
-      max-width: 100%;
-      height: 200px;
-
+      
       margin: var(--spacing-xxs) 0;
 
       ${[sizes.down('sm')]} {
         margin: 0;
       }
-      ${[sizes.down('xs')]} {
-        height: 220px;
-      }
       .installments {
         position: relative;
+        ${[sizes.down('sm')]} {
+          margin-bottom: 30px;
+        }
       }
 
       a {
@@ -329,6 +322,10 @@ export const CardProduct = styled.div`
           font-size: var(--font-size-md);
         }
       }
+      
+      .price {
+        display: none;
+      }
 
       .discount {
         display: flex;
@@ -342,6 +339,7 @@ export const CardProduct = styled.div`
           font-size: var(--font-size-sm);
           line-height: 30px;
           color: var(--gray-300);
+          text-decoration: line-through;
         }
 
         div {
@@ -378,12 +376,11 @@ export const CardProduct = styled.div`
         gap: 1rem;
 
         ${[sizes.down('sm')]} {
-          margin-top: var(--spacing-nano);
+          margin: var(--spacing-nano) 0;
           padding: var(--spacing-xxs);
 
-          .values {
-            width: 100%;
-          }
+          background: #FFFFFF;
+          box-shadow: inset 0 0.5px 4px rgba(0, 0, 0, 0.25);
         }
         .parcel {
           width: 50px;
@@ -414,12 +411,6 @@ export const CardProduct = styled.div`
           font-style: var(--font-style-normal);
           font-weight: var(--font-weight-medium);
           font-size: var(--font-size-xxl);
-          line-height: 60px;
-          font-family: 'Poppins';
-          font-style: normal;
-          font-weight: 600;
-          font-size: 40px;
-          line-height: 60px;
 
           color: var(--color-primary);
           ${[sizes.down('xs')]} {
@@ -435,33 +426,34 @@ export const CardProduct = styled.div`
 
           }
         }
+        
+      
       }
     }
 
     .button-container {
       display: flex;
+      flex-wrap: wrap;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
       gap: var(--spacing-xxxs);
       max-width: 530px;
       margin-top: var(--spacing-xxxs);
-      height: 54px;
       ${[sizes.down('sm')]} {
         flex-wrap: wrap;
         justify-content: center;
         gap: var(--spacing-xxxs);
         padding: var(--spacing-xxs) var(--spacing-xxxl);
-        height: 150px;
+        button {
+          width: 100%;
+        }
       }
       ${[sizes.down('xs')]} {
-        height: 170px;
         padding: 0 var(--spacing-md) var(--spacing-xxs) var(--spacing-md);
-        gap: 0;
       }
     }
   }
-
 `
 
 export const Button = styled.button`
@@ -494,7 +486,7 @@ export const CardDesc = styled.div`
   width: 100%;
   height: auto;
   background: var(--white);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0px;
   border-radius: var(--border-radius-gg);
 
   padding: var(--spacing-xxs) 0;
@@ -503,8 +495,13 @@ export const CardDesc = styled.div`
     display: flex;
     flex-direction: row;
 
+    width: 100%;
     height: 550px;
     padding: var(--spacing-xxs) var(--spacing-md);
+
+    ${sizes.down('sm')} {
+      padding: var(--spacing-nano) var(--spacing-md);
+    }
 
     .left-container {
       width: 600px;
@@ -711,6 +708,11 @@ export const CardDescMobile = styled.div`
   gap: var(--spacing-xs);
   margin-top: 220px;
 
+  ${sizes.down('sm')} {
+    margin-top: -50px;
+    margin-bottom: var(--spacing-xxl);
+  }
+
   .description-container,
   .rated-container {
     display: flex;
@@ -884,7 +886,7 @@ export const Footer = styled.footer`
   width: 90%;
   border-radius: var(--border-radius-gg);
   background: var(--white);
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0px;
   padding: var(--spacing-xs) var(--spacing-md);
   margin: var(--spacing-xxs) 0;
 

@@ -26,7 +26,8 @@ import {
   Row,
   Description,
   Line,
-  Text
+  Text,
+  StoreInfo
 } from '@/styles/pages/store'
 
 import { VscSearch } from 'react-icons/vsc'
@@ -42,6 +43,7 @@ import type {
   File,
   Schedules
 } from '@/@types/entities'
+import CartButton from '@/components/molecules/CartButton'
 
 interface Props {
   name: string
@@ -213,7 +215,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
       return data.id
     } catch (e) {
       console.error(e)
-      Router.push('/')
+      await Router.push('/')
     }
   }
 
@@ -236,12 +238,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
 
         <BannerStore images={[store.background.url]} />
 
-        <Card
-          style={{
-            width: '90%',
-            maxWidth: 'max-content'
-          }}
-        >
+        <StoreInfo>
           <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
 
           <Row
@@ -254,7 +251,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
             }}
           >
             <Card>
-              <Row>
+              <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
                 <StoreAvatar
                   width={138}
                   height={138}
@@ -356,9 +353,9 @@ const StorePage: NextPage<Props> = ({ name }) => {
               </Row>
             </Card>
           </Row>
-        </Card>
+        </StoreInfo>
 
-        <Row style={{ flexWrap: 'wrap' }}>
+        <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
           <Card>
             <Row>
               <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
@@ -499,6 +496,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
           lng={-46.65077920923577}
         />
       </Container>
+
+      <CartButton />
     </Wrapper>
   )
 }

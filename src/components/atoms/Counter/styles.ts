@@ -2,18 +2,17 @@ import styled from 'styled-components'
 import sizes from '@/utils/sizes'
 
 export const Container = styled.section`
-  width: 80px;
-  height: 64px;
+  width: max-content;
   background: white;
   border-radius: 8px;
   box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.25);
   display: flex;
   justify-content: space-between !important;
   align-items: center;
-  padding: 1rem;
+  padding: 0.75rem;
 
   ${[sizes.down('sm')]} {
-    padding: 0;
+    padding: 0.4rem 0.6rem;
     border-radius: 4px;
     p {
       font-size: 1.2rem;

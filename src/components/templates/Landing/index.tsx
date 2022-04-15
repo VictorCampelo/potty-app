@@ -9,6 +9,7 @@ import FooterLanding from '@/components/organisms/FooterLanding'
 import { Wrapper, Container } from '@/styles/GlobalStyle'
 
 import type { NextPage } from 'next'
+import CartButton from '@/components/molecules/CartButton'
 
 const Landing: NextPage = () => {
   return (
@@ -28,6 +29,8 @@ const Landing: NextPage = () => {
 
         <FooterLanding />
       </Container>
+
+      <CartButton />
     </Wrapper>
   )
 }
