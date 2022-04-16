@@ -8,9 +8,12 @@ import { useCart } from '@/contexts/CartContext'
 import formatToBrl from '@/utils/formatToBrl'
 
 import { Wrapper, Container, Quantity, Price } from './styles'
+import useMedia from 'use-media'
 
 const CartButton = () => {
   const { loading, totalItems, totalPrice } = useCart()
+
+  const widthScreen = useMedia({ minWidth: '640px' })
 
   return (
     <Wrapper onClick={() => Router.push('/carrinho')}>
@@ -28,7 +31,9 @@ const CartButton = () => {
             <Quantity>{totalItems}</Quantity>
           </Container>
 
-          {totalPrice ? <Price>| {formatToBrl(totalPrice)}</Price> : null}
+          {totalPrice && widthScreen ? (
+            <Price>| {formatToBrl(totalPrice)}</Price>
+          ) : null}
         </>
       )}
     </Wrapper>

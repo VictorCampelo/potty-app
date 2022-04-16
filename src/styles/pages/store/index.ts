@@ -34,6 +34,9 @@ export const StoreInfo = styled(Card)`
 
   ${sizes.down('md')} {
     width: 100%;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
   }
 `
 

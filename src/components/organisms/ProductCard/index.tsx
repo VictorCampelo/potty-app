@@ -39,8 +39,8 @@ const ProductCard = ({ product, onClick }: Props) => {
       }}
     >
       <img
-        width={156}
-        height={156}
+        width={150}
+        height={150}
         src={product.files[fileIndex]?.url}
         alt={product.title}
       />
@@ -76,13 +76,23 @@ const ProductCard = ({ product, onClick }: Props) => {
         </p>
       )}
       <IconButton
-        style={{ position: 'absolute', top: '32%', left: 0, zIndex: '999' }}
+        style={{
+          position: 'absolute',
+          top: '32%',
+          left: '-5px',
+          zIndex: '999'
+        }}
         onClick={() => updateImage('left')}
       >
         <BiChevronLeft size={32} color='black' />
       </IconButton>
       <IconButton
-        style={{ position: 'absolute', top: '32%', right: 0, zIndex: '999' }}
+        style={{
+          position: 'absolute',
+          top: '32%',
+          right: '-5px',
+          zIndex: '999'
+        }}
         onClick={() => updateImage('right')}
       >
         <BiChevronRight size={32} color='black' />

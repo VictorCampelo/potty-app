@@ -261,14 +261,23 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
             <div className='description-container'>
               <h1 className='title'>{product?.title}</h1>
               <div className='desc'>
-                <ReactStars
-                  edit={false}
-                  count={1}
-                  value={1}
-                  size={18}
-                  color2='#ffd700'
-                />
-                <p>{product?.avgStars.toFixed(1)}</p>
+                <p
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px'
+                  }}
+                >
+                  <ReactStars
+                    edit={false}
+                    count={1}
+                    value={1}
+                    size={18}
+                    color2='#ffd700'
+                  />
+                  {product?.avgStars.toFixed(1)}
+                </p>
 
                 <p className='avaliations'>
                   {product?.sumFeedbacks} avaliações
@@ -277,7 +286,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                 <p>{product?.sumOrders} pedidos</p>
               </div>
               <div className='price-container'>
-                {product?.priceWithDiscount ? (
+                {product?.discount ? (
                   <>
                     <div className='discount'>
                       <h4>De: {formatToBrl(product?.priceWithDiscount)}</h4>

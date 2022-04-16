@@ -259,6 +259,8 @@ export const CardProduct = styled.div`
     padding: var(--spacing-xs);
 
     ${[sizes.down('sm')]} {
+      padding: var(--spacing-xs) 0 0 0;
+
       .title, .desc, .discount, a {
         margin-left: var(--spacing-xxs);
       }

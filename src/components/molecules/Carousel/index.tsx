@@ -36,7 +36,7 @@ const Carousel = ({
     carousel.current.scrollLeft += 276
   }
 
-  const widthScreen = useMedia({ minWidth: '426px' })
+  const widthScreen = useMedia({ minWidth: '640px' })
 
   return (
     <Wrapper>

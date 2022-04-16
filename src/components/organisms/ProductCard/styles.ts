@@ -23,6 +23,7 @@ export const Container = styled.div`
     height: 250px;
     border-radius: 15px;
     background-size: cover;
+    margin: 0 auto;
   }
   .title {
     text-align: left;
@@ -56,6 +57,7 @@ export const Container = styled.div`
     align-items: center;
     font-size: 1rem;
     color: var(--gray-600);
+    margin-right: auto;
 
     img {
       width: 24px;
@@ -71,10 +73,14 @@ export const Container = styled.div`
     font-size: 0.875rem;
   }
   ${sizes.down('sm')} {
-    width: 165px;
-    height: 270px;
+    width: auto;
+    height: auto;
     border-radius: 10px;
     padding: 10px;
+    img {
+      width: 150px;
+      height: 150px;
+    }
     .title {
       font-size: 0.8rem !important;
     }
@@ -85,6 +91,10 @@ export const Container = styled.div`
       display: none;
     }
     .score {
+      img {
+        width: 18px;
+        height: 18px;
+      }
       span {
         font-size: 0.6rem !important;
       }

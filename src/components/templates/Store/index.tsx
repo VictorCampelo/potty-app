@@ -236,21 +236,34 @@ const StorePage: NextPage<Props> = ({ name }) => {
       <Container>
         <Header />
 
-        <BannerStore images={[store.background.url]} />
+        {!widthScreen && (
+          <div style={{ margin: 'var(--spacing-xs) 0' }}>
+            <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
+          </div>
+        )}
+
+        <BannerStore isOpen={isOpened()} images={[store.background.url]} />
 
         <StoreInfo>
-          <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
+          {widthScreen && (
+            <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
+          )}
 
           <Row
             style={{
               width: '100%',
               flexWrap: 'wrap',
-              gap: '20px',
-              padding: '20px',
+              gap: widthScreen ? '20px' : '',
               justifyContent: 'center'
             }}
           >
-            <Card>
+            <Card
+              style={
+                !widthScreen
+                  ? { background: 'transparent', boxShadow: 'none' }
+                  : undefined
+              }
+            >
               <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
                 <StoreAvatar
                   width={138}
@@ -274,214 +287,249 @@ const StorePage: NextPage<Props> = ({ name }) => {
                     </IconButton>
                   </Row>
 
-                  <ReactStars
-                    edit={false}
-                    count={5}
-                    value={store.avgStars}
-                    size={32}
-                    color2='#ffd700'
-                  />
+                  <Row>
+                    <ReactStars
+                      edit={false}
+                      count={5}
+                      value={store.avgStars}
+                      size={32}
+                      color2='#ffd700'
+                    />
+                    {!widthScreen && (
+                      <>
+                        <span style={{ margin: 'auto 0' }}>
+                          {store.sumFeedbacks}
+                        </span>
+                      </>
+                    )}
+                  </Row>
                 </Column>
               </Row>
 
               <Description>{store.description}</Description>
             </Card>
 
-            <Card>
-              <h1>Detalhes</h1>
+            {widthScreen && (
+              <>
+                <Card>
+                  <h1>Detalhes</h1>
 
-              <Line>
-                <img
-                  width={24}
-                  height={24}
-                  src='/images/caixa.svg'
-                  alt='icone de caixa'
-                />
-                <span>Quantidade de produtos:</span>
-                <span>{products.length}</span>
-              </Line>
+                  <Line>
+                    <img
+                      width={24}
+                      height={24}
+                      src='/images/caixa.svg'
+                      alt='icone de caixa'
+                    />
+                    <span>Quantidade de produtos:</span>
+                    <span>{products.length}</span>
+                  </Line>
 
-              <Line>
-                <img
-                  width={24}
-                  height={24}
-                  src='/images/caixa.svg'
-                  alt='icone de bolsa'
-                />
+                  <Line>
+                    <img
+                      width={24}
+                      height={24}
+                      src='/images/caixa.svg'
+                      alt='icone de bolsa'
+                    />
 
-                <span>Quantidade de vendas:</span>
-                <span>{store.sumOrders}</span>
-              </Line>
+                    <span>Quantidade de vendas:</span>
+                    <span>{store.sumOrders}</span>
+                  </Line>
 
-              <Line>
-                <img
-                  width={24}
-                  height={24}
-                  src='/images/loja.svg'
-                  alt='icone de loja'
-                />
-                <span>Loja cadastrada no site em:</span>
-                <span>{new Date(store.createdAt).getFullYear()}</span>
-              </Line>
+                  <Line>
+                    <img
+                      width={24}
+                      height={24}
+                      src='/images/loja.svg'
+                      alt='icone de loja'
+                    />
+                    <span>Loja cadastrada no site em:</span>
+                    <span>{new Date(store.createdAt).getFullYear()}</span>
+                  </Line>
 
-              <Line>
-                <img
-                  width={24}
-                  height={24}
-                  src='/images/estrela.svg'
-                  alt='icone de estrela'
-                />
-                <span>Quantidade de avaliações:</span>
-                <span>{store.sumFeedbacks}</span>
-              </Line>
-            </Card>
+                  <Line>
+                    <img
+                      width={24}
+                      height={24}
+                      src='/images/estrela.svg'
+                      alt='icone de estrela'
+                    />
+                    <span>Quantidade de avaliações:</span>
+                    <span>{store.sumFeedbacks}</span>
+                  </Line>
+                </Card>
 
-            <Card>
-              <h1>{isOpened() ? 'Aberto agora' : 'Fechado agora'}</h1>
+                <Card>
+                  <h1>{isOpened() ? 'Aberto agora' : 'Fechado agora'}</h1>
 
-              <Row style={{ flexWrap: 'wrap' }}>
-                {Object.entries(store.schedules).map(([day, schedule]) => {
-                  return (
-                    <div key={day}>
-                      <Text>{day}</Text>
-                      <Text>
-                        {schedule[0]} às {schedule[1]}
-                      </Text>
-                    </div>
-                  )
-                })}
-              </Row>
-            </Card>
+                  <Row style={{ flexWrap: 'wrap' }}>
+                    {Object.entries(store.schedules).map(([day, schedule]) => {
+                      return (
+                        <div key={day}>
+                          <Text>{day}</Text>
+                          <Text>
+                            {schedule[0]} às {schedule[1]}
+                          </Text>
+                        </div>
+                      )
+                    })}
+                  </Row>
+                </Card>
+              </>
+            )}
           </Row>
         </StoreInfo>
 
-        <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Card>
-            <Row>
-              <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
-              {storeOrders.map(({ value, label }, i) => (
-                <>
-                  {i !== 0 && <span key={i}>|</span>}
+        {widthScreen && (
+          <>
+            <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Card>
+                <Row>
+                  <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
+                  {storeOrders.map(({ value, label }, i) => (
+                    <>
+                      {i !== 0 && <span key={i}>|</span>}
 
+                      <Text
+                        key={i + 1}
+                        style={{ fontSize: '18px' }}
+                        pointer
+                        active={value === filter}
+                        onClick={() => setFilter(value)}
+                      >
+                        {label}
+                      </Text>
+                    </>
+                  ))}
+                </Row>
+              </Card>
+
+              <Card>
+                {starsFilter.map((star, i) => (
+                  <Checkbox
+                    key={i}
+                    confirm={starFilter === star}
+                    toggleConfirm={() => updateStarFilter(star)}
+                  >
+                    <Text onClick={() => updateStarFilter(star)}>
+                      <img
+                        src='/images/Star.svg'
+                        alt='icone estrela'
+                        style={{ margin: '0 5px -5px 0' }}
+                      />
+                      {star.replace('+', 'ou mais')}
+                    </Text>
+                  </Checkbox>
+                ))}
+              </Card>
+
+              <Card>
+                <Row style={{ padding: '10px 4px' }}>
+                  <IconButton onClick={() => setViewMode('grid')}>
+                    {viewMode === 'grid' ? (
+                      <img src='/images/quadro.svg' alt='icone de quadro' />
+                    ) : (
+                      <img src='/images/quadroOff.svg' alt='icone de lista' />
+                    )}
+                  </IconButton>
+
+                  <IconButton onClick={() => setViewMode('list')}>
+                    {viewMode === 'list' ? (
+                      <img src='/images/stackOn.svg' alt='icone de lista' />
+                    ) : (
+                      <img src='/images/stack.svg' alt='icone de lista' />
+                    )}
+                  </IconButton>
+                </Row>
+              </Card>
+            </Row>
+
+            <Row style={{ padding: '0 50px' }}>
+              <Card noPadding={true}>
+                <h2>Categorias da loja:</h2>
+                {storeCategories.map(({ value, label }, i) => (
                   <Text
-                    key={i + 1}
-                    style={{ fontSize: '18px' }}
+                    key={i}
+                    style={{
+                      fontSize: '18px',
+                      margin: '0 auto 18px 20px'
+                    }}
                     pointer
-                    active={value === filter}
-                    onClick={() => setFilter(value)}
+                    active={value === categoryFilter}
+                    onClick={() => updateCategoryFilter(value)}
                   >
                     {label}
                   </Text>
+                ))}
+              </Card>
+
+              {loadingProducts ? (
+                <PuffLoader size={28} color='#fff' />
+              ) : (
+                <>
+                  <Row
+                    style={{
+                      display: viewMode === 'grid' ? '' : 'none',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    {products.map((product) => (
+                      <ProductCard
+                        product={product}
+                        key={product.id}
+                        onClick={() => Router.push(product.id)}
+                      />
+                    ))}
+                  </Row>
+
+                  <Row
+                    style={{
+                      display: viewMode === 'list' ? '' : 'none',
+                      flexWrap: 'wrap'
+                    }}
+                  >
+                    {products.map((product) => (
+                      <ProductCardHorizon
+                        product={product}
+                        key={product.id}
+                        onClick={() => Router.push(product.id)}
+                      />
+                    ))}
+                  </Row>
                 </>
-              ))}
+              )}
             </Row>
-          </Card>
 
-          <Card>
-            {starsFilter.map((star, i) => (
-              <Checkbox
-                key={i}
-                confirm={starFilter === star}
-                toggleConfirm={() => updateStarFilter(star)}
-              >
-                <Text onClick={() => updateStarFilter(star)}>
-                  <img
-                    src='/images/Star.svg'
-                    alt='icone estrela'
-                    style={{ margin: '0 5px -5px 0' }}
-                  />
-                  {star.replace('+', 'ou mais')}
-                </Text>
-              </Checkbox>
+            <div style={{ margin: '2rem auto' }}>
+              <Pagination
+                onPageChange={() => undefined}
+                currentPage={1}
+                totalCountOfRegisters={100}
+                registersPerPage={10}
+              />
+            </div>
+          </>
+        )}
+
+        {loadingProducts ? (
+          <PuffLoader size={28} color='#fff' />
+        ) : (
+          <Row
+            style={{
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              margin: '0 8px 18px 8px'
+            }}
+          >
+            {products.map((product) => (
+              <ProductCard
+                product={product}
+                key={product.id}
+                onClick={() => Router.push(product.id)}
+              />
             ))}
-          </Card>
-
-          <Card>
-            <Row style={{ padding: '10px 4px' }}>
-              <IconButton onClick={() => setViewMode('grid')}>
-                {viewMode === 'grid' ? (
-                  <img src='/images/quadro.svg' alt='icone de quadro' />
-                ) : (
-                  <img src='/images/quadroOff.svg' alt='icone de lista' />
-                )}
-              </IconButton>
-
-              <IconButton onClick={() => setViewMode('list')}>
-                {viewMode === 'list' ? (
-                  <img src='/images/stackOn.svg' alt='icone de lista' />
-                ) : (
-                  <img src='/images/stack.svg' alt='icone de lista' />
-                )}
-              </IconButton>
-            </Row>
-          </Card>
-        </Row>
-
-        <Row style={{ padding: '0 50px' }}>
-          <Card noPadding={true}>
-            <h2>Categorias da loja:</h2>
-            {storeCategories.map(({ value, label }, i) => (
-              <Text
-                key={i}
-                style={{
-                  fontSize: '18px',
-                  margin: '0 auto 18px 20px'
-                }}
-                pointer
-                active={value === categoryFilter}
-                onClick={() => updateCategoryFilter(value)}
-              >
-                {label}
-              </Text>
-            ))}
-          </Card>
-
-          {loadingProducts ? (
-            <PuffLoader size={28} color='#fff' />
-          ) : (
-            <>
-              <Row
-                style={{
-                  display: viewMode === 'grid' ? '' : 'none',
-                  flexWrap: 'wrap'
-                }}
-              >
-                {products.map((product) => (
-                  <ProductCard
-                    product={product}
-                    key={product.id}
-                    onClick={() => Router.push(product.id)}
-                  />
-                ))}
-              </Row>
-
-              <Row
-                style={{
-                  display: viewMode === 'list' ? '' : 'none',
-                  flexWrap: 'wrap'
-                }}
-              >
-                {products.map((product) => (
-                  <ProductCardHorizon
-                    product={product}
-                    key={product.id}
-                    onClick={() => Router.push(product.id)}
-                  />
-                ))}
-              </Row>
-            </>
-          )}
-        </Row>
-
-        {widthScreen && (
-          <div style={{ margin: '2rem auto' }}>
-            <Pagination
-              onPageChange={() => undefined}
-              currentPage={1}
-              totalCountOfRegisters={100}
-              registersPerPage={10}
-            />
-          </div>
+          </Row>
         )}
 
         <FooterContact
