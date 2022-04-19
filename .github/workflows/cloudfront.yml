@@ -16,14 +16,14 @@ jobs:
       with:
         node-version: 16.13.1
         cache: 'npm'
-    - run: npm i
+    - run: npm install --legacy-peer-deps
     # - run: npm test
 
   deploy_dev:
-    if: contains( github.ref, 'staging')
+    if: contains( github.ref, 'main')
     runs-on: ubuntu-latest
     needs: build
-    environment: staging
+    environment: main
     env:
         PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
         HOSTNAME : ${{ secrets.HOSTNAME  }}
@@ -35,7 +35,7 @@ jobs:
           ssh -i private_key ${USER_NAME}@${HOSTNAME} '
           . ~/.nvm/nvm.sh &&
           cd /var/www/ultimo-app &&
-          git pull origin staging &&
+          git pull origin main &&
           npm i &&
           pm2 delete bdv-app &&
           pm2 start npm --name "bdv-app" -- start
