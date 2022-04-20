@@ -60,3 +60,23 @@ export interface UpdateOrderDTO {
   orderId: string
   situation: 'Recebido' | 'Processando' | 'Concluído' | 'Cancelado'
 }
+
+export interface Coordinates {
+  longitude: string
+  latitude: string
+}
+
+export interface Location {
+  type: string
+  coordinates: Coordinates
+}
+
+export interface SearchCepResponse {
+  cep: string
+  state: string
+  city: string
+  neighborhood: string
+  street: string
+  service: string
+  location: Location
+}

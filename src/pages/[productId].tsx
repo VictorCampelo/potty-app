@@ -721,8 +721,7 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
               whatsappLink={store.whatsappLink}
               instagramLink={store.instagramLink}
               facebookLink={store.facebookLink}
-              lat={-23.565985644182255}
-              lng={-46.65077920923577}
+              cep={store.zipcode}
             />
           )}
         </Container>

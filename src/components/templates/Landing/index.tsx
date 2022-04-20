@@ -5,11 +5,11 @@ import BannerLanding from '@/components/organisms/BannerLanding'
 import BenefitsLanding from '@/components/organisms/BenefitsLanding'
 import PlansLanding from '@/components/organisms/PlansLanding'
 import FooterLanding from '@/components/organisms/FooterLanding'
+import CartButton from '@/components/molecules/CartButton'
 
 import { Wrapper, Container } from '@/styles/GlobalStyle'
 
 import type { NextPage } from 'next'
-import CartButton from '@/components/molecules/CartButton'
 
 const Landing: NextPage = () => {
   return (

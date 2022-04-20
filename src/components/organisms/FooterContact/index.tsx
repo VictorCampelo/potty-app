@@ -1,4 +1,9 @@
+import { useState, useEffect } from 'react'
+
+import PuffLoader from 'react-spinners/PuffLoader'
 import MapStore from '@/components/organisms/MapStore'
+
+import BrasilApiRepository from '@/repositories/BrasilApiRepository'
 
 import {
   AiFillPhone,
@@ -19,7 +24,11 @@ interface Props {
   facebookLink?: string
   lat?: number
   lng?: number
+  cep?: string
+  fetchCoordsFromCEP?: boolean
 }
+
+const brasilApiRepository = new BrasilApiRepository()
 
 const FooterContact = ({
   title,
@@ -30,8 +39,41 @@ const FooterContact = ({
   instagramLink,
   facebookLink,
   lat,
-  lng
+  lng,
+  cep = '',
+  fetchCoordsFromCEP = true
 }: Props) => {
+  const [loading, setLoading] = useState(false)
+  const [coords, setCoords] = useState({
+    lng,
+    lat
+  })
+
+  const updateCoordsByCep = async () => {
+    try {
+      setLoading(true)
+      const { location } = await brasilApiRepository.searchCep(
+        cep.replace(/\D/g, '')
+      )
+      if (location.coordinates.longitude && location.coordinates.latitude) {
+        setCoords({
+          lng: Number(location.coordinates.longitude),
+          lat: Number(location.coordinates.latitude)
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if ((!lat || !lng) && cep && fetchCoordsFromCEP) {
+      updateCoordsByCep()
+    }
+  }, [])
+
   return (
     <Footer>
       <div>
@@ -79,7 +121,14 @@ const FooterContact = ({
         </ContainerTerms>
       </div>
 
-      {lat && lng && <MapStore lat={lat} lng={lng} />}
+      {loading ? (
+        <PuffLoader size={28} color='#fff' />
+      ) : (
+        coords.lat &&
+        coords.lng && (
+          <MapStore lat={Number(coords.lat)} lng={Number(coords.lng)} />
+        )
+      )}
     </Footer>
   )
 }
