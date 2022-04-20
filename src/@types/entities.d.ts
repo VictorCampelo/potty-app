@@ -60,6 +60,7 @@ export interface Store {
   state: string
   description: string
   enabled: boolean
+  isFavorite?: boolean
   sumOrders: number
   sumFeedbacks: number
   sumStars: number
@@ -79,6 +80,7 @@ export interface Store {
 }
 
 export interface Category {
+  id: string
   name: string
   storeId: string
 }
@@ -104,6 +106,7 @@ export interface Product {
   storeId: string
   files: File[]
   image?: string
+  categories: Category[]
 }
 
 export interface CartProduct extends Product {
@@ -164,3 +167,10 @@ export interface User extends UserAddress {
   role: 'USER' | 'OWNER'
   store?: Store
 }
+
+export type ProductsOrder =
+  | 'most_request'
+  | 'most_recent'
+  | 'lowest_price'
+  | 'highest_price'
+  | ''

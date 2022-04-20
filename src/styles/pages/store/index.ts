@@ -15,7 +15,10 @@ export const Card = styled.div<CardProps>`
   background-color: #fff;
   border-radius: 32px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+
+  ${sizes.up('md')} {
+    margin-bottom: 20px;
+  }
 
   ${(props) => !props.noPadding && 'padding: 20px;'}
 

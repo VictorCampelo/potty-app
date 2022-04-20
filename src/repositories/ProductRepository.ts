@@ -2,7 +2,7 @@ import Http from '@/services/Http'
 
 import getDiscount from '@/utils/getDiscount'
 
-import type { } from '@/@types/requests'
+import type { GetAllStoreProductsDTO } from '@/@types/requests'
 import type { Product } from '@/@types/entities'
 
 const config = {
@@ -10,20 +10,60 @@ const config = {
 }
 
 export default class ProductRepository extends Http {
-  async findAllByStoreId(storeId: string) {
+  async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO) {
     const products = await this.get<Product[]>(
-      `/products/store/${storeId}?limit=10&offset=0&loadRelations=true&loadLastSolds=false`
+      `/products/store/${storeId}?page=${filter.page || 1}&limit=${
+        filter.perPage || 10
+      }&offset=0&loadRelations=true&loadLastSolds=false`
     )
 
-    return products.map(product => {
-      if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
-      return product
-    })
+    return products
+      .map((product) => {
+        if (product.price) {
+          product.priceWithDiscount = getDiscount(
+            product.price,
+            product.discount
+          )
+        }
+        return product
+      })
+      .filter((product) => {
+        const name = filter.search
+          ? product.title.toLowerCase().includes(filter.search.toLowerCase())
+          : true
+        const category =
+          filter.categoryId && product.categories
+            ? product.categories.findIndex(({ id }) => id === filter.categoryId)
+            : true
+        const starFilter = filter.starFilter
+          ? product.avgStars >= filter.starFilter
+          : true
+        return name && category && starFilter
+      })
+      .sort((a, b) => {
+        if (filter.productsOrder === 'most_recent')
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          )
+        else if (filter.productsOrder === 'most_request')
+          return a.sumOrders - b.sumOrders
+        else if (filter.productsOrder === 'lowest_price')
+          return (
+            (a.priceWithDiscount || a.price) - (b.priceWithDiscount || b.price)
+          )
+        else if (filter.productsOrder === 'highest_price')
+          return (
+            (b.priceWithDiscount || b.price) - (a.priceWithDiscount || a.price)
+          )
+        return 1
+      })
   }
 
   async findById(id: string) {
     const product = await this.get<Product>(`/products/${id}?files=true`)
-    if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
+    if (product.price) {
+      product.priceWithDiscount = getDiscount(product.price, product.discount)
+    }
     return product
   }
 
@@ -32,8 +72,10 @@ export default class ProductRepository extends Http {
       `/products/store/${id}?limit=6&offset=0&loadRelations=true&loadLastSolds=false`
     )
 
-    return products.map(product => {
-      if (product.price) { product.priceWithDiscount = getDiscount(product.price, product.discount) }
+    return products.map((product) => {
+      if (product.price) {
+        product.priceWithDiscount = getDiscount(product.price, product.discount)
+      }
       return product
     })
   }

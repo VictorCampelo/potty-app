@@ -58,11 +58,11 @@ const ProductCardHorizon = ({ product, onClick }: Props) => {
           </span>
         </div>
         <div className='price'>
-          {product.priceWithDiscount ? (
+          {product.discount ? (
             <small>{formatToBrl(product.priceWithDiscount)}</small>
           ) : null}
 
-          <span>{formatToBrl(product.price)}</span>
+          <span>{formatToBrl(product.priceWithDiscount || product.price)}</span>
         </div>
 
         {product.description ? (

@@ -5,7 +5,5 @@ export default function formatToBrl(value = 0): string {
     minimumFractionDigits: 2
   })
 
-  const number = Number(String(value).replace(/[^0-9]/g, ''))
-
-  return formatter.format(number)
+  return formatter.format(value)
 }

@@ -12,8 +12,10 @@ import IconButton from '@/components/atoms/IconButton'
 import Checkbox from '@/components/atoms/Checkbox'
 import ProductCard from '@/components/organisms/ProductCard'
 import ProductCardHorizon from '@/components/organisms/ProductCardHorizon'
+import CartButton from '@/components/molecules/CartButton'
 
 import useMedia from 'use-media'
+import toast from '@/utils/toast'
 
 import StoreRepository from '@/repositories/StoreRepository'
 import ProductRepository from '@/repositories/ProductRepository'
@@ -32,7 +34,7 @@ import {
 
 import { VscSearch } from 'react-icons/vsc'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
-import PuffLoader from 'react-spinners/PuffLoader'
+import PulseLoader from 'react-spinners/PulseLoader'
 import ReactStars from 'react-stars'
 
 import type { NextPage } from 'next'
@@ -41,9 +43,9 @@ import type {
   Store,
   ScheduleDays,
   File,
-  Schedules
+  Schedules,
+  ProductsOrder
 } from '@/@types/entities'
-import CartButton from '@/components/molecules/CartButton'
 
 interface Props {
   name: string
@@ -87,46 +89,30 @@ const StorePage: NextPage<Props> = ({ name }) => {
   })
 
   const [products, setProducts] = useState<Product[]>([])
+  const [page, setPage] = useState(1)
+  const perPage = 10
   const [loadingProducts, setLoadingProducts] = useState(true)
 
   const [favorite, setFavorite] = useState(false)
 
-  const [filter, setFilter] = useState('')
-  const [starFilter, setStarFilter] = useState('')
+  const [productsOrder, setProductsOrder] = useState<ProductsOrder>('')
+  const [starFilter, setStarFilter] = useState(0)
 
   const [categoryFilter, setCategoryFilter] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
+  const [search, setSearch] = useState('')
+
   const widthScreen = useMedia({ minWidth: '640px' })
 
-  const storeCategories = [
+  const [categories, setCategories] = useState([
     {
-      value: 'all_categories',
-      label: 'Todas as categorias'
-    },
-    {
-      value: 'cozinha',
-      label: 'Cozinha'
-    },
-    {
-      value: 'quartos',
-      label: 'Quartos'
-    },
-    {
-      value: 'sala_de_estar',
-      label: 'Sala de estar'
-    },
-    {
-      value: 'escritorio',
-      label: 'Escritório'
+      id: '',
+      name: 'Todas as categorias'
     }
-  ]
+  ])
 
-  const storeOrders = [
-    {
-      value: 'best_result',
-      label: 'Melhor resultado'
-    },
+  const validProductsOrder = [
     {
       value: 'most_request',
       label: 'Mais pedidos'
@@ -136,23 +122,38 @@ const StorePage: NextPage<Props> = ({ name }) => {
       label: 'Mais recente'
     },
     {
-      value: 'price',
-      label: 'Preço'
+      value: 'lowest_price',
+      label: 'Menor Preço'
+    },
+    {
+      value: 'highest_price',
+      label: 'Maior Preço'
     }
   ]
 
-  const starsFilter = ['4.0 +']
+  const starsFilter = [4]
 
-  const handleFavorite = () => {
-    setFavorite(!favorite)
+  const handleFavorite = async () => {
+    try {
+      setFavorite(!favorite)
+      await storeRepository.toggleFavorite(store.formatedName)
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        toast({ message: 'Faça login para favorita esta loja', type: 'error' })
+      }
+    }
   }
 
-  const updateStarFilter = (newValue: string) => {
-    setStarFilter(starFilter === newValue ? '' : newValue)
+  const updateStarFilter = (newValue: number) => {
+    setStarFilter(starFilter === newValue ? 0 : newValue)
   }
 
   const updateCategoryFilter = (newValue: string) => {
     setCategoryFilter(categoryFilter === newValue ? '' : newValue)
+  }
+
+  const updateProductsOrder = (newValue: ProductsOrder) => {
+    setProductsOrder(productsOrder === newValue ? '' : newValue)
   }
 
   const scheduleDays: ScheduleDays[] = [
@@ -195,9 +196,14 @@ const StorePage: NextPage<Props> = ({ name }) => {
   const loadProducts = async (storeId: string) => {
     try {
       setLoadingProducts(true)
-
-      const data = await productsRepository.findAllByStoreId(storeId)
-
+      const data = await productsRepository.findAllByStoreId(storeId, {
+        page,
+        perPage,
+        categoryId: categoryFilter,
+        starFilter,
+        productsOrder,
+        search
+      })
       setProducts(data)
     } catch (e) {
       console.error(e)
@@ -209,9 +215,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
   const loadData = async () => {
     try {
       const data = await storeRepository.findByName(name)
-
       setStore(data)
-
+      setFavorite(!!data.isFavorite)
       return data.id
     } catch (e) {
       console.error(e)
@@ -222,10 +227,25 @@ const StorePage: NextPage<Props> = ({ name }) => {
   useEffect(() => {
     loadData().then((storeId) => {
       if (storeId) {
+        storeRepository.categories(storeId).then((newCategories) =>
+          setCategories([
+            {
+              id: '',
+              name: 'Todas as categorias'
+            },
+            ...newCategories
+          ])
+        )
         loadProducts(storeId)
       }
     })
   }, [])
+
+  useEffect(() => {
+    if (store.id) {
+      loadProducts(store.id)
+    }
+  }, [page, categoryFilter, productsOrder, starFilter, search])
 
   return (
     <Wrapper>
@@ -238,7 +258,12 @@ const StorePage: NextPage<Props> = ({ name }) => {
 
         {!widthScreen && (
           <div style={{ margin: 'var(--spacing-xs) 0' }}>
-            <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
+            <Input
+              icon={<VscSearch />}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder='Pesquisar na loja'
+            />
           </div>
         )}
 
@@ -246,7 +271,12 @@ const StorePage: NextPage<Props> = ({ name }) => {
 
         <StoreInfo>
           {widthScreen && (
-            <Input icon={<VscSearch />} placeholder='Pesquisar na loja' />
+            <Input
+              icon={<VscSearch />}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder='Pesquisar na loja'
+            />
           )}
 
           <Row
@@ -361,19 +391,17 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 </Card>
 
                 <Card>
-                  <h1>{isOpened() ? 'Aberto agora' : 'Fechado agora'}</h1>
+                  <h1>Hoŕarios</h1>
 
                   <Row style={{ flexWrap: 'wrap' }}>
-                    {Object.entries(store.schedules).map(([day, schedule]) => {
-                      return (
-                        <div key={day}>
-                          <Text>{day}</Text>
-                          <Text>
-                            {schedule[0]} às {schedule[1]}
-                          </Text>
-                        </div>
-                      )
-                    })}
+                    {Object.entries(store.schedules).map(([day, schedule]) => (
+                      <div key={day}>
+                        <Text>{day}</Text>
+                        <Text>
+                          {schedule[0]} às {schedule[1]}
+                        </Text>
+                      </div>
+                    ))}
                   </Row>
                 </Card>
               </>
@@ -387,7 +415,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
               <Card>
                 <Row>
                   <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
-                  {storeOrders.map(({ value, label }, i) => (
+                  {validProductsOrder.map(({ value, label }, i) => (
                     <>
                       {i !== 0 && <span key={i}>|</span>}
 
@@ -395,8 +423,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
                         key={i + 1}
                         style={{ fontSize: '18px' }}
                         pointer
-                        active={value === filter}
-                        onClick={() => setFilter(value)}
+                        active={value === productsOrder}
+                        onClick={() => updateProductsOrder(value)}
                       >
                         {label}
                       </Text>
@@ -418,7 +446,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
                         alt='icone estrela'
                         style={{ margin: '0 5px -5px 0' }}
                       />
-                      {star.replace('+', 'ou mais')}
+                      {star.toFixed(1)} ou mais
                     </Text>
                   </Checkbox>
                 ))}
@@ -448,7 +476,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
             <Row style={{ padding: '0 50px' }}>
               <Card noPadding={true}>
                 <h2>Categorias da loja:</h2>
-                {storeCategories.map(({ value, label }, i) => (
+                {categories.map(({ id, name }, i) => (
                   <Text
                     key={i}
                     style={{
@@ -456,81 +484,124 @@ const StorePage: NextPage<Props> = ({ name }) => {
                       margin: '0 auto 18px 20px'
                     }}
                     pointer
-                    active={value === categoryFilter}
-                    onClick={() => updateCategoryFilter(value)}
+                    active={id === categoryFilter}
+                    onClick={() => updateCategoryFilter(id)}
                   >
-                    {label}
+                    {name}
                   </Text>
                 ))}
               </Card>
 
-              {loadingProducts ? (
-                <PuffLoader size={28} color='#fff' />
-              ) : (
-                <>
-                  <Row
+              {widthScreen ? (
+                loadingProducts ? (
+                  <div
                     style={{
-                      display: viewMode === 'grid' ? '' : 'none',
-                      flexWrap: 'wrap'
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '60vw',
+                      height: '40vh'
                     }}
                   >
-                    {products.map((product) => (
-                      <ProductCard
-                        product={product}
-                        key={product.id}
-                        onClick={() => Router.push(product.id)}
-                      />
-                    ))}
-                  </Row>
+                    <PulseLoader size={32} color='var(--color-primary)' />
+                  </div>
+                ) : products.length ? (
+                  <>
+                    <Row
+                      style={{
+                        display: viewMode === 'grid' ? '' : 'none',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {products.map((product) => (
+                        <ProductCard
+                          product={product}
+                          key={product.id}
+                          onClick={() => Router.push(product.id)}
+                        />
+                      ))}
+                    </Row>
 
-                  <Row
-                    style={{
-                      display: viewMode === 'list' ? '' : 'none',
-                      flexWrap: 'wrap'
-                    }}
-                  >
-                    {products.map((product) => (
-                      <ProductCardHorizon
-                        product={product}
-                        key={product.id}
-                        onClick={() => Router.push(product.id)}
-                      />
-                    ))}
-                  </Row>
-                </>
-              )}
+                    <Row
+                      style={{
+                        display: viewMode === 'list' ? '' : 'none',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {products.map((product) => (
+                        <ProductCardHorizon
+                          product={product}
+                          key={product.id}
+                          onClick={() => Router.push(product.id)}
+                        />
+                      ))}
+                    </Row>
+                  </>
+                ) : (
+                  <Text>Nenhum produto encontrado.</Text>
+                )
+              ) : null}
             </Row>
 
-            <div style={{ margin: '2rem auto' }}>
-              <Pagination
-                onPageChange={() => undefined}
-                currentPage={1}
-                totalCountOfRegisters={100}
-                registersPerPage={10}
-              />
-            </div>
+            {products.length ? (
+              <div style={{ margin: '2rem auto' }}>
+                <Pagination
+                  onPageChange={setPage}
+                  currentPage={page}
+                  totalCountOfRegisters={100}
+                  registersPerPage={perPage}
+                />
+              </div>
+            ) : null}
           </>
         )}
 
-        {loadingProducts ? (
-          <PuffLoader size={28} color='#fff' />
-        ) : (
-          <Row
-            style={{
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              margin: '0 8px 18px 8px'
-            }}
-          >
-            {products.map((product) => (
-              <ProductCard
-                product={product}
-                key={product.id}
-                onClick={() => Router.push(product.id)}
-              />
-            ))}
-          </Row>
-        )}
+        {!widthScreen ? (
+          loadingProducts ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '150px'
+              }}
+            >
+              <PulseLoader size={18} color='var(--color-primary)' />
+            </div>
+          ) : products.length ? (
+            <>
+              <Row
+                style={{
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  margin: '0 8px 18px 8px'
+                }}
+              >
+                {products.map((product) => (
+                  <ProductCard
+                    product={product}
+                    key={product.id}
+                    onClick={() => Router.push(product.id)}
+                  />
+                ))}
+              </Row>
+
+              <div style={{ margin: '2rem auto' }}>
+                <Pagination
+                  onPageChange={setPage}
+                  currentPage={page}
+                  totalCountOfRegisters={100}
+                  registersPerPage={perPage}
+                />
+              </div>
+            </>
+          ) : (
+            <Text>Nenhum produto encontrado.</Text>
+          )
+        ) : null}
 
         <FooterContact
           title={store.name}

@@ -1,5 +1,11 @@
-import type { User, Store, Order, OrderGuest } from '@/@types/entities'
-import { GuestAddress } from '@/@types/entities'
+import type {
+  User,
+  Store,
+  Order,
+  OrderGuest,
+  ProductsOrder,
+  GuestAddress
+} from '@/@types/entities'
 
 export interface SignInDTO {
   email: string
@@ -79,4 +85,18 @@ export interface SearchCepResponse {
   street: string
   service: string
   location: Location
+}
+
+export type CategoriesResponse = {
+  id: string
+  name: string
+}[]
+
+export interface GetAllStoreProductsDTO {
+  page: number
+  perPage: number
+  categoryId: string
+  starFilter: number
+  productsOrder: ProductsOrder
+  search: string
 }

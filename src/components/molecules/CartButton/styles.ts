@@ -21,6 +21,7 @@ export const Wrapper = styled.button`
   ${[sizes.down('sm')]} {
     right: var(--spacing-xxs);
     bottom: var(--spacing-xs);
+    padding: 0 var(--spacing-xxs);
   }
 `
 
@@ -35,6 +36,16 @@ export const Container = styled.div`
   align-items: center;
   position: relative;
   height: 100%;
+
+  img {
+    width: 28px;
+    height: 28px;
+
+    ${sizes.down('sm')} {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `
 
 export const Quantity = styled.div`

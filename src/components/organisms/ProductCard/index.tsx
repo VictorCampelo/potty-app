@@ -59,11 +59,9 @@ const ProductCard = ({ product, onClick }: Props) => {
         </span>
       </div>
       <div className='price'>
-        {product.priceWithDiscount ? (
-          <small>{formatToBrl(product.priceWithDiscount)}</small>
-        ) : null}
+        {product.discount ? <small>{formatToBrl(product.price)}</small> : null}
 
-        <span>{formatToBrl(product.price)}</span>
+        <span>{formatToBrl(product.priceWithDiscount || product.price)}</span>
       </div>
 
       {product.parcelAmount > 1 && (
