@@ -1,6 +1,5 @@
 import Http from '@/services/Http'
 
-import type {} from '@/@types/requests'
 import type { Category } from '@/@types/entities'
 
 export default class CategoryRepository extends Http {
@@ -23,7 +22,7 @@ export default class CategoryRepository extends Http {
     return this.delete(`categories/products/${storeId}/category/${id}`)
   }
 
-  updateCategory(id: string, storeId: string, data: Category) {
+  updateCategory(id: string, storeId: string, data: Partial<Category>) {
     return this.patch(`categories/products/${storeId}/category/${id}`, data)
   }
 }

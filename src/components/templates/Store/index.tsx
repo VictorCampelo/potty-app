@@ -129,7 +129,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
       value: 'highest_price',
       label: 'Maior Preço'
     }
-  ]
+  ] as { value: ProductsOrder; label: string }[]
 
   const starsFilter = [4]
 
