@@ -34,10 +34,9 @@ jobs:
       - run: |
           ssh -i private_key ${USER_NAME}@${HOSTNAME} '
           . ~/.nvm/nvm.sh &&
-          cd /var/www/ultimo-app &&
+          cd /var/www/boa-de-venda-app &&
           git pull origin main &&
-          git checkout main &&
-          npm install --legacy-peer-deps &&
+          yarn install &&
           pm2 delete bdv-app &&
           pm2 start npm --name "bdv-app" -- start
           '
