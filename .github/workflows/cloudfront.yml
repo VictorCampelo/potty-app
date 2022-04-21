@@ -36,6 +36,7 @@ jobs:
           . ~/.nvm/nvm.sh &&
           cd /var/www/ultimo-app &&
           git pull origin main &&
+          git checkout main &&
           npm install --legacy-peer-deps &&
           pm2 delete bdv-app &&
           pm2 start npm --name "bdv-app" -- start
