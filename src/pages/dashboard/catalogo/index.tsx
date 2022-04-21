@@ -135,6 +135,8 @@ const CatalogPage = () => {
 
   const [activeProduct, setActiveProduct] = useState<any>({})
 
+  const [search, setSearch] = useState('')
+
   function toggleEditModal() {
     setEditModal(!editModal)
     if (!editModal) {
@@ -1548,6 +1550,8 @@ const CatalogPage = () => {
                       className='searchInput'
                       label=''
                       placeholder='Pesquisar'
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
                       icon={<FiSearch size={22} color='var(--black-800)' />}
                     />
                   </div>
@@ -1563,26 +1567,30 @@ const CatalogPage = () => {
                     content1={
                       <div className='products-container'>
                         {products.length ? (
-                          products.map((product: any) => (
-                            <ProductListCard
-                              key={product?.id}
-                              icon={product?.files[0]?.url}
-                              name={product?.title}
-                              code={product?.id}
-                              category={product?.categories?.join(', ')}
-                              amount={product?.inventory}
-                              price={product?.price}
-                              excludeBtn={() => {
-                                toggleExcludeModal()
-                                setDeleteProductId(product.id)
-                              }}
-                              editBtn={() => {
-                                editProduct(product)
-                              }}
-                              isRed={true}
-                              isGreen={true}
-                            />
-                          ))
+                          products
+                            .filter(({ title }: any) =>
+                              title.toLowerCase().includes(search.toLowerCase())
+                            )
+                            .map((product: any) => (
+                              <ProductListCard
+                                key={product?.id}
+                                icon={product?.files[0]?.url}
+                                name={product?.title}
+                                code={product?.id}
+                                category={product?.categories?.join(', ')}
+                                amount={product?.inventory}
+                                price={product?.price}
+                                excludeBtn={() => {
+                                  toggleExcludeModal()
+                                  setDeleteProductId(product.id)
+                                }}
+                                editBtn={() => {
+                                  editProduct(product)
+                                }}
+                                isRed={true}
+                                isGreen={true}
+                              />
+                            ))
                         ) : (
                           <EmptyContainer>
                             {loadingProducts ? (
@@ -1619,34 +1627,38 @@ const CatalogPage = () => {
                     content2={
                       <div className='categories-container'>
                         {categories.length ? (
-                          categories.map((cat: any, index) => {
-                            return (
-                              <CategoryListCard
-                                key={cat.id + '-' + index}
-                                date={products
-                                  .filter((prd: any) =>
-                                    prd.categories.includes(cat.name)
-                                  )
-                                  .map((data: any) => {
-                                    return {
-                                      name: data.title,
-                                      amount: String(data.inventory)
-                                    }
-                                  })}
-                                category={cat.name}
-                                excludeBtn={() => {
-                                  setDeleteCategoryId(cat.id)
-                                  toggleExcludeCategoryModal()
-                                }}
-                                editBtn={() => {
-                                  setEditCategoryId(cat.id)
-                                  toggleEditCategoryModal()
-                                }}
-                                isGreen={true}
-                                isRed={true}
-                              />
+                          categories
+                            .filter(({ name }: any) =>
+                              name.toLowerCase().includes(search.toLowerCase())
                             )
-                          })
+                            .map((cat: any, index) => {
+                              return (
+                                <CategoryListCard
+                                  key={cat.id + '-' + index}
+                                  date={products
+                                    .filter((prd: any) =>
+                                      prd.categories.includes(cat.name)
+                                    )
+                                    .map((data: any) => {
+                                      return {
+                                        name: data.title,
+                                        amount: String(data.inventory)
+                                      }
+                                    })}
+                                  category={cat.name}
+                                  excludeBtn={() => {
+                                    setDeleteCategoryId(cat.id)
+                                    toggleExcludeCategoryModal()
+                                  }}
+                                  editBtn={() => {
+                                    setEditCategoryId(cat.id)
+                                    toggleEditCategoryModal()
+                                  }}
+                                  isGreen={true}
+                                  isRed={true}
+                                />
+                              )
+                            })
                         ) : (
                           <EmptyContainer>
                             <div>
@@ -1665,22 +1677,26 @@ const CatalogPage = () => {
                     }
                     content3={
                       <div className='cupons-container'>
-                        {cupons.length > 0 ? (
-                          cupons.map((it, i) => (
-                            <CupomItem
-                              key={i}
-                              code={it.code}
-                              info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
-                              excludeBtn={() => {
-                                setActiveCupom(it)
-                                toggleDeleteCupomModal()
-                              }}
-                              editBtn={() => {
-                                setActiveCupom(it)
-                                toggleEditCupomModal()
-                              }}
-                            />
-                          ))
+                        {cupons.length ? (
+                          cupons
+                            .filter(({ code }: any) =>
+                              code.toLowerCase().includes(search.toLowerCase())
+                            )
+                            .map((it, i) => (
+                              <CupomItem
+                                key={i}
+                                code={it.code}
+                                info={`Desconto de ${it.discountPorcent} com o máximo de usos: ${it.maxUsage}`}
+                                excludeBtn={() => {
+                                  setActiveCupom(it)
+                                  toggleDeleteCupomModal()
+                                }}
+                                editBtn={() => {
+                                  setActiveCupom(it)
+                                  toggleEditCupomModal()
+                                }}
+                              />
+                            ))
                         ) : (
                           <EmptyContainer>
                             <div>
