@@ -51,7 +51,7 @@ const LoginForm = () => {
         Router.push('/dashboard')
       }
     } catch (error: any) {
-      if ([401, 404, 403].includes(error.response.status)) {
+      if ([401, 404, 403].includes(error.response?.status)) {
         if (error.response.data?.error === 'Need e-mail activation') {
           toast({
             message: 'Verifique sua conta para fazer login',
@@ -62,7 +62,7 @@ const LoginForm = () => {
           toast({ message: 'Email ou senha incorretos', type: 'error' })
         }
       } else {
-        if (error.response.status === 412) {
+        if (error.response?.status === 412) {
           Router.push('/auth/register/confirmation-token')
         } else {
           toast({

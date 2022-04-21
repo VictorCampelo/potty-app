@@ -220,7 +220,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
       return data.id
     } catch (e) {
       console.error(e)
-      await Router.push('/')
+      window.location.href = window.location.href.replace(`${name}.`, '')
     }
   }
 
