@@ -5,6 +5,7 @@ import LandingPage from '@/components/templates/Landing'
 
 const Home = () => {
   const splinted = window.location.host
+    .replace('www.', '')
     .replace('.com.br', '') // start replacing from the longest domain to lowest
     .replace('.com', '')
     .split('.')

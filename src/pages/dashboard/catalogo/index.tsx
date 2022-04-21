@@ -87,8 +87,7 @@ const CatalogPage = () => {
 
   const [addCupomModal, toggleAddCupomModal] = useToggleState(false)
 
-  const [editProduct, setEditProduct] = useState(false)
-  const [editProductId, setEditProductId] = useState('')
+  const [editModal, setEditModal] = useState(false)
   const [deleteProductId, setDeleteProductId] = useState('')
   const [editCategoryId, setEditCategoryId] = useState('')
   const [deleteCategoryId, setDeleteCategoryId] = useState('')
@@ -134,47 +133,53 @@ const CatalogPage = () => {
   const [deleteCupomModal, toggleDeleteCupomModal] = useToggleState(false)
   const [editCupomModal, toggleEditCupomModal] = useToggleState(false)
 
-  const [productEditValue, setProductEditValue] = useState('')
+  const [activeProduct, setActiveProduct] = useState<any>({})
 
-  function editProductSelected(product: any) {
-    setEnableDiscount(false)
-    setValue('title', product.title)
-    setValue('price', product.price)
-    setValue('inventory', product.inventory)
-    setValue('discount', product.discount)
-    if (Number(product.discount) > 0) setEnableDiscount(true)
+  function toggleEditModal() {
+    setEditModal(!editModal)
+    if (!editModal) {
+      setActiveProduct({})
+      setPreviewImage('')
+      setImageSrc('')
+      setImageSrc1('')
+      setImageSrc2('')
+      setPrice(0)
+      updateDiscount(0)
+    }
+  }
+
+  function editProduct(product: any) {
+    toggleEditModal()
+    setActiveProduct(product)
+    setEnableDiscount(!!product.discount)
+    setPrice(product.price)
+    const newPrice = product.price - product.price * (product.discount / 100)
+    setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
+
+    Object.entries(product).map(([key, value]) => setValue(key, value))
 
     if (product.files[0]) setImageSrc(product.files[0].url)
     if (product.files[1]) setImageSrc1(product.files[1].url)
     if (product.files[2]) setImageSrc2(product.files[2].url)
 
-    setProductEditValue(product.description)
     setInstallments({
       value: String(product.parcelAmount || ''),
       label: `${product.parcelAmount}x`
     })
 
-    const catSelecteds = categories
-      .filter((cat: any) =>
-        product.categories.some((selected: any) => selected === cat.name)
-      )
-      .map((item: any) => ({ label: item.name, value: item.id }))
-
-    setSelectedCategories(catSelecteds)
+    setSelectedCategories(
+      categories
+        .filter((cat: any) =>
+          product.categories.some((selected: any) => selected === cat.name)
+        )
+        .map((item: any) => ({ label: item.name, value: item.id }))
+    )
   }
 
   const futureDate = moment().add(30, 'days').format('DD/MM/YY')
 
   function toggleAddModal() {
     setAddModal(!addModal)
-    setPreviewImage('')
-    setImageSrc('')
-    setImageSrc1('')
-    setImageSrc2('')
-  }
-
-  function toggleEditProduct() {
-    setEditProduct(!editProduct)
     setPreviewImage('')
     setImageSrc('')
     setImageSrc1('')
@@ -412,14 +417,14 @@ const CatalogPage = () => {
       const body = {
         title: values.title,
         price: formatToNumber(values.price),
-        description: productEditValue,
+        description: values.description,
         inventory: Number(values.inventory || '0'),
         discount: Number(values.discount),
         categoriesIds: selectedCategories.map((cat: any) => cat.value),
         parcelAmount: installments?.value || '0'
       }
 
-      await productRepository.updateProduct(editProductId, body)
+      await productRepository.updateProduct(activeProduct.id, body)
 
       toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
     } catch {
@@ -429,10 +434,9 @@ const CatalogPage = () => {
       })
     }
 
-    setEditProductId('')
     setSelectedCategories([])
     loadData()
-    setEditProduct(false)
+    toggleAddModal()
   }
 
   const loadData = async () => {
@@ -478,6 +482,11 @@ const CatalogPage = () => {
   const [priceWithDiscount, setPriceWithDiscount] = useState(formatToBrl(0))
   const [discount, setDiscount] = useState(0)
 
+  function updateDiscount(discount: number) {
+    const newPrice = price - price * (discount / 100)
+    setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
+  }
+
   useEffect(() => {
     if (!activeCupom) return
     setDiscountType(activeCupom.type)
@@ -488,11 +497,6 @@ const CatalogPage = () => {
     setCupomCode(activeCupom.code)
     setDiscountCategory(activeCupom.range)
   }, [activeCupom])
-
-  useEffect(() => {
-    const newPrice = price - price * (discount / 100)
-    setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
-  }, [discount])
 
   useEffect(() => {
     if (!isLoading) {
@@ -713,7 +717,7 @@ const CatalogPage = () => {
                   label='Parcelamento'
                   isMulti={false}
                   options={productParcels}
-                  selectedValue={installments?.value}
+                  selectedValue={installments}
                   setSelectedValue={setInstallments}
                   placeholder='Selecione o número de parcelas'
                 />
@@ -728,7 +732,7 @@ const CatalogPage = () => {
                   placeholder='0.0%'
                   value={discount}
                   {...register('discount')}
-                  onChange={(e) => setDiscount(Number(e.target.value))}
+                  onChange={(e) => updateDiscount(Number(e.target.value))}
                 />
 
                 <div className='arrows'>
@@ -880,8 +884,8 @@ const CatalogPage = () => {
 
       <Modal
         showCloseButton={true}
-        setModalOpen={toggleEditProduct}
-        modalVisible={editProduct}
+        setModalOpen={toggleEditModal}
+        modalVisible={editModal}
       >
         <AddProductModalContainer onSubmit={handleSubmit(handleUpdateProduct)}>
           <h1 className='titulo-cadastro'>Editar Produto</h1>
@@ -891,6 +895,7 @@ const CatalogPage = () => {
                 label='Nome do produto'
                 icon={<FiBox />}
                 placeholder='Nome do produto'
+                defaultValue={activeProduct.title}
                 {...register('title')}
               />
 
@@ -899,9 +904,8 @@ const CatalogPage = () => {
                 maxLength={600}
                 placeholder='Descrição'
                 icon={<GiHamburgerMenu />}
+                defaultValue={activeProduct.description}
                 {...register('description')}
-                value={productEditValue}
-                onChange={(e) => setProductEditValue(e.target.value)}
               />
 
               <div className='row-edit'>
@@ -910,6 +914,7 @@ const CatalogPage = () => {
                   icon={<FaMoneyBill />}
                   placeholder='R$ 0'
                   mask='monetaryBRL'
+                  defaultValue={activeProduct.price}
                   {...register('price')}
                   onChange={(e) =>
                     setPrice(formatToNumber(String(e.target.value)))
@@ -920,7 +925,7 @@ const CatalogPage = () => {
                   label='Parcelamento'
                   isMulti={false}
                   options={productParcels}
-                  selectedValue={installments?.value}
+                  selectedValue={installments}
                   setSelectedValue={setInstallments}
                   placeholder='Selecione o número de parcelas'
                 />
@@ -933,9 +938,9 @@ const CatalogPage = () => {
                   icon={<FaPercentage />}
                   mask='number'
                   placeholder='0.0%'
-                  value={discount}
+                  defaultValue={activeProduct.discount}
                   {...register('discount')}
-                  onChange={(e) => setDiscount(Number(e.target.value))}
+                  onChange={(e) => updateDiscount(Number(e.target.value))}
                 />
 
                 <div className='arrows'>
@@ -969,6 +974,7 @@ const CatalogPage = () => {
                   icon={<FaCoins />}
                   placeholder='0'
                   mask='number'
+                  defaultValue={activeProduct.inventory}
                   {...register('inventory')}
                 />
               </div>
@@ -1077,7 +1083,7 @@ const CatalogPage = () => {
           </div>
 
           <div className='buttonContainer'>
-            <Button type='button' skin='secondary' onClick={toggleEditProduct}>
+            <Button type='button' skin='secondary' onClick={toggleEditModal}>
               Voltar
             </Button>
 
@@ -1571,10 +1577,7 @@ const CatalogPage = () => {
                                 setDeleteProductId(product.id)
                               }}
                               editBtn={() => {
-                                editProductSelected(product)
-                                setDiscount(product.discount)
-                                setEditProductId(product.id)
-                                setEditProduct(true)
+                                editProduct(product)
                               }}
                               isRed={true}
                               isGreen={true}
