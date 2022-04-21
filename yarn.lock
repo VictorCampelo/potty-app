@@ -475,10 +475,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@hookform/resolvers@^1.0.0-rc.2":
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-1.0.0-rc.2.tgz#bffafc9a0b0fee427a058d8f17ae16dc23b09488"
-  integrity sha512-D+O3cB24IwsIQBi68nK4A0Dm3AYS7YwhA68WmknjYpdBSsHe+7veQwA9vs6cdNIuIaZshr+6uPUtYaKmlvDzVQ==
+"@hookform/resolvers@^2.0.0-beta.17":
+  version "2.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.0.0-beta.17.tgz#4436d4cc0a3d668ca1c9f4c231618f406ade9555"
+  integrity sha512-lB8VLjetmoA05GZFm555kl7wolU9e0SlNTsppq23wPnkUrUpsdEomjE5MbfaYsHT3qVP49edPcI0UifSq/O5LQ==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"

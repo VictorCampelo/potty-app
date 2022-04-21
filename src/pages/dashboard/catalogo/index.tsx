@@ -329,7 +329,7 @@ const CatalogPage = () => {
     }
   }
 
-  const { register, handleSubmit, getValues, setValue, reset } = useForm({
+  const { register, handleSubmit, setValue, reset } = useForm({
     resolver: yupResolver(createProductFormSchema)
   })
 
@@ -474,6 +474,7 @@ const CatalogPage = () => {
   const [discountType, setDiscountType] = useState('real')
   const [ilimitedCupom, toggleIlimitedCupom] = useToggleState(false)
 
+  const [price, setPrice] = useState(0)
   const [priceWithDiscount, setPriceWithDiscount] = useState(formatToBrl(0))
   const [discount, setDiscount] = useState(0)
 
@@ -489,7 +490,6 @@ const CatalogPage = () => {
   }, [activeCupom])
 
   useEffect(() => {
-    const price = formatToNumber(String(getValues(['price'])[0] || 0))
     const newPrice = price - price * (discount / 100)
     setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
   }, [discount])
@@ -704,10 +704,14 @@ const CatalogPage = () => {
                   placeholder='R$ 0'
                   mask='monetaryBRL'
                   {...register('price')}
+                  onChange={(e) =>
+                    setPrice(formatToNumber(String(e.target.value)))
+                  }
                 />
 
                 <MultiSelect
                   label='Parcelamento'
+                  isMulti={false}
                   options={productParcels}
                   selectedValue={installments?.value}
                   setSelectedValue={setInstallments}
@@ -769,9 +773,6 @@ const CatalogPage = () => {
                   label: cat.name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories.map(
-                  ({ value }: any) => value
-                )}
                 setSelectedValue={setSelectedCategories}
                 creatable={true}
                 formatCreateLabel={(inputValue) =>
@@ -910,12 +911,16 @@ const CatalogPage = () => {
                   placeholder='R$ 0'
                   mask='monetaryBRL'
                   {...register('price')}
+                  onChange={(e) =>
+                    setPrice(formatToNumber(String(e.target.value)))
+                  }
                 />
 
                 <MultiSelect
                   label='Parcelamento'
+                  isMulti={false}
                   options={productParcels}
-                  selectedValue={installments}
+                  selectedValue={installments?.value}
                   setSelectedValue={setInstallments}
                   placeholder='Selecione o número de parcelas'
                 />
@@ -977,8 +982,15 @@ const CatalogPage = () => {
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
+                creatable={true}
+                formatCreateLabel={(inputValue) =>
+                  `➕ Criar categoria "${inputValue}"`
+                }
+                onCreateOption={handleCreateCategory}
               />
-              <h3>{'Categorias adicionadas: ' + selectedCategories.length}</h3>
+              <span className='text-categories-added'>
+                Categorias adicionadas: {selectedCategories.length}
+              </span>
 
               <div>
                 <h2>Fotos do produto</h2>
@@ -1199,15 +1211,21 @@ const CatalogPage = () => {
               </div>
 
               <MultiSelect
-                isDisabled={discountCategory !== 'category'}
                 label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories}
+                selectedValue={selectedCategories.map(
+                  ({ value }: any) => value
+                )}
                 setSelectedValue={setSelectedCategories}
+                creatable={true}
+                formatCreateLabel={(inputValue) =>
+                  `➕ Criar categoria "${inputValue}"`
+                }
+                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}
@@ -1373,15 +1391,21 @@ const CatalogPage = () => {
               </div>
 
               <MultiSelect
-                isDisabled={discountCategory !== 'category'}
                 label='Categorias'
                 options={categories.map((cat: any) => ({
                   value: String(cat.id),
                   label: cat.name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories}
+                selectedValue={selectedCategories.map(
+                  ({ value }: any) => value
+                )}
                 setSelectedValue={setSelectedCategories}
+                creatable={true}
+                formatCreateLabel={(inputValue) =>
+                  `➕ Criar categoria "${inputValue}"`
+                }
+                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}
@@ -1539,7 +1563,7 @@ const CatalogPage = () => {
                               icon={product?.files[0]?.url}
                               name={product?.title}
                               code={product?.id}
-                              category={product?.categories?.join('')}
+                              category={product?.categories?.join(', ')}
                               amount={product?.inventory}
                               price={product?.price}
                               excludeBtn={() => {
@@ -1649,7 +1673,6 @@ const CatalogPage = () => {
                                 toggleDeleteCupomModal()
                               }}
                               editBtn={() => {
-                                console.log(it)
                                 setActiveCupom(it)
                                 toggleEditCupomModal()
                               }}

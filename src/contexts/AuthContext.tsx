@@ -92,8 +92,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(data.user)
 
       return data.user
-    } catch {
-      return
     } finally {
       setIsLoading(false)
     }

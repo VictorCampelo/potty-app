@@ -7,12 +7,15 @@ import { BiStore, BiClipboard } from 'react-icons/bi'
 import { FiBox } from 'react-icons/fi'
 
 import { Wrapper, Container } from './styles'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface Props {
   children: React.ReactNode
 }
 
 const Dashboard = ({ children }: Props) => {
+  const { signOut } = useAuth()
+
   const links = [
     {
       name: 'Início',
@@ -37,7 +40,8 @@ const Dashboard = ({ children }: Props) => {
     {
       name: 'Sair',
       icon: IoExitOutline,
-      color: 'var(--red)'
+      color: 'var(--red)',
+      onClick: signOut
     }
   ]
 

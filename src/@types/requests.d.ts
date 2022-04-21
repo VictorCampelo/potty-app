@@ -93,10 +93,10 @@ export type CategoriesResponse = {
 }[]
 
 export interface GetAllStoreProductsDTO {
-  page: number
-  perPage: number
-  categoryId: string
-  starFilter: number
-  productsOrder: ProductsOrder
-  search: string
+  page?: number
+  perPage?: number
+  categoryId?: string
+  starFilter?: number
+  productsOrder?: ProductsOrder
+  search?: string
 }

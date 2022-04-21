@@ -39,7 +39,6 @@ const Input = ({
   const handleOnChange = (event: any) => {
     if (maskFunction) {
       const newValue = maskFunction(event.target.value)
-      console.log(newValue, event.target.value)
       event.target.value = newValue
     }
     if (registerProps?.onChange) registerProps.onChange(event)

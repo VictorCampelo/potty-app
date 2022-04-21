@@ -79,7 +79,7 @@ const RegisterForm = () => {
 
       clearSignUpMeta()
 
-      await Router.push('/confirmacao-cadastro')
+      await Router.push('/verificar-conta')
     } catch {
       toast({
         message: 'Algo deu errado!',

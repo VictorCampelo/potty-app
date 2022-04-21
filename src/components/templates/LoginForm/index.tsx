@@ -50,13 +50,19 @@ const LoginForm = () => {
       } else if (user?.role === 'OWNER') {
         Router.push('/dashboard')
       }
-    } catch ({ response }) {
-      const { status }: any = response
-
-      if ([401, 404, 403].includes(status)) {
-        toast({ message: 'Email ou senha incorretos', type: 'error' })
+    } catch (error: any) {
+      if ([401, 404, 403].includes(error.response.status)) {
+        if (error.response.data?.error === 'Need e-mail activation') {
+          toast({
+            message: 'Verifique sua conta para fazer login',
+            type: 'error'
+          })
+          await Router.push('/verificar-conta')
+        } else {
+          toast({ message: 'Email ou senha incorretos', type: 'error' })
+        }
       } else {
-        if (status === 412) {
+        if (error.response.status === 412) {
           Router.push('/auth/register/confirmation-token')
         } else {
           toast({

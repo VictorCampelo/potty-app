@@ -10,7 +10,7 @@ const config = {
 }
 
 export default class ProductRepository extends Http {
-  async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO) {
+  async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO = {}) {
     const products = await this.get<Product[]>(
       `/products/store/${storeId}?page=${filter.page || 1}&limit=${
         filter.perPage || 10
@@ -41,21 +41,27 @@ export default class ProductRepository extends Http {
         return name && category && starFilter
       })
       .sort((a, b) => {
-        if (filter.productsOrder === 'most_recent')
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          )
-        else if (filter.productsOrder === 'most_request')
-          return a.sumOrders - b.sumOrders
-        else if (filter.productsOrder === 'lowest_price')
-          return (
-            (a.priceWithDiscount || a.price) - (b.priceWithDiscount || b.price)
-          )
-        else if (filter.productsOrder === 'highest_price')
-          return (
-            (b.priceWithDiscount || b.price) - (a.priceWithDiscount || a.price)
-          )
-        return 1
+        switch (true) {
+          case filter.productsOrder === 'most_recent':
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            )
+
+          case filter.productsOrder === 'most_request':
+            return (
+              (a.priceWithDiscount || a.price) -
+              (b.priceWithDiscount || b.price)
+            )
+
+          case filter.productsOrder === 'highest_price':
+            return (
+              (b.priceWithDiscount || b.price) -
+              (a.priceWithDiscount || a.price)
+            )
+
+          default:
+            return 1
+        }
       })
   }
 

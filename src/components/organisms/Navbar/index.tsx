@@ -14,6 +14,7 @@ type Links = {
   icon: IconType
   href?: string
   color?: string
+  onClick?: () => void
 }[]
 
 interface Props {
@@ -51,7 +52,7 @@ const Navbar = ({ links }: Props) => {
         }
 
         return (
-          <Icon key={i} color={link.color}>
+          <Icon key={i} color={link.color} onClick={link.onClick}>
             {link.icon({ color: link.color })}
             <span>{link.name}</span>
           </Icon>
