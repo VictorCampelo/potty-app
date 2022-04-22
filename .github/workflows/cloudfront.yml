@@ -36,7 +36,8 @@ jobs:
           . ~/.nvm/nvm.sh &&
           cd /var/www/boa-de-venda-app &&
           git pull origin main &&
-          yarn install &&
+          npm i --legacy-peer-deps &&
+          NODE_OPTIONS="--max-old-space-size=1024" npm run build &&
           pm2 delete bdv-app &&
           pm2 start npm --name "bdv-app" -- start
           '
