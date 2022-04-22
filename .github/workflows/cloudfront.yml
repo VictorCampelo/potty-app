@@ -1,4 +1,3 @@
-  
 name: Build and run tests
 
 on:
@@ -20,27 +19,25 @@ jobs:
     - run: npm install --legacy-peer-deps
     # - run: npm test
 
-  deploy_main:
+  deploy_dev:
     if: contains( github.ref, 'main')
     runs-on: ubuntu-latest
     needs: build
     environment: main
+    env:
+        PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+        HOSTNAME : ${{ secrets.HOSTNAME  }}
+        USER_NAME : ${{ secrets.USER_NAME  }}
     steps:
-      - uses: actions/checkout@v2.1.0
-      - name: Install
-        run: npm install --legacy-peer-deps
-      
-      - name: Build
-        run: npm run build
-        
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: upload to s3
-        run: aws s3 sync --delete --acl public-read ./out s3://shopping-da-cidade
-        
-      - name: deploy on cloudwatch
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
+      - run: echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+      - run: ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} uptime
+      - run: |
+          ssh -i private_key ${USER_NAME}@${HOSTNAME} '
+          . ~/.nvm/nvm.sh &&
+          cd /var/www/boa-de-venda-app &&
+          git pull origin main &&
+          npm i --legacy-peer-deps &&
+          NODE_OPTIONS="--max-old-space-size=1024" npm run build &&
+          pm2 delete bdv-app &&
+          pm2 start npm --name "bdv-app" -- start
+          '
