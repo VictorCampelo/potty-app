@@ -94,9 +94,9 @@ const RequestsPage = () => {
     }
   }
 
-  const loadData = async (offset: number) => {
+  const loadData = async (page: number) => {
     try {
-      const data = await orderRepository.find({ confirmed: false, offset })
+      const data = await orderRepository.find({ confirmed: false, page })
       setOrdersList(data.results)
       setTotalOrders(data.totalOrders)
     } catch (e) {

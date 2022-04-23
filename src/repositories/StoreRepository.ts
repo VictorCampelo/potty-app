@@ -4,6 +4,7 @@ import type {
   CategoriesResponse,
   UpdateStoreDTO
 } from '@/@types/requests'
+import { Store } from '@/@types/entities'
 
 export default class StoreRepository extends Http {
   async findByName(name: string) {
@@ -31,13 +32,13 @@ export default class StoreRepository extends Http {
   }
 
   update(dto: UpdateStoreDTO) {
-    return this.patch('/stores', dto)
+    return this.patch<UpdateStoreDTO, Store>('/stores', dto)
   }
 
   updateUsingFormData(dto: FormData) {
     const config = {
       headers: { 'content-type': 'multipart/form-data' }
     }
-    return this.patch('/stores', dto, config)
+    return this.patch<FormData, Store>('/stores', dto, config)
   }
 }

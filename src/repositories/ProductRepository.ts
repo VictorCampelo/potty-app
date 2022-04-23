@@ -12,9 +12,9 @@ const config = {
 export default class ProductRepository extends Http {
   async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO = {}) {
     const products = await this.get<Product[]>(
-      `/products/store/${storeId}?page=${filter.page || 1}&limit=${
+      `/products/store/${storeId}?page=${filter.page || 1}&take=${
         filter.perPage || 10
-      }&offset=0&loadRelations=true&loadLastSolds=false`
+      }&loadRelations=true&loadLastSolds=false`
     )
 
     return products
@@ -73,9 +73,12 @@ export default class ProductRepository extends Http {
     return product
   }
 
-  async getRecommendProducts(id: string) {
+  async getRecommendProducts(
+    id: string,
+    filter: { take: number; page: number }
+  ) {
     const products = await this.get<Product[]>(
-      `/products/store/${id}?limit=6&offset=0&loadRelations=true&loadLastSolds=false`
+      `/products/store/${id}?take=${filter.take}&page=${filter.page}&loadRelations=true&loadLastSolds=false`
     )
 
     return products.map((product) => {

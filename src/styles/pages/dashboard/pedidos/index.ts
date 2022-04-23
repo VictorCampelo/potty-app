@@ -10,30 +10,17 @@ export const Container = styled.div`
     padding: 20px;
 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-xxxs);
 
-    #imagem-grafico {
-      width: 500px;
-      height: 150px;
-    }
-
-    .top-area {
-      display: flex;
-      flex-direction: row;
-      flex: 1;
-    }
-
+    .left-area,
     .right-area {
+      width: 49%;
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-xxs);
-    }
-
-    .bottom-area {
-      display: flex;
-      flex-direction: row;
-      flex: 1;
+      gap: var(--spacing-xxxs);
     }
   }
 `

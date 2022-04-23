@@ -16,9 +16,9 @@ export default class OrderRepository extends Http {
     return this.post<SendOrdersGuestDTO, any>('orders/guest', dto)
   }
 
-  find({ id, confirmed = false, offset = 0, limit = 8 }: FindOrderDTO) {
+  find({ id, confirmed = false, page = 0, limit = 8 }: FindOrderDTO) {
     return this.get<any>(
-      `orders/store/order?id=${id}&confirmed=${confirmed}&offset=${offset}&limit=${limit}`
+      `orders/store/order?id=${id}&confirmed=${confirmed}&page=${page}&take=${limit}`
     )
   }
 

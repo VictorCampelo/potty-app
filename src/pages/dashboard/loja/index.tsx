@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, { useCallback, useEffect, useState } from 'react'
 
 import Head from 'next/head'
@@ -5,6 +6,7 @@ import Router from 'next/router'
 
 import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
+import Checkbox from '@/components/atoms/Checkbox'
 import Textarea from '@/components/atoms/Textarea'
 import MultiSelect from '@/components/atoms/MultiSelect'
 import Modal from '@/components/molecules/Modal'
@@ -15,6 +17,7 @@ import Dashboard from '@/components/templates/Dashboard'
 
 import toast from '@/utils/toast'
 import getCroppedImg from '@/utils/cropImage'
+import formatToNumber from '@/utils/formatToNumber'
 import { dataURLtoBlob, getFileURL } from '@/utils/file'
 import Cropper from 'react-easy-crop'
 
@@ -37,13 +40,17 @@ import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { IoMdCall, IoLogoWhatsapp } from 'react-icons/io'
 
 import type { Option } from '@/components/atoms/MultiSelect'
-import type { Category } from '@/@types/entities'
+import type { Store, Category, PaymentMethod } from '@/@types/entities'
 
 const storeRepository = new StoreRepository()
 const categoryRepository = new CategoryRepository()
 
 const ShopPage = () => {
-  const { store, isLoading, fetchUser } = useAuth()
+  const auth = useAuth()
+  const storeId = auth.user?.store?.id || ''
+
+  const [store, setStore] = useState({} as Store)
+  const [isLoading, setIsLoading] = useState(true)
 
   const [descModal, toggleDescModal] = useToggleState(false)
   const [timeModal, toggleTimeModal] = useToggleState(false)
@@ -70,7 +77,8 @@ const ShopPage = () => {
 
   const [currency, setCurrency] = useState('')
   const [description, setDescription] = useState('')
-  // const [inputPaymentValue, setInputPaymentValue] = useState('')
+  const [storeDispatch, setStoreDispatch] = useState('all')
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
 
   const { handleSubmit, register, setValue } = useForm()
 
@@ -88,11 +96,10 @@ const ShopPage = () => {
         }
       }
 
-      await storeRepository.update(body)
+      setStore(await storeRepository.update(body))
 
       toast({ message: 'Horários editado(s) com sucesso!', type: 'success' })
 
-      fetchUser()
       toggleTimeModal()
     } catch (e) {
       console.error(e)
@@ -125,11 +132,10 @@ const ShopPage = () => {
         previewBanner ? dataURLtoBlob(previewBanner) : ''
       )
 
-      await storeRepository.updateUsingFormData(formData)
+      setStore(await storeRepository.updateUsingFormData(formData))
 
       toast({ message: 'Informações editada(s) com sucesso!', type: 'success' })
 
-      fetchUser()
       toggleDescModal()
     } catch (e) {
       console.error(e)
@@ -152,11 +158,10 @@ const ShopPage = () => {
 
       formData.append('storeDto', JSON.stringify(body.storeDto))
 
-      await storeRepository.updateUsingFormData(formData)
+      setStore(await storeRepository.updateUsingFormData(formData))
 
       toast({ message: 'Informações editada(s) com sucesso!', type: 'success' })
 
-      fetchUser()
       toggleContactModal()
     } catch (e) {
       console.error(e)
@@ -179,11 +184,10 @@ const ShopPage = () => {
 
       formData.append('storeDto', JSON.stringify(body.storeDto))
 
-      await storeRepository.updateUsingFormData(formData)
+      setStore(await storeRepository.updateUsingFormData(formData))
 
       toast({ message: 'Informações editada(s) com sucesso!', type: 'success' })
 
-      fetchUser()
       toggleContactModal()
     } catch (e) {
       console.error(e)
@@ -191,26 +195,24 @@ const ShopPage = () => {
     }
   }
 
-  async function handleSubmitCurrency() {
+  async function handleSubmitDelivery() {
     try {
       const formData = new FormData()
 
       const body = {
         storeDto: {
-          deliveryFee: currency.replace(/\D/g, '')
+          dispatch: storeDispatch,
+          deliveryFee: formatToNumber(currency) || 0
         }
       }
 
       formData.append('storeDto', JSON.stringify(body.storeDto))
 
-      await storeRepository.updateUsingFormData(formData)
+      setStore(await storeRepository.updateUsingFormData(formData))
+
+      toast({ message: 'Informações salva(s) com sucesso!', type: 'success' })
 
       toggleDeliveryModal()
-
-      toast({ message: 'Informações salva(s) com sucesso!', type: 'error' })
-
-      setCurrency('')
-      fetchUser()
     } catch (error) {
       console.error(error)
       toast({
@@ -225,22 +227,23 @@ const ShopPage = () => {
     setPaymentOptions(data)
   }
 
-  // async function setPaymentOptionsInStore() {
-  //   const formData = new FormData()
+  async function handleSubmitPaymentMethods() {
+    const formData = new FormData()
 
-  //   const body = {
-  //     storeDto: {
-  //       paymentMethods: inputPaymentValue
-  //     }
-  //   }
+    const body = {
+      storeDto: {
+        paymentMethods: paymentMethods.map(({ methodName }) => methodName)
+      }
+    }
 
-  //   formData.append('storeDto', JSON.stringify(body.storeDto))
+    formData.append('storeDto', JSON.stringify(body.storeDto))
 
-  //   await storeRepository.updateUsingFormData(formData)
+    setStore(await storeRepository.updateUsingFormData(formData))
 
-  //   fetchUser()
-  //   togglePaymentModal()
-  // }
+    toast({ message: 'Informações salva(s) com sucesso!', type: 'success' })
+
+    togglePaymentModal()
+  }
 
   async function onFileChange(e: any) {
     const newFileUrl = await getFileURL(e.target.files[0])
@@ -306,7 +309,7 @@ const ShopPage = () => {
     try {
       if (!newCategory) return
 
-      await categoryRepository.createCategory(newCategory, store?.id || '')
+      await categoryRepository.createCategory(newCategory, store.id || '')
 
       toast({ message: 'Categoria criada com sucesso!', type: 'success' })
 
@@ -320,8 +323,8 @@ const ShopPage = () => {
 
   async function loadCategories() {
     try {
-      const data = await categoryRepository.getCategories(store?.id || '')
-      const dataStore = await storeRepository.getCategories(store?.id || '')
+      const data = await categoryRepository.getCategories(storeId || '')
+      const dataStore = await storeRepository.getCategories(storeId || '')
 
       setStoreCategories(dataStore)
 
@@ -337,19 +340,35 @@ const ShopPage = () => {
     }
   }
 
+  function fetchStore() {
+    storeRepository
+      .findById(storeId)
+      .then((data) => {
+        setStore(data)
+        setDescription(data.description)
+        setStoreDispatch(data.dispatch)
+        setPaymentMethods(data.paymentMethods)
+        loadCategories()
+        getPaymentOptions()
+      })
+      .catch(() => {
+        toast({ message: 'Erro ao carregar loja', type: 'error' })
+        Router.push('/')
+      })
+      .finally(() => setIsLoading(false))
+  }
+
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels)
   }, [])
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!store?.id) Router.push('/')
-      else {
-        setDescription(store.description)
-        loadCategories()
-      }
+    if (!auth.isLoading) {
+      if (!auth.isAuthenticated) Router.push('/entrar')
+      else if (!storeId) Router.push('/')
+      else fetchStore()
     }
-  }, [isLoading])
+  }, [auth.isLoading])
 
   return (
     <>
@@ -375,14 +394,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.seg[0]}
+                        defaultValue={store.schedules?.seg[0]}
                         {...register('seg[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.seg[1]}
+                        defaultValue={store.schedules?.seg[1]}
                         {...register('seg[1]')}
                       />
                     </div>
@@ -392,14 +411,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.ter[0]}
+                        defaultValue={store.schedules?.ter[0]}
                         {...register('ter[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.ter[1]}
+                        defaultValue={store.schedules?.ter[1]}
                         {...register('ter[1]')}
                       />
                     </div>
@@ -409,14 +428,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.qua[0]}
+                        defaultValue={store.schedules?.qua[0]}
                         {...register('qua[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.qua[1]}
+                        defaultValue={store.schedules?.qua[1]}
                         {...register('qua[1]')}
                       />
                     </div>
@@ -426,14 +445,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.qui[0]}
+                        defaultValue={store.schedules?.qui[0]}
                         {...register('qui[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.qui[1]}
+                        defaultValue={store.schedules?.qui[1]}
                         {...register('qui[1]')}
                       />
                     </div>
@@ -443,14 +462,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.sex[0]}
+                        defaultValue={store.schedules?.sex[0]}
                         {...register('sex[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.sex[1]}
+                        defaultValue={store.schedules?.sex[1]}
                         {...register('sex[1]')}
                       />
                     </div>
@@ -460,14 +479,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.sab[0]}
+                        defaultValue={store.schedules?.sab[0]}
                         {...register('sab[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.sab[1]}
+                        defaultValue={store.schedules?.sab[1]}
                         {...register('sab[1]')}
                       />
                     </div>
@@ -477,14 +496,14 @@ const ShopPage = () => {
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.dom[0]}
+                        defaultValue={store.schedules?.dom[0]}
                         {...register('dom[0]')}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
-                        defaultValue={store?.schedules?.dom[1]}
+                        defaultValue={store.schedules?.dom[1]}
                         {...register('dom[1]')}
                       />
                     </div>
@@ -553,7 +572,7 @@ const ShopPage = () => {
                 <Input
                   label='Estado'
                   placeholder='Estado'
-                  defaultValue={store?.state}
+                  defaultValue={store.state}
                   icon={
                     <HiOutlineLocationMarker
                       size={20}
@@ -566,7 +585,7 @@ const ShopPage = () => {
                 <Input
                   label='Cidade'
                   placeholder='Cidade'
-                  defaultValue={store?.city}
+                  defaultValue={store.city}
                   icon={
                     <HiOutlineLocationMarker
                       size={20}
@@ -579,7 +598,7 @@ const ShopPage = () => {
                 <Input
                   label='Logradouro'
                   placeholder='Logradouro'
-                  defaultValue={store?.street}
+                  defaultValue={store.street}
                   icon={<FaRoad size={20} color='var(--black-800)' />}
                   {...register('street')}
                 />
@@ -587,7 +606,7 @@ const ShopPage = () => {
                 <Input
                   label='Número'
                   placeholder='0000'
-                  defaultValue={store?.addressNumber}
+                  defaultValue={store.addressNumber}
                   type='numeric'
                   maxLength={6}
                   icon={<BiBuildings size={20} color='var(--black-800)' />}
@@ -596,7 +615,7 @@ const ShopPage = () => {
                 <Input
                   label='Bairro'
                   placeholder='Bairro'
-                  defaultValue={store?.neighborhood}
+                  defaultValue={store.neighborhood}
                   icon={<BiMapAlt size={20} color='var(--black-800)' />}
                   {...register('neighborhood')}
                 />
@@ -605,7 +624,7 @@ const ShopPage = () => {
                   label='CEP'
                   placeholder='000.000.000-00'
                   mask='cep'
-                  defaultValue={store?.zipcode}
+                  defaultValue={store.zipcode}
                   icon={<BiMapAlt size={20} color='var(--black-800)' />}
                   {...register('cep')}
                 />
@@ -638,7 +657,7 @@ const ShopPage = () => {
                       label='Telefone'
                       placeholder='(00) 0000-0000'
                       mask='phone'
-                      defaultValue={store?.phone}
+                      defaultValue={store.phone}
                       maxLength={14}
                       icon={<IoMdCall size={20} color='var(--black-800)' />}
                       {...register('phone')}
@@ -647,7 +666,7 @@ const ShopPage = () => {
                     <Input
                       label='Instagram do negócio'
                       placeholder='instagram.com/exemplo'
-                      defaultValue={store?.instagramLink}
+                      defaultValue={store.instagramLink}
                       icon={<FiInstagram size={20} color='var(--black-800)' />}
                       {...register('instagram')}
                     />
@@ -657,14 +676,14 @@ const ShopPage = () => {
                     <Input
                       label='Facebook do negócio'
                       placeholder='facebook.com/exemplo'
-                      defaultValue={store?.facebookLink}
+                      defaultValue={store.facebookLink}
                       icon={<FaFacebook size={20} color='var(--black-800)' />}
                       {...register('facebook')}
                     />
                     <Input
                       label='WhatsApp do negócio'
                       placeholder='whatsApp.com/exemplo'
-                      defaultValue={store?.whatsappLink}
+                      defaultValue={store.whatsappLink}
                       icon={
                         <IoLogoWhatsapp size={20} color='var(--black-800)' />
                       }
@@ -699,7 +718,7 @@ const ShopPage = () => {
                   <div className='top'>
                     <ShopImage
                       id='icon'
-                      imageSrc={previewIcon || store?.avatar?.url}
+                      imageSrc={previewIcon || store.avatar?.url}
                       btnIcon={<AiFillCamera size={23} color='var(--white)' />}
                       btn={
                         <input
@@ -718,14 +737,14 @@ const ShopPage = () => {
                   <div className='bottom'>
                     <Input
                       label='Nome do negócio'
-                      defaultValue={store?.name}
+                      defaultValue={store.name}
                       placeholder='Exemplo: Café da Maria'
                       icon={<FaBuilding size={21} color='var(--black-800)' />}
                       {...register('name')}
                     />
                     <Textarea
                       label='Descrição do negócio'
-                      defaultValue={store?.description}
+                      defaultValue={store.description}
                       placeholder='Faça uma descrição rápida e útil do seu negócio para seus clientes.'
                       {...register('description')}
                       onChange={(e) => {
@@ -761,19 +780,10 @@ const ShopPage = () => {
             <ModalContainer>
               <div className='options'>
                 <div className='wrap-opts'>
-                  <a onClick={getPaymentOptions}>Formas de pagamento</a>
+                  <a onClick={togglePaymentModal}>Formas de pagamento</a>
                 </div>
                 <div className='wrap-opts'>
-                  <a onClick={console.log}>Opções de entrega</a>
-                </div>
-                <div className='wrap-opts'>
-                  <a>Opções indefinidas</a>
-                </div>
-                <div className='wrap-opts'>
-                  <a>Opções indefinidas</a>
-                </div>
-                <div className='wrap-opts'>
-                  <a>Opções indefinidas</a>
+                  <a onClick={toggleDeliveryModal}>Opções de entrega</a>
                 </div>
                 <div className='wrap-opts'>
                   <a>Excluir loja</a>
@@ -794,7 +804,7 @@ const ShopPage = () => {
           </Modal>
 
           <Modal
-            title='Formas de Pagamento'
+            title='Formas de pagamento'
             showCloseButton={true}
             modalVisible={paymentModal}
             setModalOpen={togglePaymentModal}
@@ -807,14 +817,29 @@ const ShopPage = () => {
 
               <div className='wrap-payments-and-buttons'>
                 <div className='payment-options'>
-                  {paymentsOptions.map((payment, i) => (
-                    <Input
-                      key={i}
-                      type='checkbox'
-                      label={payment.methodName}
-                      value={payment.id}
-                    />
-                  ))}
+                  {paymentsOptions.map((payment, i) => {
+                    const exists =
+                      paymentMethods.findIndex(
+                        ({ id }) => id === payment.id
+                      ) !== -1
+
+                    return (
+                      <Checkbox
+                        key={i}
+                        label={payment.methodName}
+                        confirm={exists}
+                        toggleConfirm={() =>
+                          setPaymentMethods(
+                            exists
+                              ? paymentMethods.filter(
+                                  ({ id }) => id !== payment.id
+                                )
+                              : [...paymentMethods, payment]
+                          )
+                        }
+                      />
+                    )
+                  })}
                 </div>
               </div>
 
@@ -822,11 +847,13 @@ const ShopPage = () => {
                 <Button
                   skin='secondary'
                   type='button'
-                  onClick={toggleConfigModal}
+                  onClick={togglePaymentModal}
                 >
                   Voltar
                 </Button>
-                <Button type='submit'>Confirmar</Button>
+                <Button onClick={handleSubmitPaymentMethods} type='submit'>
+                  Confirmar
+                </Button>
               </div>
             </ModalContainer>
           </Modal>
@@ -845,8 +872,23 @@ const ShopPage = () => {
 
               <div className='wrap-delivery-options'>
                 <div>
-                  <Input type='checkbox' label='Retirada na loja' />
-                  <Input type='checkbox' label='Envio de produto' />
+                  <Checkbox
+                    confirm={storeDispatch === 'all'}
+                    toggleConfirm={() => setStoreDispatch('all')}
+                    label='Todos'
+                  />
+
+                  <Checkbox
+                    confirm={storeDispatch === 'withdrawal'}
+                    toggleConfirm={() => setStoreDispatch('withdrawal')}
+                    label='Retirada na loja'
+                  />
+
+                  <Checkbox
+                    confirm={storeDispatch === 'delivery'}
+                    toggleConfirm={() => setStoreDispatch('delivery')}
+                    label='Envio de produto'
+                  />
                 </div>
 
                 <label className='label-input-frete'>
@@ -854,8 +896,9 @@ const ShopPage = () => {
                   <Input
                     mask='monetaryBRL'
                     value={currency}
+                    defaultValue={store.deliveryFee}
                     onChange={(e) => setCurrency(e.target.value)}
-                    placeholder='0,00'
+                    placeholder='R$ 0,00'
                   />
                 </label>
               </div>
@@ -864,7 +907,7 @@ const ShopPage = () => {
                 <Button skin='secondary' onClick={toggleDeliveryModal}>
                   Voltar
                 </Button>
-                <Button onClick={handleSubmitCurrency}>Salvar</Button>
+                <Button onClick={handleSubmitDelivery}>Salvar</Button>
               </div>
             </ModalContainer>
           </Modal>
@@ -926,11 +969,11 @@ const ShopPage = () => {
           <div className='cards-area'>
             <div className='left-area'>
               <CardDescription
-                imgSrc={store?.avatar?.url}
-                coverSrc={store?.background?.url}
-                title={store?.name}
-                quantStar={store?.avgStars}
-                description={store?.description}
+                imgSrc={store.avatar?.url}
+                coverSrc={store.background?.url}
+                title={store.name}
+                quantStar={store.avgStars}
+                description={store.description}
                 button={toggleDescModal}
                 isLoading={isLoading}
                 voidText='Nenhum descrição foi encontrada...'
@@ -939,41 +982,51 @@ const ShopPage = () => {
               <CardInfo
                 title='Informações de contato'
                 type='contact'
-                cell={store?.phone}
-                facebook={store?.facebookLink}
-                instagram={store?.instagramLink}
-                whatsApp={store?.whatsappLink}
+                cell={store.phone}
+                facebook={store.facebookLink}
+                instagram={store.instagramLink}
+                whatsApp={store.whatsappLink}
                 button={toggleContactModal}
                 isLoading={isLoading}
                 voidText='Nenhum contato foi encontrada...'
               />
 
+              <CardInfo
+                title='Localização'
+                type='local'
+                button={toggleLocationModal}
+                local={store.formattedAddress}
+                isLoading={isLoading}
+                voidText='Nenhuma localização foi encontrada...'
+              />
+
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
                   margin: 'var(--spacing-xxs) auto',
-                  gap: 'var(--spacing-xxxs)'
+                  gap: 'var(--spacing-nano)'
                 }}
               >
                 <Button
                   skin='secondary'
                   onClick={() =>
                     Router.push(
-                      `http://${store?.formatedName}.${window.location.host}`
+                      `http://${store.formatedName}.${window.location.host}`
                     )
                   }
                 >
                   Pré-visualização
                 </Button>
                 <Button onClick={toggleConfigModal}>
-                  CONFIGURAÇÕES ADCIONAIS
+                  CONFIGURAÇÕES ADICIONAIS
                 </Button>
               </div>
             </div>
 
             <div className='right-area'>
-              {!store?.schedules ? (
+              {!store.schedules ? (
                 <CardInfo
                   title='Horário de funcionamento'
                   type='timetable'
@@ -986,13 +1039,13 @@ const ShopPage = () => {
                   title='Horário de funcionamento'
                   type='timetable'
                   button={toggleTimeModal}
-                  seg={store?.schedules?.seg}
-                  ter={store?.schedules?.ter}
-                  qua={store?.schedules?.qua}
-                  qui={store?.schedules?.qui}
-                  sex={store?.schedules?.sex}
-                  sab={store?.schedules?.sab}
-                  dom={store?.schedules?.dom}
+                  seg={store.schedules?.seg}
+                  ter={store.schedules?.ter}
+                  qua={store.schedules?.qua}
+                  qui={store.schedules?.qui}
+                  sex={store.schedules?.sex}
+                  sab={store.schedules?.sab}
+                  dom={store.schedules?.dom}
                   isLoading={isLoading}
                 />
               )}
@@ -1004,15 +1057,6 @@ const ShopPage = () => {
                 isLoading={isLoading}
                 categories={storeCategories.map(({ name }) => name)}
                 voidText='Nenhuma categoria foi encontrada...'
-              />
-
-              <CardInfo
-                title='Localização'
-                type='local'
-                button={toggleLocationModal}
-                local={store?.formattedAddress}
-                isLoading={isLoading}
-                voidText='Nenhuma localização foi encontrada...'
               />
             </div>
           </div>

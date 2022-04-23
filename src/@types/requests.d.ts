@@ -59,7 +59,7 @@ export interface SendOrdersGuestDTO {
 export interface FindOrderDTO {
   id?: string
   confirmed?: boolean
-  offset?: number
+  page?: number
   limit?: number
 }
 
