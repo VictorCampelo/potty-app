@@ -412,7 +412,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
         {widthScreen && (
           <>
             <Row style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Card>
+              <Card style={{ height: '96px' }}>
                 <Row>
                   <Text style={{ fontSize: '18px' }}>Ordenar por:</Text>
                   {validProductsOrder.map(({ value, label }, i) => (
@@ -433,7 +433,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 </Row>
               </Card>
 
-              <Card>
+              <Card style={{ height: '96px' }}>
                 {starsFilter.map((star, i) => (
                   <Checkbox
                     key={i}
@@ -452,7 +452,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 ))}
               </Card>
 
-              <Card>
+              <Card style={{ height: '96px' }}>
                 <Row style={{ padding: '10px 4px' }}>
                   <IconButton onClick={() => setViewMode('grid')}>
                     {viewMode === 'grid' ? (

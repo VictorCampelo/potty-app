@@ -3,8 +3,8 @@ import sizes from '@/utils/sizes'
 
 export const Container = styled.div`
   cursor: pointer;
-  width: 350px;
-  height: 460px;
+  width: 330px;
+  height: 450px;
   border-radius: 30px;
   background: var(--white);
   box-shadow: 0 0 8px rgba(54, 63, 78, 0.2);
@@ -20,7 +20,7 @@ export const Container = styled.div`
   }
   img {
     width: 100%;
-    height: 250px;
+    height: 240px;
     border-radius: 15px;
     background-size: cover;
     margin: 0 auto;
