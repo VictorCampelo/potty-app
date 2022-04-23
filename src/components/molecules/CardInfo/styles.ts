@@ -95,7 +95,7 @@ export const Container = styled.section`
           margin-left: 10px;
           font-style: normal;
           font-weight: normal;
-          font-size: 12px;
+          font-size: 14px;
           line-height: 18px;
 
           color: #363f4e;

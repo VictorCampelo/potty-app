@@ -93,22 +93,22 @@ const CardInfo = ({
                   <>
                     {cell ? (
                       <div className='contact-info'>
-                        <IoMdCall size={15} /> <h2>{cell}</h2>{' '}
+                        <IoMdCall size={18} /> <h2>{cell}</h2>{' '}
                       </div>
                     ) : null}
                     {facebook ? (
                       <div className='contact-info'>
-                        <FaFacebook size={15} /> <h2>{facebook}</h2>{' '}
+                        <FaFacebook size={18} /> <h2>{facebook}</h2>{' '}
                       </div>
                     ) : null}
                     {instagram ? (
                       <div className='contact-info'>
-                        <FiInstagram size={15} /> <h2>{instagram}</h2>{' '}
+                        <FiInstagram size={18} /> <h2>{instagram}</h2>{' '}
                       </div>
                     ) : null}
                     {whatsApp ? (
                       <div className='contact-info'>
-                        <IoLogoWhatsapp size={15} /> <h2>{whatsApp}</h2>{' '}
+                        <IoLogoWhatsapp size={18} /> <h2>{whatsApp}</h2>{' '}
                       </div>
                     ) : null}
                   </>

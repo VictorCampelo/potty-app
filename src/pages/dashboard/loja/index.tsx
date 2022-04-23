@@ -15,7 +15,7 @@ import Dashboard from '@/components/templates/Dashboard'
 
 import toast from '@/utils/toast'
 import getCroppedImg from '@/utils/cropImage'
-import { dataURLtoBlob } from '@/utils/file'
+import { dataURLtoBlob, getFileURL } from '@/utils/file'
 import Cropper from 'react-easy-crop'
 
 import useToggleState from '@/hooks/useToggleState'
@@ -37,7 +37,7 @@ import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { IoMdCall, IoLogoWhatsapp } from 'react-icons/io'
 
 import type { Option } from '@/components/atoms/MultiSelect'
-import { Category } from '@/@types/entities'
+import type { Category } from '@/@types/entities'
 
 const storeRepository = new StoreRepository()
 const categoryRepository = new CategoryRepository()
@@ -243,7 +243,7 @@ const ShopPage = () => {
   // }
 
   async function onFileChange(e: any) {
-    const newFileUrl = e.target.files?.shift()
+    const newFileUrl = await getFileURL(e.target.files[0])
     if (newFileUrl) setPreviewImage(newFileUrl)
     else {
       toast({ message: 'Selecione apenas 1 imagem pro vez', type: 'error' })
@@ -546,72 +546,70 @@ const ShopPage = () => {
             modalVisible={locationModal}
           >
             <ModalContainer>
-              <form onSubmit={handleSubmit(handleEditLocalizationInfo)}>
-                <div className='inputRow'>
-                  <Input
-                    label='Estado'
-                    placeholder='Estado'
-                    defaultValue={store?.state}
-                    icon={
-                      <HiOutlineLocationMarker
-                        size={20}
-                        color='var(--black-800)'
-                      />
-                    }
-                    {...register('state')}
-                  />
+              <form
+                className='content column'
+                onSubmit={handleSubmit(handleEditLocalizationInfo)}
+              >
+                <Input
+                  label='Estado'
+                  placeholder='Estado'
+                  defaultValue={store?.state}
+                  icon={
+                    <HiOutlineLocationMarker
+                      size={20}
+                      color='var(--black-800)'
+                    />
+                  }
+                  {...register('state')}
+                />
 
-                  <Input
-                    label='Cidade'
-                    placeholder='Cidade'
-                    defaultValue={store?.city}
-                    icon={
-                      <HiOutlineLocationMarker
-                        size={20}
-                        color='var(--black-800)'
-                      />
-                    }
-                    {...register('city')}
-                  />
-                </div>
+                <Input
+                  label='Cidade'
+                  placeholder='Cidade'
+                  defaultValue={store?.city}
+                  icon={
+                    <HiOutlineLocationMarker
+                      size={20}
+                      color='var(--black-800)'
+                    />
+                  }
+                  {...register('city')}
+                />
 
-                <div className='inputRow'>
-                  <Input
-                    label='Logradouro'
-                    placeholder='Logradouro'
-                    defaultValue={store?.street}
-                    icon={<FaRoad size={20} color='var(--black-800)' />}
-                    {...register('street')}
-                  />
+                <Input
+                  label='Logradouro'
+                  placeholder='Logradouro'
+                  defaultValue={store?.street}
+                  icon={<FaRoad size={20} color='var(--black-800)' />}
+                  {...register('street')}
+                />
 
-                  <Input
-                    label='Número'
-                    placeholder='0000'
-                    defaultValue={store?.addressNumber}
-                    type='numeric'
-                    maxLength={6}
-                    icon={<BiBuildings size={20} color='var(--black-800)' />}
-                    {...register('number')}
-                  />
-                </div>
-                <div className='last-inputRow'>
-                  <Input
-                    label='Bairro'
-                    placeholder='Bairro'
-                    defaultValue={store?.neighborhood}
-                    icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                    {...register('neighborhood')}
-                  />
+                <Input
+                  label='Número'
+                  placeholder='0000'
+                  defaultValue={store?.addressNumber}
+                  type='numeric'
+                  maxLength={6}
+                  icon={<BiBuildings size={20} color='var(--black-800)' />}
+                  {...register('number')}
+                />
+                <Input
+                  label='Bairro'
+                  placeholder='Bairro'
+                  defaultValue={store?.neighborhood}
+                  icon={<BiMapAlt size={20} color='var(--black-800)' />}
+                  {...register('neighborhood')}
+                />
 
-                  <Input
-                    label='CEP'
-                    placeholder='000.000.000-00'
-                    mask='cep'
-                    defaultValue={store?.zipcode}
-                    icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                    {...register('cep')}
-                  />
-                </div>
+                <Input
+                  label='CEP'
+                  placeholder='000.000.000-00'
+                  mask='cep'
+                  defaultValue={store?.zipcode}
+                  icon={<BiMapAlt size={20} color='var(--black-800)' />}
+                  {...register('cep')}
+                />
+
                 <div className='buttonsContainer'>
                   <Button
                     skin='secondary'
@@ -699,35 +697,9 @@ const ShopPage = () => {
               <form onSubmit={handleSubmit(handleEditBusinessDescription)}>
                 <div className='desc-container'>
                   <div className='top'>
-                    <section>
-                      <img
-                        id='banner'
-                        src={
-                          previewBanner ||
-                          store?.background?.url ||
-                          '/images/capa.png'
-                        }
-                        alt='Banner'
-                      />
-                      <button type='button' id='imageBtn'>
-                        <label htmlFor='banner[]'>
-                          <AiFillCamera size={23} color='var(--white)' />
-                        </label>
-                        <input
-                          type='file'
-                          id='banner[]'
-                          name='banner'
-                          accept='image/*'
-                          multiple={false}
-                          onChange={onFileChange}
-                          style={{ display: 'none' }}
-                          onClick={() => setCurrentImage(1)}
-                        />
-                      </button>
-                    </section>
                     <ShopImage
                       id='icon'
-                      imageSrc={previewIcon}
+                      imageSrc={previewIcon || store?.avatar?.url}
                       btnIcon={<AiFillCamera size={23} color='var(--white)' />}
                       btn={
                         <input
@@ -941,11 +913,12 @@ const ShopPage = () => {
                 </div>
               </section>
               <section className='btns'>
-                <Button title='Cancelar' onClick={() => setPreviewImage('')} />
-                <Button
-                  title='Recortar'
-                  onClick={() => cropImage(currentImage)}
-                />
+                <Button skin='secondary' onClick={() => setPreviewImage('')}>
+                  Cancelar
+                </Button>
+                <Button onClick={() => cropImage(currentImage)}>
+                  Recortar
+                </Button>
               </section>
             </CropModalContainer>
           </Modal>
@@ -964,7 +937,7 @@ const ShopPage = () => {
               />
 
               <CardInfo
-                title='Informações de Contato'
+                title='Informações de contato'
                 type='contact'
                 cell={store?.phone}
                 facebook={store?.facebookLink}

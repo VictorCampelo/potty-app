@@ -370,6 +370,13 @@ export const ModalContainer = styled.div`
       }
     }
   }
+
+  .content.column {
+    flex-direction: column;
+    gap: var(--spacing-xxxs);
+    margin-top: var(--spacing-xxs);
+  }
+
   .buttonsContainer {
     width: max-content;
     display: flex;

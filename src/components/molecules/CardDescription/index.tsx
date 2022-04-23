@@ -76,22 +76,18 @@ const CardDescription = ({
               </div>
             </section>
           </div>
-          {voidText ? (
+          {description ? (
+            <div className='bottom'>
+              <h1>Descrição</h1>
+
+              <span>{description}</span>
+            </div>
+          ) : (
             <div className='bottom'>
               <h1>Descrição</h1>
               <div className='voidText'>
                 <p>{voidText}</p>
               </div>
-            </div>
-          ) : (
-            <div className='bottom'>
-              <h1>Descrição</h1>
-
-              {description ? (
-                <p>{description}</p>
-              ) : (
-                <span>Nenhuma descrição cadastrada...</span>
-              )}
             </div>
           )}
         </>
