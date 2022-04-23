@@ -2,13 +2,10 @@ import styled from 'styled-components'
 
 export const Container = styled.div`
   width: 100%;
-  height: 100%;
-  display: flex;
 
-  div.cards-area {
+  .cards-area {
     width: 100%;
     height: 100%;
-    gap: 1.5rem;
 
     padding: 20px;
 
@@ -20,10 +17,17 @@ export const Container = styled.div`
       width: 500px;
       height: 150px;
     }
+
     .top-area {
       display: flex;
       flex-direction: row;
       flex: 1;
+    }
+
+    .right-area {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xxs);
     }
 
     .bottom-area {
@@ -367,12 +371,13 @@ export const ModalContainer = styled.div`
     }
   }
   .buttonsContainer {
-    div {
-      display: flex;
-      width: 50%;
-      gap: var(--spacing-xxxs);
-      margin: auto;
-      margin-top: 2rem;
-    }
+    width: max-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-xxxs);
+    margin: 2rem auto auto auto;
   }
 `

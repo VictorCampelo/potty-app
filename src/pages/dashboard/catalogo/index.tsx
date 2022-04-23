@@ -462,7 +462,7 @@ const CatalogPage = () => {
     try {
       const data = await categoryRepository.getCategories(user?.store?.id || '')
 
-      setCategories(data)
+      setCategories(data.map(({ id, name }) => ({ value: id, label: name })))
     } catch {
       toast({ message: 'Erro ao buscar categorias', type: 'error' })
     }

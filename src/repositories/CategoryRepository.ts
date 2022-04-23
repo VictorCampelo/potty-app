@@ -1,10 +1,11 @@
 import Http from '@/services/Http'
 
+import type { CategoriesResponse } from '@/@types/requests'
 import type { Category } from '@/@types/entities'
 
 export default class CategoryRepository extends Http {
   getCategories(id: string) {
-    return this.get<any>(`/categories/products/${id}`)
+    return this.get<CategoriesResponse>(`/categories/products/${id}`)
   }
 
   getStoreCategories() {

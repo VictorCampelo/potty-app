@@ -4,7 +4,8 @@ import type {
   Order,
   OrderGuest,
   ProductsOrder,
-  GuestAddress
+  GuestAddress,
+  Category
 } from '@/@types/entities'
 
 export interface SignInDTO {
@@ -87,10 +88,7 @@ export interface SearchCepResponse {
   location: Location
 }
 
-export type CategoriesResponse = {
-  id: string
-  name: string
-}[]
+export type CategoriesResponse = Category[]
 
 export interface GetAllStoreProductsDTO {
   page?: number
@@ -100,3 +98,5 @@ export interface GetAllStoreProductsDTO {
   productsOrder?: ProductsOrder
   search?: string
 }
+
+export type UpdateStoreDTO = Partial<Store>

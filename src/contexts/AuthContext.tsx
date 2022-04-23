@@ -4,9 +4,10 @@ import Router from 'next/router'
 
 import AuthRepository from '@/repositories/AuthRepository'
 import UserRepository from '@/repositories/UserRepository'
+import StoreRepository from '@/repositories/StoreRepository'
 
 import type { ReactNode } from 'react'
-import type { User, UserSignUpMeta } from '@/@types/entities'
+import type { Store, User, UserSignUpMeta } from '@/@types/entities'
 import type { SignInDTO } from '@/@types/requests'
 
 interface AuthContextData {
@@ -17,6 +18,7 @@ interface AuthContextData {
   ) => Promise<User | undefined>
   isAuthenticated: boolean
   user: User | null
+  store: Store | null
   fetchUser: () => Promise<void>
   signUpMeta: UserSignUpMeta | null
   setSignUpMeta: (meta: UserSignUpMeta) => void
@@ -30,12 +32,14 @@ interface AuthProviderProps {
 
 const authRepository = new AuthRepository()
 const userRepository = new UserRepository()
+const storeRepository = new StoreRepository()
 
 export const AuthContext = createContext<AuthContextData>({
   signOut: () => undefined,
   signIn: async () => undefined,
   isAuthenticated: false,
   user: null,
+  store: null,
   signUpMeta: null,
   fetchUser: async () => undefined,
   setSignUpMeta: () => undefined,
@@ -45,14 +49,28 @@ export const AuthContext = createContext<AuthContextData>({
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null)
+  const [store, setStore] = useState<Store | null>(null)
   const [signUpMeta, setSignUpMeta] = useState<UserSignUpMeta | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const isAuthenticated = useMemo(() => !!user?.email, [user])
+
+  const fetchStore = async (storeId: string) => {
+    try {
+      setIsLoading(true)
+      const store = await storeRepository.findById(storeId)
+      setStore(store)
+    } catch {
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const fetchUser = async () => {
     try {
       setIsLoading(true)
       const user = await userRepository.getMe()
+      const storeId = user?.store?.id
+      if (storeId) await fetchStore(storeId)
       setUser(user)
     } catch {
     } finally {
@@ -145,6 +163,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         signIn,
         isAuthenticated,
         user,
+        store,
         isLoading
       }}
     >

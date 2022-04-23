@@ -1,5 +1,9 @@
 import Http from '@/services/Http'
-import type { StoreResponse, CategoriesResponse } from '@/@types/requests'
+import type {
+  StoreResponse,
+  CategoriesResponse,
+  UpdateStoreDTO
+} from '@/@types/requests'
 
 export default class StoreRepository extends Http {
   async findByName(name: string) {
@@ -14,11 +18,26 @@ export default class StoreRepository extends Http {
     return store
   }
 
-  categories(id: string) {
+  getCategories(id: string) {
     return this.get<CategoriesResponse>(`categories/products/${id}`)
+  }
+
+  payments() {
+    return this.get<any>('/payments/find')
   }
 
   toggleFavorite(formatedName: string) {
     return this.post(`stores/toggleFavorite/${formatedName}`, {})
+  }
+
+  update(dto: UpdateStoreDTO) {
+    return this.patch('/stores', dto)
+  }
+
+  updateUsingFormData(dto: FormData) {
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' }
+    }
+    return this.patch('/stores', dto, config)
   }
 }

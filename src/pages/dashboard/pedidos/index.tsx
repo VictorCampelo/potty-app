@@ -394,10 +394,10 @@ const RequestsPage = () => {
                   </div>
                 </div>
                 <div className='buttonsContainer'>
-                  <div>
-                    <Button onClick={toggleModalVisible}>Voltar</Button>
-                    <Button onClick={handleSubmit}>Salvar</Button>
-                  </div>
+                  <Button skin='secondary' onClick={toggleModalVisible}>
+                    Voltar
+                  </Button>
+                  <Button onClick={handleSubmit}>Salvar</Button>
                 </div>
               </ModalContainer>
             ) : null}

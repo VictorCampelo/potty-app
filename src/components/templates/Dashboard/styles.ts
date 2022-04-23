@@ -29,6 +29,7 @@ export const Container = styled.div`
   flex-direction: row;
   gap: var(--spacing-md);
   flex-wrap: wrap;
+  overflow: auto;
 
   ${[sizes.down('lg')]} {
     flex-direction: column;

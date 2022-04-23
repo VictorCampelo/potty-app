@@ -227,7 +227,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
   useEffect(() => {
     loadData().then((storeId) => {
       if (storeId) {
-        storeRepository.categories(storeId).then((newCategories) =>
+        storeRepository.getCategories(storeId).then((newCategories) =>
           setCategories([
             {
               id: '',

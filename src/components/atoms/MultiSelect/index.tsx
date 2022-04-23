@@ -11,7 +11,7 @@ export interface Option {
 
 interface Props {
   placeholder: string
-  label: string
+  label?: string
   selectedValue?: Option | null
   setSelectedValue: (option: any) => void
   isDisabled?: boolean
@@ -48,7 +48,7 @@ const MultiSelect = ({
 
   return (
     <Container>
-      <label> {label} </label>
+      {label && <label>{label}</label>}
       {creatable ? (
         <Creatable
           {...props}
