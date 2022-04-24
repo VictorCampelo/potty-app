@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { useEffect, useState } from 'react'
 
 import Head from 'next/head'
@@ -16,9 +19,9 @@ import DashboardRepository from '@/repositories/DashboardRepository'
 
 import { List } from '@/styles/pages/dashboard'
 
-const dashboardRepository = new DashboardRepository()
-
 const DashboardPage = () => {
+  const dashboardRepository = new DashboardRepository()
+
   const [mostSoldProducts, setMostSoldProducts] = useState([])
 
   // {
@@ -78,8 +81,8 @@ const DashboardPage = () => {
 
   const loadMostSoldProducts = async () => {
     try {
-      const data = await dashboardRepository.mostSolds()
-      setMostSoldProducts(data)
+      // const data = await dashboardRepository.mostSolds()
+      // setMostSoldProducts(data)
     } catch (e) {
       console.error(e)
       toast({
@@ -91,8 +94,8 @@ const DashboardPage = () => {
 
   const loadLastSoldProducts = async () => {
     try {
-      const data = await dashboardRepository.lastSolds()
-      setLastSoldProducts(data)
+      // const data = await dashboardRepository.lastSolds()
+      // setLastSoldProducts(data)
     } catch (e) {
       console.error(e)
       toast({
@@ -104,8 +107,8 @@ const DashboardPage = () => {
 
   const loadLastFeedbacks = async () => {
     try {
-      const data = await dashboardRepository.lastFeedbacks()
-      setLastFeedback(data)
+      // const data = await dashboardRepository.lastFeedbacks()
+      // setLastFeedback(data)
     } catch (e) {
       console.error(e)
       toast({
@@ -117,8 +120,8 @@ const DashboardPage = () => {
 
   const loadStoreAccess = async () => {
     try {
-      const data = await dashboardRepository.getViewer()
-      setStoreAccess(data)
+      // const data = await dashboardRepository.getViewer()
+      // setStoreAccess(data)
     } catch (e) {
       console.error(e)
       toast({
@@ -130,8 +133,8 @@ const DashboardPage = () => {
 
   const loadStoreProfit = async () => {
     try {
-      const data = await dashboardRepository.income()
-      setStoreProfit(data)
+      // const data = await dashboardRepository.income()
+      // setStoreProfit(data)
     } catch (e) {
       console.error(e)
       toast({
@@ -142,7 +145,7 @@ const DashboardPage = () => {
   }
 
   const loadData = () =>
-    Promise.allSettled([
+    Promise.all([
       loadMostSoldProducts(),
       loadLastSoldProducts(),
       loadLastFeedbacks(),

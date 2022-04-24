@@ -9,9 +9,9 @@ export const Wrapper = styled.div<WrapperProps>`
   height: 100%;
   max-height: 44vh;
   background: var(--white);
-  box-shadow: 0px 0px 20px rgba(54, 63, 78, 0.2);
   border-radius: var(--border-radius-gg);
   padding: var(--spacing-xxxs);
+  border: 1px solid #eeeeee;
 `
 
 export const Container = styled.div`
