@@ -1585,8 +1585,12 @@ const CatalogPage = () => {
                       <div className='products-container'>
                         {products.length ? (
                           products
-                            .filter(({ title }: any) =>
-                              title.toLowerCase().includes(search.toLowerCase())
+                            .filter(
+                              ({ title }: any) =>
+                                title &&
+                                title
+                                  .toLowerCase()
+                                  .includes(search.toLowerCase())
                             )
                             .map((product: any) => (
                               <ProductListCard
@@ -1641,7 +1645,7 @@ const CatalogPage = () => {
                         )}
 
                         {!loadingProducts && (
-                          <div style={{ margin: 'auto' }}>
+                          <div style={{ margin: '0 auto' }}>
                             <Pagination
                               onPageChange={() =>
                                 setProductsPagination({
@@ -1662,8 +1666,12 @@ const CatalogPage = () => {
                       <div className='categories-container'>
                         {categories.length ? (
                           categories
-                            .filter(({ name }: any) =>
-                              name.toLowerCase().includes(search.toLowerCase())
+                            .filter(
+                              ({ name }: any) =>
+                                name &&
+                                name
+                                  .toLowerCase()
+                                  .includes(search.toLowerCase())
                             )
                             .map((cat: any, index) => {
                               return (
@@ -1713,8 +1721,12 @@ const CatalogPage = () => {
                       <div className='cupons-container'>
                         {cupons.length ? (
                           cupons
-                            .filter(({ code }: any) =>
-                              code.toLowerCase().includes(search.toLowerCase())
+                            .filter(
+                              ({ code }: any) =>
+                                code &&
+                                code
+                                  .toLowerCase()
+                                  .includes(search.toLowerCase())
                             )
                             .map((it, i) => (
                               <CupomItem
