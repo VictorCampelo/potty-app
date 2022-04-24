@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Head from 'next/head'
 
@@ -10,91 +10,46 @@ import FeedbackList from '@/components/organisms/FeedbackList'
 import StoreAccess from '@/components/organisms/StoreAccess'
 import StoreProfit from '@/components/organisms/StoreProfit'
 
+import toast from '@/utils/toast'
+
+import DashboardRepository from '@/repositories/DashboardRepository'
+
 import { List } from '@/styles/pages/dashboard'
 
+const dashboardRepository = new DashboardRepository()
+
 const DashboardPage = () => {
-  const [mostSoldProducts] = useState([])
+  const [mostSoldProducts, setMostSoldProducts] = useState([])
 
-  const [lastSoldProducts] = useState([
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    },
-    {
-      image: '/images/coffee.png',
-      code: '123',
-      name: 'Produto 1',
-      price: 10.5,
-      quantity: 10
-    }
-  ])
+  // {
+  //   image: '/images/coffee.png',
+  //   code: '123',
+  //   name: 'Produto 1',
+  //   price: 10.5,
+  //   quantity: 10
+  // }
+  const [lastSoldProducts, setLastSoldProducts] = useState([])
 
-  const [lastFeedback] = useState([
-    {
-      name: 'Mikael',
-      text: 'Adorei o café!',
-      stars: 4,
-      time: 'Há 1 hora'
-    }
-  ])
+  // {
+  //   name: 'Mikael',
+  //   text: 'Adorei o café!',
+  //   stars: 4,
+  //   time: 'Há 1 hora'
+  // }
+  const [lastFeedback, setLastFeedback] = useState([])
 
-  const [storeAccess] = useState({
-    monday: 10,
-    tuesday: 10,
-    wednesday: 10,
-    thursday: 10,
-    friday: 10,
-    saturday: 10,
-    sunday: 10,
-    today: 10
+  const [storeAccess, setStoreAccess] = useState({
+    monday: 0,
+    tuesday: 0,
+    wednesday: 0,
+    thursday: 0,
+    friday: 0,
+    saturday: 0,
+    sunday: 0,
+    today: 0
   })
 
-  const [storeProfit] = useState([
+  const [storeProfit, setStoreProfit] = useState([
     {
       name: 'Fev',
       value: 10360
@@ -120,6 +75,84 @@ const DashboardPage = () => {
       value: 16892
     }
   ])
+
+  const loadMostSoldProducts = async () => {
+    try {
+      const data = await dashboardRepository.mostSolds()
+      setMostSoldProducts(data)
+    } catch (e) {
+      console.error(e)
+      toast({
+        message: 'Não foi possível carregar os produtos mais vendidos',
+        type: 'error'
+      })
+    }
+  }
+
+  const loadLastSoldProducts = async () => {
+    try {
+      const data = await dashboardRepository.lastSolds()
+      setLastSoldProducts(data)
+    } catch (e) {
+      console.error(e)
+      toast({
+        message: 'Não foi possível carregar os últimos produtos vendidos',
+        type: 'error'
+      })
+    }
+  }
+
+  const loadLastFeedbacks = async () => {
+    try {
+      const data = await dashboardRepository.lastFeedbacks()
+      setLastFeedback(data)
+    } catch (e) {
+      console.error(e)
+      toast({
+        message: 'Não foi possível carregar os últimos feedbacks',
+        type: 'error'
+      })
+    }
+  }
+
+  const loadStoreAccess = async () => {
+    try {
+      const data = await dashboardRepository.getViewer()
+      setStoreAccess(data)
+    } catch (e) {
+      console.error(e)
+      toast({
+        message: 'Não foi possível carregar os números de acessos',
+        type: 'error'
+      })
+    }
+  }
+
+  const loadStoreProfit = async () => {
+    try {
+      const data = await dashboardRepository.income()
+      setStoreProfit(data)
+    } catch (e) {
+      console.error(e)
+      toast({
+        message: 'Não foi possível carregar os rendimentos',
+        type: 'error'
+      })
+    }
+  }
+
+  const loadData = () =>
+    Promise.allSettled([
+      loadMostSoldProducts(),
+      loadLastSoldProducts(),
+      loadLastFeedbacks(),
+      loadStoreAccess(),
+      loadStoreProfit()
+    ])
+
+  useEffect(() => {
+    loadData()
+  })
 
   return (
     <>
