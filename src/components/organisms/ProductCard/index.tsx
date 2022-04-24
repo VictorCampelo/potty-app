@@ -59,7 +59,12 @@ const ProductCard = ({ product, onClick }: Props) => {
         </span>
       </div>
       <div className='price'>
-        {product.discount ? <small>{formatToBrl(product.price)}</small> : null}
+        {product.discount ? (
+          <div className='discount'>
+            <small>{formatToBrl(product.price)}</small>
+            <span className='percentage'>-{product.discount}%</span>
+          </div>
+        ) : null}
 
         <span>{formatToBrl(product.priceWithDiscount || product.price)}</span>
       </div>

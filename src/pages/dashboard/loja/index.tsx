@@ -1011,6 +1011,7 @@ const ShopPage = () => {
               >
                 <Button
                   skin='secondary'
+                  disabled={isLoading}
                   onClick={() =>
                     Router.push(
                       `http://${store.formatedName}.${window.location.host}`
@@ -1019,7 +1020,7 @@ const ShopPage = () => {
                 >
                   Pré-visualização
                 </Button>
-                <Button onClick={toggleConfigModal}>
+                <Button disabled={isLoading} onClick={toggleConfigModal}>
                   CONFIGURAÇÕES ADICIONAIS
                 </Button>
               </div>

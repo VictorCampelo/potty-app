@@ -24,6 +24,7 @@ import CategoryListCard from '@/components/molecules/CategoryListCard'
 import Modal from '@/components/molecules/Modal'
 import ProductListCard from '@/components/organisms/ProductListCard'
 import Textarea from '@/components/atoms/Textarea'
+import Pagination from '@/components/molecules/Pagination'
 
 import useToggleState from '@/hooks/useToggleState'
 
@@ -58,6 +59,7 @@ import {
 
 import type { Point } from 'react-easy-crop/types'
 import type { Option } from '@/components/atoms/MultiSelect'
+import type { Product } from '@/@types/entities'
 
 const createProductFormSchema = yup.object().shape({
   title: yup.string(),
@@ -73,7 +75,7 @@ const couponRepository = new CouponRepository()
 const categoryRepository = new CategoryRepository()
 
 const CatalogPage = () => {
-  const { isLoading, user } = useAuth()
+  const { isLoading, store } = useAuth()
   const [excludeModal, toggleExcludeModal] = useToggleState(false)
   const [confirmExclude, handleContinueExcludeModal] = useToggleState(false)
 
@@ -93,7 +95,12 @@ const CatalogPage = () => {
   const [deleteCategoryId, setDeleteCategoryId] = useState('')
 
   const [category, setCategory] = useState('')
-  const [products, setProducts] = useState<any>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [productsPagination, setProductsPagination] = useState({
+    currentPage: 1,
+    perPage: 10,
+    count: 0
+  })
 
   const [loadingProducts, setLoadingProducts] = useState(true)
 
@@ -230,7 +237,7 @@ const CatalogPage = () => {
     try {
       await categoryRepository.createCategory(
         newCategory || category,
-        user?.store?.id || ''
+        store?.id || ''
       )
 
       toast({ message: 'Categoria criada com sucesso!', type: 'success' })
@@ -291,10 +298,7 @@ const CatalogPage = () => {
 
   const handleDeleteCategory = async () => {
     try {
-      await categoryRepository.deleteCategory(
-        deleteCategoryId,
-        user?.store?.id || ''
-      )
+      await categoryRepository.deleteCategory(deleteCategoryId, store?.id || '')
 
       loadData()
 
@@ -314,12 +318,12 @@ const CatalogPage = () => {
     try {
       const body = {
         name: category,
-        storeId: user?.store?.id || ''
+        storeId: store?.id || ''
       }
 
       await categoryRepository.updateCategory(
         editCategoryId,
-        user?.store?.id || '',
+        store?.id || '',
         body
       )
 
@@ -441,26 +445,35 @@ const CatalogPage = () => {
     toggleAddModal()
   }
 
-  const loadData = async () => {
+  const loadProducts = async () => {
     try {
-      const data = await productRepository.findAllByStoreId(
-        user?.store?.id || ''
+      const pagination = await productRepository.findAllByStoreId(
+        store?.id || '',
+        {
+          page: productsPagination.currentPage,
+          perPage: productsPagination.perPage,
+          search
+        }
       )
 
-      const formattedData = data.map((it: any) => ({
-        ...it,
-        categories: it.categories.map((cat: any) => cat.name)
-      }))
-
-      setProducts(formattedData)
+      setProducts(pagination.data)
+      setProductsPagination({
+        currentPage: pagination.currentPage,
+        perPage: 10,
+        count: pagination.count
+      })
     } catch {
       toast({ message: 'Erro ao buscar produtos', type: 'error' })
     } finally {
       setLoadingProducts(false)
     }
+  }
+
+  const loadData = async () => {
+    loadProducts()
 
     try {
-      const data = await categoryRepository.getCategories(user?.store?.id || '')
+      const data = await categoryRepository.getCategories(store?.id || '')
 
       setCategories(data.map(({ id, name }) => ({ value: id, label: name })))
     } catch {
@@ -490,6 +503,10 @@ const CatalogPage = () => {
   }
 
   useEffect(() => {
+    if (store?.id) loadProducts()
+  }, [productsPagination.currentPage])
+
+  useEffect(() => {
     if (!activeCupom) return
     setDiscountType(activeCupom.type)
     setDiscountPorcent(activeCupom.discountPorcent)
@@ -502,7 +519,7 @@ const CatalogPage = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      if (user?.store) loadData()
+      if (store) loadData()
       else Router.push('/')
     }
   }, [isLoading])
@@ -1502,7 +1519,7 @@ const CatalogPage = () => {
       </Modal>
 
       <Dashboard>
-        {isLoading && !user?.store ? (
+        {isLoading && !store ? (
           <div
             style={{
               height: '30px',
@@ -1621,6 +1638,23 @@ const CatalogPage = () => {
                               </div>
                             )}
                           </EmptyContainer>
+                        )}
+
+                        {!loadingProducts && (
+                          <div style={{ margin: 'auto' }}>
+                            <Pagination
+                              onPageChange={() =>
+                                setProductsPagination({
+                                  ...productsPagination,
+                                  currentPage:
+                                    productsPagination.currentPage + 1
+                                })
+                              }
+                              currentPage={productsPagination.currentPage}
+                              totalCountOfRegisters={productsPagination.count}
+                              registersPerPage={productsPagination.perPage}
+                            />
+                          </div>
                         )}
                       </div>
                     }

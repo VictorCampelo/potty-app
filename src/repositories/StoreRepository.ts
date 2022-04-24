@@ -9,13 +9,17 @@ import { Store } from '@/@types/entities'
 export default class StoreRepository extends Http {
   async findByName(name: string) {
     const store = await this.get<StoreResponse>(`stores/find/${name}`)
-    store.formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${store.city} - ${store.state} - CEP ${store.zipcode}`
+    store.formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${
+      store.city
+    } - ${store.state} ${store.zipcode ? `- CEP ${store.zipcode}` : ''}`
     return store
   }
 
   async findById(id: string) {
     const store = await this.get<StoreResponse>(`stores/id/${id}`)
-    store.formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${store.city} - ${store.state} - CEP ${store.zipcode}`
+    store.formattedAddress = `${store.neighborhood}, ${store.addressNumber}, ${
+      store.city
+    } - ${store.state} ${store.zipcode ? `- CEP ${store.zipcode}` : ''}`
     return store
   }
 

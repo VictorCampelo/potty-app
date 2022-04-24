@@ -89,14 +89,17 @@ const StorePage: NextPage<Props> = ({ name }) => {
   })
 
   const [products, setProducts] = useState<Product[]>([])
-  const [page, setPage] = useState(1)
-  const perPage = 10
+  const [productsPagination, setProductsPagination] = useState({
+    currentPage: 1,
+    perPage: 10,
+    count: 0
+  })
   const [loadingProducts, setLoadingProducts] = useState(true)
 
   const [favorite, setFavorite] = useState(false)
 
   const [productsOrder, setProductsOrder] = useState<ProductsOrder>('')
-  const [starFilter, setStarFilter] = useState(0)
+  const [starsMinFilter, setStarsMinFilter] = useState(0)
 
   const [categoryFilter, setCategoryFilter] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -144,8 +147,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
     }
   }
 
-  const updateStarFilter = (newValue: number) => {
-    setStarFilter(starFilter === newValue ? 0 : newValue)
+  const updateStarsMinFilter = (newValue: number) => {
+    setStarsMinFilter(starsMinFilter === newValue ? 0 : newValue)
   }
 
   const updateCategoryFilter = (newValue: string) => {
@@ -166,7 +169,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
     'sab'
   ]
 
-  const getWeekDay = (date: Date): ScheduleDays => scheduleDays[date.getDay()]
+  const getWeekDay = (date: Date = new Date()): ScheduleDays =>
+    scheduleDays[date.getDay()]
 
   const getHourInMinutes = (date: Date) =>
     date.getHours() * 60 + date.getMinutes()
@@ -196,15 +200,20 @@ const StorePage: NextPage<Props> = ({ name }) => {
   const loadProducts = async (storeId: string) => {
     try {
       setLoadingProducts(true)
-      const data = await productsRepository.findAllByStoreId(storeId, {
-        page,
-        perPage,
+      const pagination = await productsRepository.findAllByStoreId(storeId, {
+        page: productsPagination.currentPage,
+        perPage: productsPagination.perPage,
         categoryId: categoryFilter,
-        starFilter,
+        starsMin: starsMinFilter,
         productsOrder,
         search
       })
-      setProducts(data)
+      setProducts(pagination.data)
+      setProductsPagination({
+        currentPage: pagination.currentPage,
+        perPage: 10,
+        count: pagination.count
+      })
     } catch (e) {
       console.error(e)
     } finally {
@@ -227,7 +236,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
   useEffect(() => {
     loadData().then((storeId) => {
       if (storeId) {
-        storeRepository.getCategories(storeId).then((newCategories) =>
+        productsRepository.getCategories(storeId).then((newCategories) =>
           setCategories([
             {
               id: '',
@@ -245,7 +254,13 @@ const StorePage: NextPage<Props> = ({ name }) => {
     if (store.id) {
       loadProducts(store.id)
     }
-  }, [page, categoryFilter, productsOrder, starFilter, search])
+  }, [
+    productsPagination.currentPage,
+    categoryFilter,
+    productsOrder,
+    starsMinFilter,
+    search
+  ])
 
   return (
     <Wrapper>
@@ -267,7 +282,10 @@ const StorePage: NextPage<Props> = ({ name }) => {
           </div>
         )}
 
-        <BannerStore isOpen={isOpened()} images={[store.background.url]} />
+        <BannerStore
+          isOpen={isOpened()}
+          images={[store.background?.url || '/images/capa-small.png']}
+        />
 
         <StoreInfo>
           {widthScreen && (
@@ -298,7 +316,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 <StoreAvatar
                   width={138}
                   height={138}
-                  src={store.avatar.url}
+                  src={store.avatar?.url || '/images/icon.png'}
                   alt='Foto da loja'
                 />
 
@@ -391,17 +409,18 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 </Card>
 
                 <Card>
-                  <h1>Hoŕarios</h1>
+                  <h1>{isOpened() ? 'Aberto' : 'Fechado'} agora</h1>
 
-                  <Row style={{ flexWrap: 'wrap' }}>
-                    {Object.entries(store.schedules).map(([day, schedule]) => (
-                      <div key={day}>
-                        <Text>{day}</Text>
+                  <Row>
+                    {store.schedules[getWeekDay()] ? (
+                      <div>
+                        <Text>{getWeekDay()}</Text>
                         <Text>
-                          {schedule[0]} às {schedule[1]}
+                          {store.schedules[getWeekDay()][0]} às{' '}
+                          {store.schedules[getWeekDay()][1]}
                         </Text>
                       </div>
-                    ))}
+                    ) : null}
                   </Row>
                 </Card>
               </>
@@ -437,10 +456,10 @@ const StorePage: NextPage<Props> = ({ name }) => {
                 {starsFilter.map((star, i) => (
                   <Checkbox
                     key={i}
-                    confirm={starFilter === star}
-                    toggleConfirm={() => updateStarFilter(star)}
+                    confirm={starsMinFilter === star}
+                    toggleConfirm={() => updateStarsMinFilter(star)}
                   >
-                    <Text onClick={() => updateStarFilter(star)}>
+                    <Text onClick={() => updateStarsMinFilter(star)}>
                       <img
                         src='/images/Star.svg'
                         alt='icone estrela'
@@ -548,10 +567,15 @@ const StorePage: NextPage<Props> = ({ name }) => {
             {products.length ? (
               <div style={{ margin: '2rem auto' }}>
                 <Pagination
-                  onPageChange={setPage}
-                  currentPage={page}
-                  totalCountOfRegisters={100}
-                  registersPerPage={perPage}
+                  onPageChange={() =>
+                    setProductsPagination({
+                      ...productsPagination,
+                      currentPage: productsPagination.currentPage + 1
+                    })
+                  }
+                  currentPage={productsPagination.currentPage}
+                  totalCountOfRegisters={productsPagination.count}
+                  registersPerPage={productsPagination.perPage}
                 />
               </div>
             ) : null}
@@ -591,10 +615,15 @@ const StorePage: NextPage<Props> = ({ name }) => {
 
               <div style={{ margin: '2rem auto' }}>
                 <Pagination
-                  onPageChange={setPage}
-                  currentPage={page}
-                  totalCountOfRegisters={100}
-                  registersPerPage={perPage}
+                  onPageChange={() =>
+                    setProductsPagination({
+                      ...productsPagination,
+                      currentPage: productsPagination.currentPage + 1
+                    })
+                  }
+                  currentPage={productsPagination.currentPage}
+                  totalCountOfRegisters={productsPagination.count}
+                  registersPerPage={productsPagination.perPage}
                 />
               </div>
             </>

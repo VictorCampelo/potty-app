@@ -5,8 +5,19 @@ import type {
   OrderGuest,
   ProductsOrder,
   GuestAddress,
-  Category
+  Category,
+  Product
 } from '@/@types/entities'
+
+export interface Pagination<Data> {
+  statusCode: 'success' | 'error'
+  data: Data[]
+  count: number
+  currentPage: number
+  nextPage: number
+  prevPage?: number
+  lastPage: number
+}
 
 export interface SignInDTO {
   email: string
@@ -94,9 +105,13 @@ export interface GetAllStoreProductsDTO {
   page?: number
   perPage?: number
   categoryId?: string
-  starFilter?: number
+  starsMin?: number
   productsOrder?: ProductsOrder
   search?: string
 }
 
 export type UpdateStoreDTO = Partial<Store>
+
+export type GetAllStoreProductsResponse = Pagination<Product>
+
+export type GetRecommendedProductsResponse = Pagination<Product>

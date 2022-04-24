@@ -34,12 +34,29 @@ export const Container = styled.div`
       margin-right: 0.5rem;
     }
 
-    small {
-      margin-top: 10px;
-      font-weight: 600;
-      text-decoration: line-through;
-      color: var(--gray-200);
-      padding-bottom: 0.25rem;
+    .discount {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: var(--spacing-nano) 0%;
+      gap: var(--spacing-nano);
+
+      small {
+        margin-top: 0.5rem;
+        font-weight: 600;
+        text-decoration: line-through;
+        color: var(--gray-200);
+        font-size: 1rem;
+      }
+
+      span {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        background: var(--color-primary);
+        color: white;
+        padding: 3px;
+        border-radius: 5px;
+      }
     }
   }
   .score {

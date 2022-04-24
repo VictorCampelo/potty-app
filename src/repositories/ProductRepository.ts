@@ -2,7 +2,12 @@ import Http from '@/services/Http'
 
 import getDiscount from '@/utils/getDiscount'
 
-import type { GetAllStoreProductsDTO } from '@/@types/requests'
+import type {
+  GetAllStoreProductsResponse,
+  GetAllStoreProductsDTO,
+  GetRecommendedProductsResponse,
+  CategoriesResponse
+} from '@/@types/requests'
 import type { Product } from '@/@types/entities'
 
 const config = {
@@ -10,14 +15,17 @@ const config = {
 }
 
 export default class ProductRepository extends Http {
+  // TODO: need send filter to api
   async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO = {}) {
-    const products = await this.get<Product[]>(
+    const pagination = await this.get<GetAllStoreProductsResponse>(
       `/products/store/${storeId}?page=${filter.page || 1}&take=${
         filter.perPage || 10
+      }&starsMin=${filter.starsMin || 0}${
+        filter.categoryId ? `&categories=[${filter.categoryId}]` : ''
       }&loadRelations=true&loadLastSolds=false`
     )
 
-    return products
+    pagination.data = pagination.data
       .map((product) => {
         if (product.price) {
           product.priceWithDiscount = getDiscount(
@@ -31,14 +39,7 @@ export default class ProductRepository extends Http {
         const name = filter.search
           ? product.title.toLowerCase().includes(filter.search.toLowerCase())
           : true
-        const category =
-          filter.categoryId && product.categories
-            ? product.categories.findIndex(({ id }) => id === filter.categoryId)
-            : true
-        const starFilter = filter.starFilter
-          ? product.avgStars >= filter.starFilter
-          : true
-        return name && category && starFilter
+        return name
       })
       .sort((a, b) => {
         switch (true) {
@@ -63,6 +64,8 @@ export default class ProductRepository extends Http {
             return 1
         }
       })
+
+    return pagination
   }
 
   async findById(id: string) {
@@ -77,16 +80,18 @@ export default class ProductRepository extends Http {
     id: string,
     filter: { take: number; page: number }
   ) {
-    const products = await this.get<Product[]>(
+    const pagination = await this.get<GetRecommendedProductsResponse>(
       `/products/store/${id}?take=${filter.take}&page=${filter.page}&loadRelations=true&loadLastSolds=false`
     )
 
-    return products.map((product) => {
+    pagination.data = pagination.data.map((product) => {
       if (product.price) {
         product.priceWithDiscount = getDiscount(product.price, product.discount)
       }
       return product
     })
+
+    return pagination
   }
 
   createProduct(data: any) {
@@ -99,5 +104,9 @@ export default class ProductRepository extends Http {
 
   updateProduct(id: string, data: any) {
     return this.patch(`/products/details/${id}`, data, config)
+  }
+
+  getCategories(storeId: string) {
+    return this.get<CategoriesResponse>(`categories/products/${storeId}`)
   }
 }

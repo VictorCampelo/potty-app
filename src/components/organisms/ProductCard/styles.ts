@@ -40,16 +40,34 @@ export const Container = styled.div`
     width: 100%;
     span {
       font-size: 1.75rem;
-      color: var(--color-primary);
+      color: var(--color-secondary);
       font-weight: 600;
       margin-right: 0.5rem;
     }
-    small {
-      margin-top: 0.5rem;
-      font-weight: 600;
-      text-decoration: line-through;
-      color: var(--gray-200);
-      font-size: 1rem;
+
+    .discount {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: var(--spacing-nano) 0%;
+      gap: var(--spacing-nano);
+
+      small {
+        margin-top: 0.5rem;
+        font-weight: 600;
+        text-decoration: line-through;
+        color: var(--gray-200);
+        font-size: 1rem;
+      }
+
+      span {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        background: var(--color-primary);
+        color: white;
+        padding: 3px;
+        border-radius: 5px;
+      }
     }
   }
   .score {
