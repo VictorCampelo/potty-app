@@ -395,14 +395,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.seg[0]}
-                        {...register('seg[0]')}
+                        name='seg[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.seg[1]}
-                        {...register('seg[1]')}
+                        name='seg[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -412,14 +414,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.ter[0]}
-                        {...register('ter[0]')}
+                        name='ter[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.ter[1]}
-                        {...register('ter[1]')}
+                        name='ter[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -429,14 +433,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.qua[0]}
-                        {...register('qua[0]')}
+                        name='qua[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.qua[1]}
-                        {...register('qua[1]')}
+                        name='qua[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -446,14 +452,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.qui[0]}
-                        {...register('qui[0]')}
+                        name='qui[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.qui[1]}
-                        {...register('qui[1]')}
+                        name='qui[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -463,14 +471,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.sex[0]}
-                        {...register('sex[0]')}
+                        name='sex[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.sex[1]}
-                        {...register('sex[1]')}
+                        name='sex[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -480,14 +490,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.sab[0]}
-                        {...register('sab[0]')}
+                        name='sab[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.sab[1]}
-                        {...register('sab[1]')}
+                        name='sab[1]'
+                        register={register}
                       />
                     </div>
                     <div className='dates'>
@@ -497,14 +509,16 @@ const ShopPage = () => {
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.dom[0]}
-                        {...register('dom[0]')}
+                        name='dom[0]'
+                        register={register}
                       />
                       <Input
                         icon={<BiTimeFive />}
                         mask='time'
                         placeholder='00:00'
                         defaultValue={store.schedules?.dom[1]}
-                        {...register('dom[1]')}
+                        name='dom[1]'
+                        register={register}
                       />
                     </div>
                   </div>
@@ -579,7 +593,8 @@ const ShopPage = () => {
                       color='var(--black-800)'
                     />
                   }
-                  {...register('state')}
+                  name='state'
+                  register={register}
                 />
 
                 <Input
@@ -592,7 +607,8 @@ const ShopPage = () => {
                       color='var(--black-800)'
                     />
                   }
-                  {...register('city')}
+                  name='city'
+                  register={register}
                 />
 
                 <Input
@@ -600,7 +616,8 @@ const ShopPage = () => {
                   placeholder='Logradouro'
                   defaultValue={store.street}
                   icon={<FaRoad size={20} color='var(--black-800)' />}
-                  {...register('street')}
+                  name='street'
+                  register={register}
                 />
 
                 <Input
@@ -610,14 +627,16 @@ const ShopPage = () => {
                   type='numeric'
                   maxLength={6}
                   icon={<BiBuildings size={20} color='var(--black-800)' />}
-                  {...register('number')}
+                  name='number'
+                  register={register}
                 />
                 <Input
                   label='Bairro'
                   placeholder='Bairro'
                   defaultValue={store.neighborhood}
                   icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                  {...register('neighborhood')}
+                  name='neighborhood'
+                  register={register}
                 />
 
                 <Input
@@ -626,7 +645,8 @@ const ShopPage = () => {
                   mask='cep'
                   defaultValue={store.zipcode}
                   icon={<BiMapAlt size={20} color='var(--black-800)' />}
-                  {...register('cep')}
+                  name='cep'
+                  register={register}
                 />
 
                 <div className='buttonsContainer'>
@@ -660,7 +680,8 @@ const ShopPage = () => {
                       defaultValue={store.phone}
                       maxLength={14}
                       icon={<IoMdCall size={20} color='var(--black-800)' />}
-                      {...register('phone')}
+                      name='phone'
+                      register={register}
                     />
 
                     <Input
@@ -668,7 +689,8 @@ const ShopPage = () => {
                       placeholder='instagram.com/exemplo'
                       defaultValue={store.instagramLink}
                       icon={<FiInstagram size={20} color='var(--black-800)' />}
-                      {...register('instagram')}
+                      name='instagram'
+                      register={register}
                     />
                   </div>
 
@@ -678,7 +700,8 @@ const ShopPage = () => {
                       placeholder='facebook.com/exemplo'
                       defaultValue={store.facebookLink}
                       icon={<FaFacebook size={20} color='var(--black-800)' />}
-                      {...register('facebook')}
+                      name='facebook'
+                      register={register}
                     />
                     <Input
                       label='WhatsApp do negócio'
@@ -687,7 +710,8 @@ const ShopPage = () => {
                       icon={
                         <IoLogoWhatsapp size={20} color='var(--black-800)' />
                       }
-                      {...register('whatsApp')}
+                      name='whatsApp'
+                      register={register}
                     />
                   </div>
                 </div>
@@ -740,13 +764,15 @@ const ShopPage = () => {
                       defaultValue={store.name}
                       placeholder='Exemplo: Café da Maria'
                       icon={<FaBuilding size={21} color='var(--black-800)' />}
-                      {...register('name')}
+                      name='name'
+                      register={register}
                     />
                     <Textarea
                       label='Descrição do negócio'
                       defaultValue={store.description}
                       placeholder='Faça uma descrição rápida e útil do seu negócio para seus clientes.'
-                      {...register('description')}
+                      name='description'
+                      register={register}
                       onChange={(e) => {
                         e.target.value = e.target.value.slice(0, 301)
                         setDescription(e.target.value)

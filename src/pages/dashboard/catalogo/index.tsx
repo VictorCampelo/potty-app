@@ -37,7 +37,6 @@ import CategoryRepository from '@/repositories/CategoryRepository'
 import cropImage from '@/utils/cropImage'
 import randomString from '@/utils/randomString'
 import { getFileURL, dataURLtoFile } from '@/utils/file'
-import formatToBrl from '@/utils/formatToBrl'
 import formatToNumber from '@/utils/formatToNumber'
 import toast from '@/utils/toast'
 
@@ -152,8 +151,8 @@ const CatalogPage = () => {
       setImageSrc('')
       setImageSrc1('')
       setImageSrc2('')
-      setPrice(0)
-      updateDiscount(0)
+      setPrice('0')
+      updateDiscount('0')
     }
   }
 
@@ -162,8 +161,9 @@ const CatalogPage = () => {
     setActiveProduct(product)
     setEnableDiscount(!!product.discount)
     setPrice(product.price)
-    const newPrice = product.price - product.price * (product.discount / 100)
-    setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
+    setPriceWithDiscount(
+      String(product.price - product.price * (product.discount / 100))
+    )
 
     Object.entries(product).map(([key, value]) => setValue(key, value))
 
@@ -348,7 +348,10 @@ const CatalogPage = () => {
     try {
       const formData = new FormData()
       formData.append('title', values.title)
-      formData.append('price', String(formatToNumber(String(values.price))))
+      formData.append(
+        'price',
+        formatToNumber(String(values.price || price)).toString()
+      )
       formData.append('description', values.description)
       formData.append('inventory', values.inventory)
       formData.append('discount', values.discount || '0')
@@ -493,14 +496,23 @@ const CatalogPage = () => {
   const [discountType, setDiscountType] = useState('real')
   const [ilimitedCupom, toggleIlimitedCupom] = useToggleState(false)
 
-  const [price, setPrice] = useState(0)
-  const [priceWithDiscount, setPriceWithDiscount] = useState(formatToBrl(0))
-  const [discount, setDiscount] = useState(0)
+  const [price, setPrice] = useState('0')
+  const [priceWithDiscount, setPriceWithDiscount] = useState('0')
+  const [discount, setDiscount] = useState('0')
 
-  function updateDiscount(discount: number) {
-    const newPrice = price - price * (discount / 100)
-    setPriceWithDiscount(formatToBrl(newPrice < 0 ? 0 : newPrice))
+  function updateDiscount(discount: string) {
+    const newPrice =
+      formatToNumber(price) -
+      formatToNumber(price) * (formatToNumber(discount) / 100)
+    setDiscount(discount)
+    setPriceWithDiscount(
+      String(Number(discount) > 0 && Number(newPrice) > 0 ? newPrice : 0)
+    )
   }
+
+  useEffect(() => {
+    if (enableDiscount) updateDiscount(discount)
+  }, [price])
 
   useEffect(() => {
     if (store?.id) loadProducts()
@@ -709,7 +721,8 @@ const CatalogPage = () => {
                 label='Nome do produto'
                 icon={<FiBox />}
                 placeholder='Nome do produto'
-                {...register('title')}
+                name='title'
+                register={register}
               />
 
               <Textarea
@@ -717,7 +730,8 @@ const CatalogPage = () => {
                 maxLength={600}
                 placeholder='Descrição'
                 icon={<GiHamburgerMenu />}
-                {...register('description')}
+                name='description'
+                register={register}
               />
 
               <div className='row'>
@@ -726,10 +740,9 @@ const CatalogPage = () => {
                   icon={<FaMoneyBill />}
                   placeholder='R$ 0'
                   mask='monetaryBRL'
-                  {...register('price')}
-                  onChange={(e) =>
-                    setPrice(formatToNumber(String(e.target.value)))
-                  }
+                  name='price'
+                  register={register}
+                  onValueChange={setPrice}
                 />
 
                 <MultiSelect
@@ -747,11 +760,11 @@ const CatalogPage = () => {
                   label='Desconto'
                   disabled={!enableDiscount}
                   icon={<FaPercentage />}
-                  mask='number'
                   placeholder='0.0%'
                   value={discount}
-                  {...register('discount')}
-                  onChange={(e) => updateDiscount(Number(e.target.value))}
+                  name='discount'
+                  register={register}
+                  onChange={(e) => updateDiscount(e.target.value)}
                 />
 
                 <div className='arrows'>
@@ -785,7 +798,8 @@ const CatalogPage = () => {
                   icon={<FaCoins />}
                   placeholder='0'
                   mask='number'
-                  {...register('inventory')}
+                  name='inventory'
+                  register={register}
                 />
               </div>
 
@@ -915,7 +929,8 @@ const CatalogPage = () => {
                 icon={<FiBox />}
                 placeholder='Nome do produto'
                 defaultValue={activeProduct.title}
-                {...register('title')}
+                name='title'
+                register={register}
               />
 
               <Textarea
@@ -924,7 +939,8 @@ const CatalogPage = () => {
                 placeholder='Descrição'
                 icon={<GiHamburgerMenu />}
                 defaultValue={activeProduct.description}
-                {...register('description')}
+                name='description'
+                register={register}
               />
 
               <div className='row-edit'>
@@ -934,10 +950,9 @@ const CatalogPage = () => {
                   placeholder='R$ 0'
                   mask='monetaryBRL'
                   defaultValue={activeProduct.price}
-                  {...register('price')}
-                  onChange={(e) =>
-                    setPrice(formatToNumber(String(e.target.value)))
-                  }
+                  name='price'
+                  register={register}
+                  onValueChange={setPrice}
                 />
 
                 <MultiSelect
@@ -955,11 +970,11 @@ const CatalogPage = () => {
                   label='Desconto'
                   disabled={!enableDiscount}
                   icon={<FaPercentage />}
-                  mask='number'
                   placeholder='0.0%'
                   defaultValue={activeProduct.discount}
-                  {...register('discount')}
-                  onChange={(e) => updateDiscount(Number(e.target.value))}
+                  name='discount'
+                  register={register}
+                  onChange={(e) => updateDiscount(e.target.value)}
                 />
 
                 <div className='arrows'>
@@ -994,7 +1009,8 @@ const CatalogPage = () => {
                   placeholder='0'
                   mask='number'
                   defaultValue={activeProduct.inventory}
-                  {...register('inventory')}
+                  name='inventory'
+                  register={register}
                 />
               </div>
 
@@ -1550,8 +1566,8 @@ const CatalogPage = () => {
                       reset()
                       setSelectedCategories([])
                       setInstallments(null)
-                      setDiscount(0)
-                      setPriceWithDiscount(formatToBrl(0))
+                      setDiscount('0')
+                      setPriceWithDiscount('0')
                       if (toggleState === 1) toggleAddModal()
                       else {
                         if (toggleState === 2) toggleAddCategoryModal()

@@ -2,25 +2,39 @@ import React from 'react'
 
 import { Container } from './styles'
 
+import type { UseFormRegisterReturn, FieldErrors } from 'react-hook-form'
+
 interface TextArea extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string
-  textError?: string
+  errors?: FieldErrors
   icon?: React.ReactElement
+  register?: (name: string) => UseFormRegisterReturn
 }
 
-const Textarea = ({ label, icon, textError = '', ...rest }: TextArea) => {
+const Textarea = ({
+  name,
+  label,
+  icon,
+  errors,
+  register,
+  ...rest
+}: TextArea) => {
+  const registerProps = register && name ? register(name) : null
+
+  const errorMessage = errors && name ? errors[name]?.message : ''
+
   return (
-    <Container error={!!textError.length}>
+    <Container error={!!errorMessage.length}>
       <section className='labelContent'>
         <label>{label}</label>
 
-        {textError && <span>{textError}</span>}
+        {errorMessage && <span>{errorMessage}</span>}
       </section>
 
       <label className='inputContainter'>
         {!!icon && icon}
 
-        <textarea placeholder={rest.placeholder} {...rest} />
+        <textarea placeholder={rest.placeholder} {...registerProps} {...rest} />
       </label>
     </Container>
   )

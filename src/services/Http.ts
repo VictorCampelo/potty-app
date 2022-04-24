@@ -7,7 +7,7 @@ class Http {
 
   constructor() {
     this.http = setup({
-      baseURL: 'https://79ba-2804-782c-300-d00-3ce4-8dbb-9106-7b89.ngrok.io/',
+      baseURL: 'https://api-dev.boadevenda.com',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json'

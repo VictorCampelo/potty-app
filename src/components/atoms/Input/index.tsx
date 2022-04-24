@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+
+import CurrencyInput from 'react-currency-input-field'
+
 import masks from '@/utils/masks'
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
@@ -16,6 +19,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   forgetPassword?: boolean
   icon?: React.ReactElement
   mask?: MasksTypes
+  onValueChange?: (value: string) => void
 }
 
 const Input = ({
@@ -27,6 +31,7 @@ const Input = ({
   type,
   password,
   onChange,
+  onValueChange,
   icon,
   mask,
   disabled,
@@ -36,8 +41,12 @@ const Input = ({
 
   const maskFunction = mask ? masks[mask] : null
 
+  const errorMessage = errors && name ? errors[name]?.message : ''
+
+  const registerProps = register && name ? register(name) : null
+
   const handleOnChange = (event: any) => {
-    if (maskFunction) {
+    if (maskFunction && mask !== 'monetaryBRL') {
       const newValue = maskFunction(event.target.value)
       event.target.value = newValue
     }
@@ -48,10 +57,6 @@ const Input = ({
   if (maskFunction && props.defaultValue) {
     props.defaultValue = maskFunction(props.defaultValue)
   }
-
-  const errorMessage = errors && name ? errors[name]?.message : ''
-
-  const registerProps = register && name ? register(name) : null
 
   return (
     <Container fullWidth={fullWidth} error={!!errorMessage} disabled={disabled}>
@@ -64,14 +69,29 @@ const Input = ({
       <div className='inputContainer'>
         {!!icon && icon}
 
-        <input
-          name={name}
-          disabled={disabled}
-          type={password && isInputVisible ? 'password' : type}
-          {...registerProps}
-          {...props}
-          onChange={handleOnChange}
-        />
+        {mask !== 'monetaryBRL' ? (
+          <input
+            name={name}
+            disabled={disabled}
+            type={password && isInputVisible ? 'password' : type}
+            {...registerProps}
+            {...props}
+            onChange={handleOnChange}
+          />
+        ) : (
+          <CurrencyInput
+            prefix='R$ '
+            decimalsLimit={2}
+            name={name}
+            disabled={disabled}
+            type={password && isInputVisible ? 'password' : type}
+            {...registerProps}
+            {...(props as any)}
+            onValueChange={(value) =>
+              onValueChange && onValueChange(value || '')
+            }
+          />
+        )}
 
         {password &&
           (isInputVisible ? (
