@@ -1,7 +1,5 @@
 import Http from '@/services/Http'
 
-import getDiscount from '@/utils/getDiscount'
-
 import type {
   GetAllStoreProductsResponse,
   GetAllStoreProductsDTO,
@@ -15,26 +13,23 @@ const config = {
 }
 
 export default class ProductRepository extends Http {
-  // TODO: need send filter to api
   async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO = {}) {
     const pagination = await this.get<GetAllStoreProductsResponse>(
-      `/products/store/${storeId}?page=${filter.page || 1}&take=${
-        filter.perPage || 10
-      }&starsMin=${filter.starsMin || 0}${
-        filter.categoryId ? `&categories=[${filter.categoryId}]` : ''
-      }&loadRelations=true&loadLastSolds=false`
+      `/products/store/${storeId}
+      ?page=${filter.page || 1}
+      &take=${filter.perPage || 10}
+      &starsMin=${filter.starsMin || 0}
+      ${filter.categoryId ? `&categories=[${filter.categoryId}]` : ''}
+      ${filter.productsOrder === 'most_recent' ? 'loadLastCreated=true' : ''}
+      ${
+        filter.productsOrder === 'highest_price'
+          ? 'loadWithHighestPrice=true'
+          : ''
+      }
+      &loadRelations=true&loadLastSolds=false`
     )
 
     pagination.data = pagination.data
-      .map((product) => {
-        if (product.price) {
-          product.priceWithDiscount = getDiscount(
-            product.price,
-            product.discount
-          )
-        }
-        return product
-      })
       .filter((product) => {
         const name = filter.search
           ? product.title.toLowerCase().includes(filter.search.toLowerCase())
@@ -68,30 +63,14 @@ export default class ProductRepository extends Http {
     return pagination
   }
 
-  async findById(id: string) {
-    const product = await this.get<Product>(`/products/${id}?files=true`)
-    if (product.price) {
-      product.priceWithDiscount = getDiscount(product.price, product.discount)
-    }
-    return product
+  findById(id: string) {
+    return this.get<Product>(`/products/${id}?files=true`)
   }
 
-  async getRecommendProducts(
-    id: string,
-    filter: { take: number; page: number }
-  ) {
-    const pagination = await this.get<GetRecommendedProductsResponse>(
+  getRecommendProducts(id: string, filter: { take: number; page: number }) {
+    return this.get<GetRecommendedProductsResponse>(
       `/products/store/${id}?take=${filter.take}&page=${filter.page}&loadRelations=true&loadLastSolds=false`
     )
-
-    pagination.data = pagination.data.map((product) => {
-      if (product.price) {
-        product.priceWithDiscount = getDiscount(product.price, product.discount)
-      }
-      return product
-    })
-
-    return pagination
   }
 
   createProduct(data: any) {

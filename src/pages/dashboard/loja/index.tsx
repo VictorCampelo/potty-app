@@ -309,7 +309,7 @@ const ShopPage = () => {
     try {
       if (!newCategory) return
 
-      await categoryRepository.createCategory(newCategory, store.id || '')
+      await storeRepository.createCategory(newCategory)
 
       toast({ message: 'Categoria criada com sucesso!', type: 'success' })
 

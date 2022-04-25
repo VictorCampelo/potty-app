@@ -27,6 +27,10 @@ export default class StoreRepository extends Http {
     return this.get<CategoriesResponse>(`categories/products/${id}`)
   }
 
+  createCategory(categoryName: string) {
+    return this.post('categories', { name: categoryName, type: 'store' })
+  }
+
   payments() {
     return this.get<any>('/payments/find')
   }
