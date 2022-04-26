@@ -30,7 +30,7 @@
     "react-leaflet": "^3.2.5",
     "react-modal": "^3.14.4",
     "react-reveal": "^1.2.2",
-    "react-select": "^5.2.2",
+    "react-select": "^5.3.0",
     "react-spinners": "^0.11.0",
     "react-stars": "^2.2.5",
     "react-toastify": "^8.2.0",

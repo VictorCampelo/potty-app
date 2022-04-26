@@ -246,7 +246,7 @@ const CatalogPage = () => {
       })
 
       setCategory('')
-      loadData()
+      await loadData()
     } catch {
       toast({ message: 'Erro ao criar categoria', type: 'error' })
     }
@@ -300,20 +300,23 @@ const CatalogPage = () => {
 
   const handleDeleteCategory = async () => {
     try {
-      await categoryRepository.deleteCategory(deleteCategoryId, store?.id || '')
+      await categoryRepository.deleteProductCategory(
+        deleteCategoryId,
+        store?.id || ''
+      )
 
       loadData()
 
-      toast({ message: 'Produto deletado com sucesso!', type: 'success' })
+      toast({ message: 'Categoria deletada com sucesso!', type: 'success' })
     } catch {
       toast({
-        message: 'Erro ao excluir produto, tente novamente!',
+        message: 'Erro ao excluir categoria, tente novamente!',
         type: 'error'
       })
     }
 
-    toggleExcludeCategoryModal()
     loadData()
+    toggleExcludeCategoryModal()
   }
 
   const handleUpdateCategory = async () => {
@@ -323,16 +326,16 @@ const CatalogPage = () => {
         storeId: store?.id || ''
       }
 
-      await categoryRepository.updateCategory(
+      await categoryRepository.updateProductCategory(
         editCategoryId,
         store?.id || '',
         body
       )
 
-      toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
+      toast({ message: 'Categoria atualizada com sucesso!', type: 'success' })
     } catch {
       toast({
-        message: 'Erro ao editar produto, tente novamente!',
+        message: 'Erro ao editar categoria, tente novamente!',
         type: 'error'
       })
     } finally {
@@ -474,9 +477,7 @@ const CatalogPage = () => {
     }
   }
 
-  const loadData = async () => {
-    loadProducts()
-
+  const loadCategories = async () => {
     try {
       const data = await categoryRepository.getProductCategories(
         store?.id || ''
@@ -486,6 +487,12 @@ const CatalogPage = () => {
     } catch {
       toast({ message: 'Erro ao buscar categorias', type: 'error' })
     }
+  }
+
+  const loadData = async () => {
+    loadProducts()
+
+    loadCategories()
 
     try {
       const data = await couponRepository.getCoupon()
@@ -1246,9 +1253,7 @@ const CatalogPage = () => {
                   label: name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories.map(
-                  ({ value }: any) => value
-                )}
+                selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
                 creatable={true}
                 formatCreateLabel={(inputValue) =>
@@ -1426,9 +1431,7 @@ const CatalogPage = () => {
                   label: name
                 }))}
                 placeholder='Suas categorias'
-                selectedValue={selectedCategories.map(
-                  ({ value }: any) => value
-                )}
+                selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
                 creatable={true}
                 formatCreateLabel={(inputValue) =>
@@ -1677,34 +1680,32 @@ const CatalogPage = () => {
                                   .toLowerCase()
                                   .includes(search.toLowerCase())
                             )
-                            .map((cat: any, index) => {
-                              return (
-                                <CategoryListCard
-                                  key={cat.id + '-' + index}
-                                  date={products
-                                    .filter((prd: any) =>
-                                      prd.categories.includes(cat.name)
-                                    )
-                                    .map((data: any) => {
-                                      return {
-                                        name: data.title,
-                                        amount: String(data.inventory)
-                                      }
-                                    })}
-                                  category={cat.name}
-                                  excludeBtn={() => {
-                                    setDeleteCategoryId(cat.id)
-                                    toggleExcludeCategoryModal()
-                                  }}
-                                  editBtn={() => {
-                                    setEditCategoryId(cat.id)
-                                    toggleEditCategoryModal()
-                                  }}
-                                  isGreen={true}
-                                  isRed={true}
-                                />
-                              )
-                            })
+                            .map((category) => (
+                              <CategoryListCard
+                                key={category.id}
+                                date={products
+                                  .filter((product) =>
+                                    product.categories?.includes(category.name)
+                                  )
+                                  .map((data: any) => {
+                                    return {
+                                      name: data.title,
+                                      amount: String(data.inventory)
+                                    }
+                                  })}
+                                category={category.name}
+                                excludeBtn={() => {
+                                  setDeleteCategoryId(category.id)
+                                  toggleExcludeCategoryModal()
+                                }}
+                                editBtn={() => {
+                                  setEditCategoryId(category.id)
+                                  toggleEditCategoryModal()
+                                }}
+                                isGreen={true}
+                                isRed={true}
+                              />
+                            ))
                         ) : (
                           <EmptyContainer>
                             <div>

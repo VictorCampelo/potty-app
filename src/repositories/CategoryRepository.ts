@@ -23,11 +23,18 @@ export default class CategoryRepository extends Http {
     return this.post('categories', { name: categoryName, type: 'store' })
   }
 
-  deleteCategory(id: string, storeId: string) {
-    return this.delete(`categories/products/${storeId}/category/${id}`)
+  deleteProductCategory(categoryId: string, storeId: string) {
+    return this.delete(`categories/products/${storeId}/category/${categoryId}`)
   }
 
-  updateCategory(id: string, storeId: string, data: Partial<Category>) {
-    return this.patch(`categories/products/${storeId}/category/${id}`, data)
+  updateProductCategory(
+    categoryId: string,
+    storeId: string,
+    data: Partial<Category>
+  ) {
+    return this.patch(
+      `categories/products/${storeId}/category/${categoryId}`,
+      data
+    )
   }
 }

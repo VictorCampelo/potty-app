@@ -107,7 +107,7 @@ export interface Product {
   storeId: string
   files: File[]
   image?: string
-  categories: Category[]
+  categories: string[]
 }
 
 export interface CartProduct extends Product {
