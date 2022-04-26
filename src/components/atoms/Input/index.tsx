@@ -52,6 +52,7 @@ const Input = ({
     }
     if (registerProps?.onChange) registerProps.onChange(event)
     if (onChange) onChange(event)
+    if (onValueChange) onValueChange(event.target.value)
   }
 
   if (maskFunction && props.defaultValue) {

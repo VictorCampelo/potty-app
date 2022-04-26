@@ -45,6 +45,12 @@ interface PaymentMethod {
   allowParcels: boolean
 }
 
+export interface Category {
+  id: string
+  name: string
+  storeId: string
+}
+
 export interface Store {
   id: string
   name: string
@@ -77,12 +83,7 @@ export interface Store {
   avatar: File
   background: File
   paymentMethods: PaymentMethod[]
-}
-
-export interface Category {
-  id: string
-  name: string
-  storeId: string
+  categories: Category[]
 }
 
 export interface Product {

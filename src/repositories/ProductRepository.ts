@@ -3,8 +3,7 @@ import Http from '@/services/Http'
 import type {
   GetAllStoreProductsResponse,
   GetAllStoreProductsDTO,
-  GetRecommendedProductsResponse,
-  CategoriesResponse
+  GetRecommendedProductsResponse
 } from '@/@types/requests'
 import type { Product } from '@/@types/entities'
 
@@ -14,51 +13,25 @@ const config = {
 
 export default class ProductRepository extends Http {
   async findAllByStoreId(storeId: string, filter: GetAllStoreProductsDTO = {}) {
+    const params = new URLSearchParams({
+      page: String(filter.page || 1),
+      take: String(filter.perPage || 10),
+      starsMin: String(filter.starsMin || 0),
+      categories: filter.categoryId ? `['${filter.categoryId}']` : '',
+      loadLastCreated: String(filter.productsOrder === 'most_recent'),
+      loadWithHighestPrice: String(filter.productsOrder === 'highest_price')
+    }).toString()
+
     const pagination = await this.get<GetAllStoreProductsResponse>(
-      `/products/store/${storeId}
-      ?page=${filter.page || 1}
-      &take=${filter.perPage || 10}
-      &starsMin=${filter.starsMin || 0}
-      ${filter.categoryId ? `&categories=[${filter.categoryId}]` : ''}
-      ${filter.productsOrder === 'most_recent' ? 'loadLastCreated=true' : ''}
-      ${
-        filter.productsOrder === 'highest_price'
-          ? 'loadWithHighestPrice=true'
-          : ''
-      }
-      &loadRelations=true&loadLastSolds=false`
+      `/products/store/${storeId}?${params}&loadRelations=true&loadLastSolds=false`
     )
 
-    pagination.data = pagination.data
-      .filter((product) => {
-        const name = filter.search
-          ? product.title.toLowerCase().includes(filter.search.toLowerCase())
-          : true
-        return name
-      })
-      .sort((a, b) => {
-        switch (true) {
-          case filter.productsOrder === 'most_recent':
-            return (
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-            )
-
-          case filter.productsOrder === 'most_request':
-            return (
-              (a.priceWithDiscount || a.price) -
-              (b.priceWithDiscount || b.price)
-            )
-
-          case filter.productsOrder === 'highest_price':
-            return (
-              (b.priceWithDiscount || b.price) -
-              (a.priceWithDiscount || a.price)
-            )
-
-          default:
-            return 1
-        }
-      })
+    pagination.data = pagination.data.filter((product) => {
+      const name = filter.search
+        ? product.title.toLowerCase().includes(filter.search.toLowerCase())
+        : true
+      return name
+    })
 
     return pagination
   }
@@ -83,9 +56,5 @@ export default class ProductRepository extends Http {
 
   updateProduct(id: string, data: any) {
     return this.patch(`/products/details/${id}`, data, config)
-  }
-
-  getCategories(storeId: string) {
-    return this.get<CategoriesResponse>(`categories/products/${storeId}`)
   }
 }

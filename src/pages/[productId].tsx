@@ -412,11 +412,15 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                         <div className='image-container'>
                           <div className='list-images'>
                             <Button
-                              style={{ marginBottom: '1rem' }}
+                              style={{
+                                width: '76px',
+                                marginBottom: '1rem',
+                                padding: '1rem'
+                              }}
                               onClick={handleUpFileDesc}
                             >
                               {' '}
-                              <AiOutlineUp size={20} color='var(--gray-600)' />
+                              <AiOutlineUp size={22} color='var(--gray-600)' />
                             </Button>
                             {product?.files.map((file) => {
                               return (
@@ -429,12 +433,16 @@ const ProductPage: NextPage<ServerProps> = ({ productId }) => {
                               )
                             })}
                             <Button
-                              style={{ marginTop: '1rem' }}
+                              style={{
+                                width: '76px',
+                                marginTop: '1rem',
+                                padding: '1rem'
+                              }}
                               onClick={handleDownFileDesc}
                             >
                               {' '}
                               <AiOutlineDown
-                                size={20}
+                                size={22}
                                 color='var(--gray-600)'
                               />
                             </Button>

@@ -12,7 +12,7 @@ export interface Option {
 interface Props {
   placeholder: string
   label?: string
-  selectedValue?: Option | null
+  selectedValue?: Option | Option[] | null
   setSelectedValue: (option: any) => void
   isDisabled?: boolean
   options?: Option[]

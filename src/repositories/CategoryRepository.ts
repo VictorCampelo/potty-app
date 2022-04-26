@@ -4,19 +4,23 @@ import type { CategoriesResponse } from '@/@types/requests'
 import type { Category } from '@/@types/entities'
 
 export default class CategoryRepository extends Http {
-  getCategories(id: string) {
-    return this.get<CategoriesResponse>(`/categories/products/${id}`)
+  getProductCategories(storeId: string) {
+    return this.get<CategoriesResponse>(`/categories/products/${storeId}`)
   }
 
   getStoreCategories() {
-    return this.get('/categories')
+    return this.get<CategoriesResponse>('/categories')
   }
 
-  createCategory(name: string, storeId: string) {
+  createProductCategory(name: string, storeId: string) {
     return this.post('/categories/product', {
       name,
       storeId
     })
+  }
+
+  createStoreCategory(categoryName: string) {
+    return this.post('categories', { name: categoryName, type: 'store' })
   }
 
   deleteCategory(id: string, storeId: string) {

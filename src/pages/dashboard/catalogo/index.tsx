@@ -6,7 +6,7 @@ import Router from 'next/router'
 
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { FiPlus, FiSearch, FiArrowLeft, FiBox } from 'react-icons/fi'
-import { IoIosClose, IoMdCamera } from 'react-icons/io'
+import { IoMdCamera } from 'react-icons/io'
 import { FaMoneyBill, FaPercentage, FaCoins } from 'react-icons/fa'
 import { GoArrowRight, GoArrowLeft } from 'react-icons/go'
 import { IoTrashBinOutline } from 'react-icons/io5'
@@ -58,7 +58,7 @@ import {
 
 import type { Point } from 'react-easy-crop/types'
 import type { Option } from '@/components/atoms/MultiSelect'
-import type { Product } from '@/@types/entities'
+import type { Category, Product } from '@/@types/entities'
 
 const createProductFormSchema = yup.object().shape({
   title: yup.string(),
@@ -103,8 +103,8 @@ const CatalogPage = () => {
 
   const [loadingProducts, setLoadingProducts] = useState(true)
 
-  const [categories, setCategories] = useState<Option[]>([])
-  const [installments, setInstallments] = useState<any>({
+  const [categories, setCategories] = useState<Category[]>([])
+  const [installments, setInstallments] = useState<Option | null>({
     value: '1',
     label: '1x'
   })
@@ -128,7 +128,7 @@ const CatalogPage = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(0)
 
   const [toggleState, setToggleState] = useState(1)
-  const [selectedCategories, setSelectedCategories] = useState<any>([])
+  const [selectedCategories, setSelectedCategories] = useState<Option[]>([])
 
   const productParcels = [...Array(12)].map((_, idx) => ({
     value: String(idx + 1),
@@ -235,16 +235,18 @@ const CatalogPage = () => {
 
   async function handleCreateCategory(newCategory?: string) {
     try {
-      await categoryRepository.createCategory(
+      await categoryRepository.createProductCategory(
         newCategory || category,
         store?.id || ''
       )
 
-      toast({ message: 'Categoria criada com sucesso!', type: 'success' })
+      toast({
+        message: 'Categoria de produto criada com sucesso!',
+        type: 'success'
+      })
 
       setCategory('')
       loadData()
-      toggleAddCategoryModal()
     } catch {
       toast({ message: 'Erro ao criar categoria', type: 'error' })
     }
@@ -259,7 +261,7 @@ const CatalogPage = () => {
         validate: new Date(validate + '-3:00'),
         type: discountType,
         range: discountCategory,
-        categoriesIds: selectedCategories.map((it: any) => it.value),
+        categoriesIds: selectedCategories.map(({ value }) => value),
         isPrivate: privateCupom
       })
 
@@ -282,7 +284,7 @@ const CatalogPage = () => {
         validate: new Date(validate + '-3:00'),
         type: discountType,
         range: discountCategory,
-        categoriesIds: selectedCategories.map((it: any) => it.value),
+        categoriesIds: selectedCategories.map(({ value }) => value),
         isPrivate: privateCupom
       })
 
@@ -357,7 +359,7 @@ const CatalogPage = () => {
       formData.append('discount', values.discount || '0')
       formData.append(
         'categoriesIds',
-        JSON.stringify(selectedCategories.map((cat: any) => cat.value))
+        JSON.stringify(selectedCategories.map(({ value }) => value))
       )
       formData.append('parcelAmount', String(installments?.value || 0))
       formData.append(
@@ -476,9 +478,11 @@ const CatalogPage = () => {
     loadProducts()
 
     try {
-      const data = await categoryRepository.getCategories(store?.id || '')
+      const data = await categoryRepository.getProductCategories(
+        store?.id || ''
+      )
 
-      setCategories(data.map(({ id, name }) => ({ value: id, label: name })))
+      setCategories(data)
     } catch {
       toast({ message: 'Erro ao buscar categorias', type: 'error' })
     }
@@ -493,7 +497,7 @@ const CatalogPage = () => {
   }
 
   const [privateCupom, togglePrivateCupom] = useToggleState(false)
-  const [discountType, setDiscountType] = useState('real')
+  const [discountType, setDiscountType] = useState('money')
   const [ilimitedCupom, toggleIlimitedCupom] = useToggleState(false)
 
   const [price, setPrice] = useState('0')
@@ -646,21 +650,12 @@ const CatalogPage = () => {
       </Modal>
 
       <Modal
-        showCloseButton={false}
+        title='Adicionar Categoria'
+        showCloseButton={true}
         setModalOpen={toggleAddCategoryModal}
         modalVisible={addCategoryModal}
       >
         <AddCategoryModalContainer>
-          <div className='exit-container'>
-            <h1>Adicionar Categoria</h1>
-
-            <IoIosClose
-              onClick={toggleAddCategoryModal}
-              size={36}
-              color='black'
-            />
-          </div>
-
           <div className='inputContainer'>
             <Input
               value={category}
@@ -680,19 +675,12 @@ const CatalogPage = () => {
       </Modal>
 
       <Modal
+        title='Editar categoria'
+        showCloseButton={true}
         setModalOpen={toggleEditCategoryModal}
         modalVisible={editCategoryModal}
       >
         <EditCategoryModalContainer>
-          <div className='exit-container'>
-            <h1>Editar Categoria</h1>
-            <IoIosClose
-              onClick={toggleEditCategoryModal}
-              size={36}
-              color={'black'}
-            />
-          </div>
-
           <div className='category-container'>
             <Input
               label='Nome da categoria'
@@ -805,9 +793,9 @@ const CatalogPage = () => {
 
               <MultiSelect
                 label='Categorias'
-                options={categories.map((cat: any) => ({
-                  value: String(cat.id),
-                  label: cat.name
+                options={categories.map(({ id, name }) => ({
+                  value: id,
+                  label: name
                 }))}
                 placeholder='Suas categorias'
                 setSelectedValue={setSelectedCategories}
@@ -1016,9 +1004,9 @@ const CatalogPage = () => {
 
               <MultiSelect
                 label='Categorias'
-                options={categories.map((cat: any) => ({
-                  value: String(cat.id),
-                  label: cat.name
+                options={categories.map(({ id, name }) => ({
+                  value: id,
+                  label: name
                 }))}
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories}
@@ -1167,7 +1155,7 @@ const CatalogPage = () => {
                 placeholder={discountType === 'money' ? 'R$ 0' : '0 %'}
                 mask={discountType === 'money' ? 'monetaryBRL' : 'percent'}
                 value={discountPorcent}
-                onChange={(e) => setDiscountPorcent(e.target.value)}
+                onValueChange={setDiscountPorcent}
               />
 
               <div className='row'>
@@ -1253,9 +1241,9 @@ const CatalogPage = () => {
 
               <MultiSelect
                 label='Categorias'
-                options={categories.map((cat: any) => ({
-                  value: String(cat.id),
-                  label: cat.name
+                options={categories.map(({ id, name }) => ({
+                  value: id,
+                  label: name
                 }))}
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories.map(
@@ -1433,9 +1421,9 @@ const CatalogPage = () => {
 
               <MultiSelect
                 label='Categorias'
-                options={categories.map((cat: any) => ({
-                  value: String(cat.id),
-                  label: cat.name
+                options={categories.map(({ id, name }) => ({
+                  value: id,
+                  label: name
                 }))}
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories.map(

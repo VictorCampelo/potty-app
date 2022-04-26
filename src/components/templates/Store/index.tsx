@@ -19,6 +19,7 @@ import toast from '@/utils/toast'
 
 import StoreRepository from '@/repositories/StoreRepository'
 import ProductRepository from '@/repositories/ProductRepository'
+import CategoryRepository from '@/repositories/CategoryRepository'
 
 import { Wrapper, Container } from '@/styles/GlobalStyle'
 import {
@@ -53,6 +54,7 @@ interface Props {
 
 const storeRepository = new StoreRepository()
 const productsRepository = new ProductRepository()
+const categoryRepository = new CategoryRepository()
 
 const StorePage: NextPage<Props> = ({ name }) => {
   const [store, setStore] = useState<Store>({
@@ -85,7 +87,8 @@ const StorePage: NextPage<Props> = ({ name }) => {
     dispatch: 'all',
     avatar: { url: '/images/icon.png' } as File,
     background: { url: '/images/capa.png' } as File,
-    paymentMethods: []
+    paymentMethods: [],
+    categories: []
   })
 
   const [products, setProducts] = useState<Product[]>([])
@@ -236,7 +239,7 @@ const StorePage: NextPage<Props> = ({ name }) => {
   useEffect(() => {
     loadData().then((storeId) => {
       if (storeId) {
-        productsRepository.getCategories(storeId).then((newCategories) =>
+        categoryRepository.getProductCategories(storeId).then((newCategories) =>
           setCategories([
             {
               id: '',

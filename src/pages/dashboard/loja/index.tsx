@@ -8,7 +8,7 @@ import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import Checkbox from '@/components/atoms/Checkbox'
 import Textarea from '@/components/atoms/Textarea'
-import MultiSelect from '@/components/atoms/MultiSelect'
+import MultiSelect, { Option } from '@/components/atoms/MultiSelect'
 import Modal from '@/components/molecules/Modal'
 import ShopImage from '@/components/molecules/ShopImage'
 import CardDescription from '@/components/molecules/CardDescription'
@@ -39,7 +39,6 @@ import { FaRoad, FaFacebook, FaBuilding } from 'react-icons/fa'
 import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { IoMdCall, IoLogoWhatsapp } from 'react-icons/io'
 
-import type { Option } from '@/components/atoms/MultiSelect'
 import type { Store, Category, PaymentMethod } from '@/@types/entities'
 
 const storeRepository = new StoreRepository()
@@ -61,9 +60,8 @@ const ShopPage = () => {
   const [paymentModal, togglePaymentModal] = useToggleState(false)
   const [deliveryModal, toggleDeliveryModal] = useToggleState(false)
 
-  const [categoriesOptions, setCategoriesOptions] = useState<Option[]>([])
   const [storeCategories, setStoreCategories] = useState<Category[]>([])
-  const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState<Option[]>([])
 
   const [previewImage, setPreviewImage] = useState('')
   const [previewBanner, setPreviewBanner] = useState('')
@@ -290,8 +288,9 @@ const ShopPage = () => {
 
       formData.append('storeDto', JSON.stringify(body.storeDto))
 
-      await storeRepository.updateUsingFormData(formData)
+      setStore(await storeRepository.updateUsingFormData(formData))
 
+      toggleCategoryModal()
       toast({
         message: 'Categorias da loja foram atualizadas com sucesso!',
         type: 'success'
@@ -305,36 +304,15 @@ const ShopPage = () => {
     }
   }
 
-  async function handleCreateCategory(newCategory: string) {
-    try {
-      if (!newCategory) return
-
-      await storeRepository.createCategory(newCategory)
-
-      toast({ message: 'Categoria criada com sucesso!', type: 'success' })
-
-      await loadCategories()
-
-      toggleCategoryModal()
-    } catch {
-      toast({ message: 'Erro ao criar categoria', type: 'error' })
-    }
-  }
-
   async function loadCategories() {
     try {
-      const data = await categoryRepository.getCategories(storeId || '')
-      const dataStore = await storeRepository.getCategories(storeId || '')
+      const data = await categoryRepository.getStoreCategories()
 
-      setStoreCategories(dataStore)
-
-      setCategoriesOptions(
-        data.map(({ id, name }) => ({ value: id, label: name }))
-      )
+      setStoreCategories(data)
     } catch (e) {
       console.error(e)
       toast({
-        message: 'Não foi possível carregar as categorias',
+        message: 'Não foi possível carregar as categorias da loja',
         type: 'error'
       })
     }
@@ -369,6 +347,15 @@ const ShopPage = () => {
       else fetchStore()
     }
   }, [auth.isLoading])
+
+  useEffect(() => {
+    if (store) {
+      setSelectedCategories(
+        store.categories?.map(({ id, name }) => ({ value: id, label: name })) ||
+          []
+      )
+    }
+  }, [store])
 
   return (
     <>
@@ -552,12 +539,11 @@ const ShopPage = () => {
 
               <div className='categories-container'>
                 <MultiSelect
-                  creatable={true}
-                  formatCreateLabel={(inputValue) =>
-                    `➕ Criar categoria "${inputValue}"`
-                  }
-                  onCreateOption={handleCreateCategory}
-                  options={categoriesOptions}
+                  options={storeCategories.map(({ id, name }) => ({
+                    value: id,
+                    label: name
+                  }))}
+                  selectedValue={selectedCategories}
                   setSelectedValue={setSelectedCategories}
                   placeholder='Selecione as categorias'
                 />
@@ -1082,8 +1068,8 @@ const ShopPage = () => {
                 type='category'
                 button={toggleCategoryModal}
                 isLoading={isLoading}
-                categories={storeCategories.map(({ name }) => name)}
-                voidText='Nenhuma categoria foi encontrada...'
+                categories={store.categories?.map(({ name }) => name)}
+                voidText='Nenhuma categoria foi cadastrada...'
               />
             </div>
           </div>
