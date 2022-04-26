@@ -1,6 +1,5 @@
 import React from 'react'
 import Select from 'react-select'
-import Creatable from 'react-select/creatable'
 
 import { Container, SelectStylesMulti } from './styles'
 
@@ -16,10 +15,7 @@ interface Props {
   setSelectedValue: (option: any) => void
   isDisabled?: boolean
   options?: Option[]
-  creatable?: boolean
   isMulti?: boolean
-  formatCreateLabel?: (inputValue: string) => string
-  onCreateOption?: (inputValue: string) => void
 }
 
 const MultiSelect = ({
@@ -29,12 +25,9 @@ const MultiSelect = ({
   setSelectedValue,
   isDisabled = false,
   label,
-  creatable = false,
-  isMulti = true,
-  formatCreateLabel,
-  onCreateOption
+  isMulti = true
 }: Props) => {
-  const props = {
+  const props: any = {
     placeholderButtonLabel: placeholder,
     value: selectedValue,
     onChange: (values: any) => setSelectedValue(values),
@@ -44,20 +37,13 @@ const MultiSelect = ({
     noOptionsMessage: () => 'Nenhum resultado encontrado',
     styles: SelectStylesMulti,
     isMulti
-  } as any
+  }
 
   return (
     <Container>
       {label && <label>{label}</label>}
-      {creatable ? (
-        <Creatable
-          {...props}
-          formatCreateLabel={formatCreateLabel}
-          onCreateOption={onCreateOption}
-        />
-      ) : (
-        <Select {...props} />
-      )}
+
+      <Select {...props} />
     </Container>
   )
 }

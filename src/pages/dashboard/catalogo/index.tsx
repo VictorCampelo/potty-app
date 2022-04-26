@@ -75,19 +75,16 @@ const categoryRepository = new CategoryRepository()
 
 const CatalogPage = () => {
   const { isLoading, store } = useAuth()
+
   const [excludeModal, toggleExcludeModal] = useToggleState(false)
   const [confirmExclude, handleContinueExcludeModal] = useToggleState(false)
-
   const [editCategoryModal, toggleEditCategoryModal] = useToggleState(false)
   const [excludeCategoryModal, toggleExcludeCategoryModal] =
     useToggleState(false)
-
   const [addModal, setAddModal] = useState(false)
   const [addCategoryModal, toggleAddCategoryModal] = useToggleState(false)
   const [enableDiscount, setEnableDiscount] = useState(false)
-
   const [addCupomModal, toggleAddCupomModal] = useToggleState(false)
-
   const [editModal, setEditModal] = useState(false)
   const [deleteProductId, setDeleteProductId] = useState('')
   const [editCategoryId, setEditCategoryId] = useState('')
@@ -143,7 +140,7 @@ const CatalogPage = () => {
 
   const [search, setSearch] = useState('')
 
-  function toggleEditModal() {
+  const toggleEditModal = () => {
     setEditModal(!editModal)
     if (!editModal) {
       setActiveProduct({})
@@ -156,7 +153,7 @@ const CatalogPage = () => {
     }
   }
 
-  function editProduct(product: any) {
+  const editProduct = (product: any) => {
     toggleEditModal()
     setActiveProduct(product)
     setEnableDiscount(!!product.discount)
@@ -187,7 +184,7 @@ const CatalogPage = () => {
 
   const futureDate = moment().add(30, 'days').format('DD/MM/YY')
 
-  function toggleAddModal() {
+  const toggleAddModal = () => {
     setAddModal(!addModal)
     setPreviewImage('')
     setImageSrc('')
@@ -195,7 +192,7 @@ const CatalogPage = () => {
     setImageSrc2('')
   }
 
-  function onZoomChange(newValue: number) {
+  const onZoomChange = (newValue: number) => {
     setZoom(newValue)
   }
 
@@ -212,7 +209,7 @@ const CatalogPage = () => {
     }
   }
 
-  async function startCrop(current: any) {
+  const startCrop = async (current: any) => {
     const image = await cropImage(previewImage, croppedAreaPixels)
 
     try {
@@ -233,26 +230,26 @@ const CatalogPage = () => {
     }
   }
 
-  async function handleCreateCategory(newCategory?: string) {
+  const handleCreateCategory = async (newCategory?: string) => {
     try {
       await categoryRepository.createProductCategory(
         newCategory || category,
         store?.id || ''
       )
 
+      setCategory('')
+      loadCategories()
+
       toast({
         message: 'Categoria de produto criada com sucesso!',
         type: 'success'
       })
-
-      setCategory('')
-      await loadData()
     } catch {
       toast({ message: 'Erro ao criar categoria', type: 'error' })
     }
   }
 
-  async function handleCreateCupom() {
+  const handleCreateCupom = async () => {
     try {
       await couponRepository.createCoupon({
         code: activeCupom.code,
@@ -265,8 +262,7 @@ const CatalogPage = () => {
         isPrivate: privateCupom
       })
 
-      loadData()
-
+      loadCoupons()
       toggleAddCupomModal()
 
       toast({ message: 'Cupom criado com sucesso!', type: 'success' })
@@ -275,7 +271,7 @@ const CatalogPage = () => {
     }
   }
 
-  async function handleUpdateCupom() {
+  const handleUpdateCupom = async () => {
     try {
       await couponRepository.editCoupon({
         code: activeCupom.code,
@@ -288,10 +284,8 @@ const CatalogPage = () => {
         isPrivate: privateCupom
       })
 
-      loadData()
-
+      loadCoupons()
       toggleEditCupomModal()
-
       toast({ message: 'Cupom editado com sucesso!', type: 'success' })
     } catch {
       toast({ message: 'Erro ao editar cupom', type: 'error' })
@@ -305,8 +299,8 @@ const CatalogPage = () => {
         store?.id || ''
       )
 
-      loadData()
-
+      loadCategories()
+      toggleExcludeCategoryModal()
       toast({ message: 'Categoria deletada com sucesso!', type: 'success' })
     } catch {
       toast({
@@ -314,9 +308,6 @@ const CatalogPage = () => {
         type: 'error'
       })
     }
-
-    loadData()
-    toggleExcludeCategoryModal()
   }
 
   const handleUpdateCategory = async () => {
@@ -332,16 +323,16 @@ const CatalogPage = () => {
         body
       )
 
+      setCategory('')
+      loadCategories()
+      toggleEditCategoryModal()
+
       toast({ message: 'Categoria atualizada com sucesso!', type: 'success' })
     } catch {
       toast({
         message: 'Erro ao editar categoria, tente novamente!',
         type: 'error'
       })
-    } finally {
-      setCategory('')
-      loadData()
-      toggleEditCategoryModal()
     }
   }
 
@@ -380,12 +371,11 @@ const CatalogPage = () => {
 
       await productRepository.createProduct(formData)
 
-      loadData()
+      setSelectedCategories([])
+      loadProducts()
+      toggleAddModal()
 
       toast({ message: 'Produto criado com sucesso', type: 'success' })
-
-      toggleAddModal()
-      setSelectedCategories([])
     } catch {
       toast({
         message: 'Erro ao criar produto, tente novamente!',
@@ -400,7 +390,7 @@ const CatalogPage = () => {
 
       toast({ message: 'Produto deletado com sucesso!', type: 'success' })
       toggleExcludeModal()
-      loadData()
+      loadProducts()
     } catch {
       toast({
         message: 'Erro ao excluir produto, tente novamente!',
@@ -414,7 +404,7 @@ const CatalogPage = () => {
       await couponRepository.deleteCoupon(code)
 
       toast({ message: 'Cupom deletado com sucesso!', type: 'success' })
-      loadData()
+      loadCoupons()
     } catch {
       toast({
         message: 'Erro ao excluir cupom, tente novamente!',
@@ -440,6 +430,10 @@ const CatalogPage = () => {
 
       await productRepository.updateProduct(activeProduct.id, body)
 
+      setSelectedCategories([])
+      loadProducts()
+      toggleAddModal()
+
       toast({ message: 'Produto atualizado com sucesso!', type: 'success' })
     } catch {
       toast({
@@ -447,10 +441,6 @@ const CatalogPage = () => {
         type: 'error'
       })
     }
-
-    setSelectedCategories([])
-    loadData()
-    toggleAddModal()
   }
 
   const loadProducts = async () => {
@@ -489,11 +479,7 @@ const CatalogPage = () => {
     }
   }
 
-  const loadData = async () => {
-    loadProducts()
-
-    loadCategories()
-
+  const loadCoupons = async () => {
     try {
       const data = await couponRepository.getCoupon()
 
@@ -501,6 +487,10 @@ const CatalogPage = () => {
     } catch {
       toast({ message: 'Erro ao buscar cupons', type: 'error' })
     }
+  }
+
+  const loadData = () => {
+    Promise.all([loadProducts(), loadCategories(), loadCoupons()])
   }
 
   const [privateCupom, togglePrivateCupom] = useToggleState(false)
@@ -511,7 +501,7 @@ const CatalogPage = () => {
   const [priceWithDiscount, setPriceWithDiscount] = useState('0')
   const [discount, setDiscount] = useState('0')
 
-  function updateDiscount(discount: string) {
+  const updateDiscount = (discount: string) => {
     const newPrice =
       formatToNumber(price) -
       formatToNumber(price) * (formatToNumber(discount) / 100)
@@ -663,7 +653,7 @@ const CatalogPage = () => {
         modalVisible={addCategoryModal}
       >
         <AddCategoryModalContainer>
-          <div className='inputContainer'>
+          <div className='inputs'>
             <Input
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -806,11 +796,6 @@ const CatalogPage = () => {
                 }))}
                 placeholder='Suas categorias'
                 setSelectedValue={setSelectedCategories}
-                creatable={true}
-                formatCreateLabel={(inputValue) =>
-                  `➕ Criar categoria "${inputValue}"`
-                }
-                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}
@@ -1018,11 +1003,6 @@ const CatalogPage = () => {
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
-                creatable={true}
-                formatCreateLabel={(inputValue) =>
-                  `➕ Criar categoria "${inputValue}"`
-                }
-                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}
@@ -1255,11 +1235,6 @@ const CatalogPage = () => {
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
-                creatable={true}
-                formatCreateLabel={(inputValue) =>
-                  `➕ Criar categoria "${inputValue}"`
-                }
-                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}
@@ -1433,11 +1408,6 @@ const CatalogPage = () => {
                 placeholder='Suas categorias'
                 selectedValue={selectedCategories}
                 setSelectedValue={setSelectedCategories}
-                creatable={true}
-                formatCreateLabel={(inputValue) =>
-                  `➕ Criar categoria "${inputValue}"`
-                }
-                onCreateOption={handleCreateCategory}
               />
               <span className='text-categories-added'>
                 Categorias adicionadas: {selectedCategories.length}

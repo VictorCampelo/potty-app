@@ -552,27 +552,9 @@ export const AddCategoryModalContainer = styled.div`
   align-items: center;
   justify-content: center;
 
-  .exit-container {
-    width: 100%;
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-
-    h1 {
-      font-weight: 600;
-      font-size: 24px;
-      line-height: 36px;
-    }
-
-    svg {
-      cursor: pointer;
-    }
-  }
-
-  .inputContainer {
+  .inputs {
     width: 450px;
-    margin-bottom: 30px;
+    margin-top: 15px;
   }
 
   .buttonContainer {
