@@ -252,9 +252,9 @@ const CatalogPage = () => {
   const handleCreateCupom = async () => {
     try {
       await couponRepository.createCoupon({
-        code: activeCupom.code,
-        discountPorcent: formatToNumber(activeCupom.discountPorcent),
-        maxUsage: Number(activeCupom.maxUsage),
+        code: cupomCode,
+        discountPorcent: formatToNumber(discountPorcent),
+        maxUsage: Number(maxUsage),
         validate: new Date(validate + '-3:00'),
         type: discountType,
         range: discountCategory,
@@ -266,7 +266,8 @@ const CatalogPage = () => {
       toggleAddCupomModal()
 
       toast({ message: 'Cupom criado com sucesso!', type: 'success' })
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast({ message: 'Erro ao criar cupom', type: 'error' })
     }
   }
