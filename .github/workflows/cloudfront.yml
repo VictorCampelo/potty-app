@@ -39,9 +39,9 @@ jobs:
       - run: yarn build
       
       - name: Adding Known Hosts
-        run: 'echo "$PRIVATE_KEY" >> ~/.ssh/github-action-app'
-      - run: chmod 400 ~/.ssh/github-action-app
-      - run: echo -e "Host potty-app\n\tUser ${USER_NAME}\n\tHostname ${HOSTNAME}\n\tIdentityFile ~/.ssh/github-action-app\n\tStrictHostKeyChecking No" >> ~/.ssh/config
+        run: 'echo "$PRIVATE_KEY" >> ~/.ssh/github-action'
+      - run: chmod 400 ~/.ssh/github-action
+      - run: echo -e "Host potty-app\n\tUser ${USER_NAME}\n\tHostname ${HOSTNAME}\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
       
       - name: Deploy with rsync
         run: rsync -e ssh /home/runner/work/potty-app/potty-app/.next bdv:/var/www/potty-app/.next/
