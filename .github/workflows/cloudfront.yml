@@ -50,7 +50,7 @@ jobs:
       - run: echo -e "Host potty-app\n\tUser ${USER_NAME}\n\tHostname ${HOSTNAME}\n\tIdentityFile ~/.ssh/github-action\n\tStrictHostKeyChecking No" >> ~/.ssh/config
       
       - name: Deploy with rsync
-        run: rsync -e ssh /home/runner/work/potty-app/potty-app/.next bdv:/var/www/potty-app/.next/
+        run: rsync -e ssh /home/runner/work/potty-app/potty-app/.next potty-app:/var/www/potty-app/.next/
       
       - run: echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
       - run: ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} uptime
