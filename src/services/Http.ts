@@ -7,7 +7,7 @@ class Http {
 
   constructor() {
     this.http = setup({
-      baseURL: 'https://api-dev.boadevenda.com',
+      baseURL: 'https://api.potty.com.br',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json'
