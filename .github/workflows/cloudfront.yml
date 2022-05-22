@@ -38,6 +38,12 @@ jobs:
       - run: yarn install
       - run: yarn build
       
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+      
       - name: Adding Known Hosts
         run: 'echo "$PRIVATE_KEY" >> ~/.ssh/github-action'
       - run: chmod 400 ~/.ssh/github-action
