@@ -18,13 +18,13 @@ export default class OrderRepository extends Http {
 
   findAll({ id, confirmed = false, page = 0, limit = 8 }: FindOrderDTO) {
     return this.get<any>(
-      `orders/store/order?confirmed=${confirmed}&page=${page}&take=${limit}`
+      `orders/store?confirmed=${confirmed}&page=${page}&take=${limit}`
     )
   }
 
   find({ id, confirmed = false, page = 0, limit = 8 }: FindOrderDTO) {
     return this.get<any>(
-      `orders/store/order?id=${id}&confirmed=${confirmed}&page=${page}&take=${limit}`
+      `orders/store/order?id=${id}`
     )
   }
 
