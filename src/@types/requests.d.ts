@@ -38,7 +38,7 @@ export interface SignUpDTO {
   city: string
   uf: string
   street: string
-  adressNumber: number
+  addressNumber: number
   neighborhood: string
   zipcode: string
   complement: string

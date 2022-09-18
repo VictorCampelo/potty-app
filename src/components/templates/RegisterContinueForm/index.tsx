@@ -36,7 +36,7 @@ const RegisterForm = () => {
     state: yup.string().required('Estado é obrigatório'),
     city: yup.string().required('Cidade obrigatória'),
     street: yup.string().required('Logradouro é obrigatório'),
-    adressNumber: yup.string().required('Número é obrigatório'),
+    addressNumber: yup.string().required('Número é obrigatório'),
     neighborhood: yup.string().required('Bairro é obrigatório'),
     cep: yup
       .string()
@@ -66,7 +66,7 @@ const RegisterForm = () => {
         city: dto.city,
         uf: dto.state,
         street: dto.street,
-        adressNumber: Number(dto.adressNumber),
+        addressNumber: Number(dto.addressNumber),
         neighborhood: dto.neighborhood,
         zipcode: dto.cep,
         complement: dto.complement,
@@ -190,7 +190,7 @@ const RegisterForm = () => {
               <Input
                 label='Número'
                 type='number'
-                name='adressNumber'
+                name='addressNumber'
                 mask='number'
                 placeholder='Número'
                 icon={<BiBuildings size={20} color='var(--black-800)' />}
