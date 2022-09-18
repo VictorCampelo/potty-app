@@ -47,6 +47,7 @@ jobs:
           cd /var/www/potty-app &&
           git pull origin main &&
           yarn install &&
+          yarn build &&
           pm2 delete potty-app &&
           pm2 start npm --name "potty-app" -- start
           '
