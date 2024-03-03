@@ -9,6 +9,7 @@ import GlobalStyle from '@/styles/GlobalStyle'
 import 'react-toastify/dist/ReactToastify.css'
 
 import type { AppProps } from 'next/app'
+import { ShopkeeperProvider } from '@/contexts/ShopkeeperContext'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -33,22 +34,24 @@ function MyApp({ Component, pageProps }: AppProps) {
               function gtag() { dataLayer.push(arguments); }
               gtag('js', new Date());
               gtag('config', 'G-PZVRKLPMDN');
-            `
+              `
             }}
           />
-          <GlobalStyle />
-          <Component {...pageProps} />
-          <ToastContainer
-            position='top-right'
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
+          <ShopkeeperProvider>
+            <GlobalStyle />
+            <Component {...pageProps} />
+            <ToastContainer
+              position='top-right'
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+          </ShopkeeperProvider>
         </CartProvider>
       </AuthProvider>
     </>

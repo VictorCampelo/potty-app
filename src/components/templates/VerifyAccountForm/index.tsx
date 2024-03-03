@@ -33,9 +33,10 @@ const VerifyAccountForm = () => {
   const handleVerifyAccount = async (dto: any) => {
     try {
       await authRepository.verifyAccount(dto.token)
-      await Router.push('/login')
-    } catch ({ response }) {
-      const message = (response as any).data?.error || 'Algo deu errado!'
+      await Router.push('/entrar')
+    } catch (error) {
+      console.error(error)
+      const message = 'Algo deu errado!'
       toast({ message, type: 'error' })
     }
   }

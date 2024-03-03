@@ -7,11 +7,13 @@ const Home = () => {
   const splinted = window.location.host
     .replace('www.', '')
     .replace('bdv-dev.', '')
-    .replace('.com.br', '') // start replacing from the longest domain to lowest
+    .replace('.com.br', '') 
     .replace('.com', '')
     .replace('.app', '')
+    .replace('localhost', '')
+    .replace(':3000', '')
     .split('.')
-
+  
   if (splinted.length > 1) {
     return <StorePage name={splinted[0]} />
   }

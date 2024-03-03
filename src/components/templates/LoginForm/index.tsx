@@ -46,7 +46,7 @@ const LoginForm = () => {
       const user = await signIn(dto as SignInDTO, { remember })
 
       if (user?.role === 'USER') {
-        Router.push('/')
+        Router.push('/lojas')
       } else if (user?.role === 'OWNER') {
         Router.push('/dashboard')
       }

@@ -19,6 +19,10 @@ export default class StoreRepository extends Http {
     return store
   }
 
+  async findByParams(search: string) {
+    return this.get<any>('/stores/search?parameter=' + search)
+  }
+
   payments() {
     return this.get<any>('/payments/find')
   }

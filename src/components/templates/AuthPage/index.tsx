@@ -4,6 +4,8 @@ import Head from 'next/head'
 
 import WavesBg from '@/components/molecules/WavesBg'
 
+import Button from '@/components/atoms/Button'
+
 import { FaFacebook } from 'react-icons/fa'
 import { AiFillGoogleCircle } from 'react-icons/ai'
 
@@ -11,6 +13,7 @@ import { Wrapper } from '@/styles/GlobalStyle'
 import { Container } from './styles'
 
 import IconButton from '@/components/atoms/IconButton'
+import { useRouter } from 'next/router'
 
 interface Props {
   size?: 'md' | 'lg' | 'xl'
@@ -27,6 +30,7 @@ const AuthPage = ({
   children,
   footer
 }: Props) => {
+  const router = useRouter()
   return (
     <Wrapper>
       <Head>
@@ -47,14 +51,12 @@ const AuthPage = ({
         <div className='card'>
           <div className='title'>
             <h1>{title}</h1>
-            <div className='logo'>
-              <img
-                src='/images/logo.svg'
-                alt='Logo marca boa de venda'
-                width={150}
-                height={80}
-              />
-            </div>
+            <Button
+              onClick={() => router.push('/business-register')}
+              type='button'
+            >
+              Cadastre seu negócio
+            </Button>
           </div>
 
           {children}

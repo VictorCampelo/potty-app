@@ -16,6 +16,14 @@ export default class AuthRepository extends Http {
     return this.post<SignUpDTO, SignUpResponse>('/auth/signup', dto)
   }
 
+  singUpStore(dto: any) {
+    return this.post('/auth/signup-store', dto, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
+
   singOut() {
     localStorage.removeItem('bdv.auth.token')
     sessionStorage.removeItem('bdv.auth.token')
